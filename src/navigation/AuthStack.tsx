@@ -7,7 +7,7 @@ const Stack = createNativeStackNavigator<IAuthStackParamList>();
 
 function AuthStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="FirstName" component={FirstName} />
     </Stack.Navigator>
   );

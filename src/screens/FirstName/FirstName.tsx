@@ -1,11 +1,13 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import React from 'react';
+import Screen from '../../components/Screen/Screen';
+import {ScreenTitle} from '../../components/Text/Text';
 
 const FirstName = () => {
   return (
-    <View>
-      <Text>FirstName</Text>
-    </View>
+    <Screen>
+      <ScreenTitle>What is your first name?</ScreenTitle>
+    </Screen>
   );
 };
 

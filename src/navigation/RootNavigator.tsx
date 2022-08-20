@@ -6,7 +6,6 @@ import {useTheme} from '../providers/ThemeProvider';
 
 export default function RootNavigator() {
   const {isDarkTheme} = useTheme();
-  console.log(isDarkTheme);
   return (
     <NavigationContainer theme={isDarkTheme ? DarkTheme : LightTheme}>
       <AuthStack />
