@@ -1,16 +1,15 @@
-import {Pressable, StyleSheet, TextInput, Text} from 'react-native';
+import {StyleSheet, TextInput} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Screen from '../../components/Screen/Screen';
-import {ScreenTitle} from '../../components/Text/Text';
 import {useSpeach} from '../../providers/SpeachProvider';
 import {useIsFocused} from '@react-navigation/native';
+import SpeachTextTitle from '../../components/Text/SpeachTextTitle';
 
 const FirstName = () => {
   const [firstname, setfirrstname] = useState<string>('');
   const [title /* setTitle */] = useState('What is your first name?');
   const isFocused = useIsFocused();
-  const {startSpeach, speachLocation} = useSpeach();
-  console.log(speachLocation);
+  const {startSpeach} = useSpeach();
 
   useEffect(() => {
     if (!isFocused || !title) {
@@ -24,9 +23,8 @@ const FirstName = () => {
 
   return (
     <Screen>
-      <ScreenTitle>{title}</ScreenTitle>
+      <SpeachTextTitle title={title} />
 
-      <Text style={styles.text}>Welcome home</Text>
       <TextInput
         style={styles.input}
         value={firstname}

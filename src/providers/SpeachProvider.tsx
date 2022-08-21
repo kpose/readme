@@ -17,7 +17,7 @@ export interface ISpeachContext {
   startSpeach: (data: string) => void;
   speachVoices?: ISpeachVoice[];
   currentVoice?: ISpeachVoice;
-  speachLocation?: ISpeachLocationProps;
+  speachLocation?: ISpeachCurrentWordProps;
 }
 
 export interface ISpeachVoice {
@@ -27,7 +27,7 @@ export interface ISpeachVoice {
   quality?: number;
 }
 
-export interface ISpeachLocationProps {
+export interface ISpeachCurrentWordProps {
   location: number;
   length: number;
   utteranceId: number;
@@ -43,7 +43,7 @@ export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
   const [selectedVoice, setSelectedVoice] = useState<ISpeachVoice>();
   const [speachRate, setSpeachRate] = useState<number>(0.5);
   const [speachPitch, setSpeachPitch] = useState<number>(1);
-  const [currentWord, setcurrentWord] = useState<ISpeachLocationProps>();
+  const [currentWord, setcurrentWord] = useState<ISpeachCurrentWordProps>();
 
   const initTts = useCallback(async () => {
     const voices = await Tts.voices();
