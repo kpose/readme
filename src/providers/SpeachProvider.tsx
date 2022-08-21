@@ -17,6 +17,7 @@ export interface ISpeachContext {
   startSpeach: (data: string) => void;
   speachVoices?: ISpeachVoice[];
   currentVoice?: ISpeachVoice;
+  speachLocation?: ISpeachLocationProps;
 }
 
 export interface ISpeachVoice {
@@ -24,6 +25,12 @@ export interface ISpeachVoice {
   language: string;
   name: string;
   quality?: number;
+}
+
+export interface ISpeachLocationProps {
+  location: number;
+  length: number;
+  utteranceId: number;
 }
 
 const SpeachContext = createContext<ISpeachContext>({
@@ -36,6 +43,7 @@ export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
   const [selectedVoice, setSelectedVoice] = useState<ISpeachVoice>();
   const [speachRate, setSpeachRate] = useState<number>(0.5);
   const [speachPitch, setSpeachPitch] = useState<number>(1);
+  const [currentWord, setcurrentWord] = useState<ISpeachLocationProps>();
 
   const initTts = useCallback(async () => {
     const voices = await Tts.voices();
@@ -57,7 +65,7 @@ export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
         );
       } catch (err) {
         // My Samsung S9 has always this error: "Language is not supported"
-        console.log(`setDefaultLanguage error `, err);
+        // console.log(`setDefaultLanguage error `, err);
       }
       await Tts.setDefaultVoice(englishUK?.id || availableVoices[0].id);
       setTtsVoices(availableVoices);
@@ -78,6 +86,10 @@ export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
       return;
     });
 
+    const onProgress = Tts.addEventListener('tts-progress', value => {
+      setcurrentWord(value);
+    });
+
     Tts.setDefaultRate(speachRate);
     Tts.setDefaultPitch(speachPitch);
     Tts.getInitStatus().then(() => initTts());
@@ -86,6 +98,7 @@ export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
       onStart;
       onCancel;
       onFinish;
+      onProgress;
     };
   }, [initTts, speachPitch, speachRate]);
 
@@ -105,6 +118,7 @@ export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
         pauseSpeach,
         speachVoices: ttsvoices,
         currentVoice: selectedVoice,
+        speachLocation: currentWord,
       }}>
       {children}
     </SpeachContext.Provider>
