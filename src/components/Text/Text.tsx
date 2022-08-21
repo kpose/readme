@@ -77,8 +77,8 @@ const styles = StyleSheet.create({
     marginBottom: 23,
   },
   screenTitleFixed: {
-    fontSize: 34,
-    lineHeight: 34,
+    fontSize: 30,
+    lineHeight: 30,
   },
   base: {
     fontSize: 14,

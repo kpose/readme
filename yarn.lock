@@ -5836,6 +5836,11 @@
     "react-freeze" "^1.0.0"
     "warn-once" "^0.1.0"
 
+"react-native-tts@^4.1.0":
+  "integrity" "sha512-tvf3lQ6u9MqztUie37qoPw5YQPqi0ql1lPhDsBBs/RRA6A/H1J9X9H/qb1A0Hx0ZpjavrEdtVSqQQ2JDZvZCTQ=="
+  "resolved" "https://registry.npmjs.org/react-native-tts/-/react-native-tts-4.1.0.tgz"
+  "version" "4.1.0"
+
 "react-native@*", "react-native@0.69.4":
   "integrity" "sha512-rqNMialM/T4pHRKWqTIpOxA65B/9kUjtnepxwJqvsdCeMP9Q2YdSx4VASFR9RoEFYcPRU41yGf6EKrChNfns3g=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.69.4.tgz"
