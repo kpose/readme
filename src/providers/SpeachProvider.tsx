@@ -2,6 +2,7 @@ import React, {
   createContext,
   FC,
   useCallback,
+  useContext,
   useEffect,
   useState,
 } from 'react';
@@ -13,14 +14,16 @@ interface ISpeachProviderProps {
 
 export interface ISpeachContext {
   pauseSpeach: () => void;
-  startSpeach: () => void;
+  startSpeach: (data: string) => void;
   speachVoices?: ISpeachVoice[];
+  currentVoice?: ISpeachVoice;
 }
 
 export interface ISpeachVoice {
   id: string;
   language: string;
   name: string;
+  quality?: number;
 }
 
 const SpeachContext = createContext<ISpeachContext>({
@@ -43,35 +46,36 @@ export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
         return {id: v.id, name: v.name, language: v.language};
       });
 
-    console.log(availableVoices);
-
     let currentVoice = null;
-    if (voices && voices.length > 0) {
-      currentVoice = voices[0];
+    if (availableVoices && availableVoices.length > 0) {
+      // get english uk
+      const englishUK = availableVoices.find(x => x.language === 'en-GB');
+      currentVoice = englishUK || availableVoices[0];
       try {
-        await Tts.setDefaultLanguage(voices[0].language);
+        await Tts.setDefaultLanguage(
+          englishUK?.language || availableVoices[0].language,
+        );
       } catch (err) {
         // My Samsung S9 has always this error: "Language is not supported"
         console.log(`setDefaultLanguage error `, err);
       }
-      await Tts.setDefaultVoice(voices[0].id);
+      await Tts.setDefaultVoice(englishUK?.id || availableVoices[0].id);
       setTtsVoices(availableVoices);
       setSelectedVoice(currentVoice);
     } else {
-      console.log('else');
+      console.log('error');
     }
   }, []);
 
   useEffect(() => {
-    console.log('kkkk');
-    Tts.addEventListener('tts-start', () => {
-      console.log('started');
+    const onStart = Tts.addEventListener('tts-start', () => {
+      return;
     });
-    Tts.addEventListener('tts-finish', () => {
-      console.log('finished');
+    const onFinish = Tts.addEventListener('tts-finish', () => {
+      return;
     });
-    Tts.addEventListener('tts-cancel', () => {
-      console.log('canceled');
+    const onCancel = Tts.addEventListener('tts-cancel', () => {
+      return;
     });
 
     Tts.setDefaultRate(speachRate);
@@ -79,26 +83,32 @@ export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
     Tts.getInitStatus().then(() => initTts());
 
     return () => {
-      Tts.removeEventListener('tts-start', () => {
-        console.log('started');
-      });
+      onStart;
+      onCancel;
+      onFinish;
     };
   }, [initTts, speachPitch, speachRate]);
 
-  const startSpeach = useCallback(() => {
-    console.log('kkkkk');
+  const startSpeach = useCallback(async (data: string) => {
+    Tts.stop();
+    Tts.speak(data);
   }, []);
 
   const pauseSpeach = useCallback(() => {
     console.log('kkkkk');
   }, []);
 
-  console.log(selectedVoice);
-
   return (
     <SpeachContext.Provider
-      value={{startSpeach, pauseSpeach, speachVoices: ttsvoices}}>
+      value={{
+        startSpeach,
+        pauseSpeach,
+        speachVoices: ttsvoices,
+        currentVoice: selectedVoice,
+      }}>
       {children}
     </SpeachContext.Provider>
   );
 };
+
+export const useSpeach = () => useContext(SpeachContext);
