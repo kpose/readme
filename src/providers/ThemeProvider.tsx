@@ -17,7 +17,7 @@ const defaultState: IThemeContext = {
 const ThemeContext = createContext<IThemeContext>(defaultState);
 
 export const ThemeProvider: FC<IThemeContextProps> = ({children}) => {
-  const [isDarkTheme, setDark] = useState(false);
+  const [isDarkTheme, setDark] = useState(true);
 
   const toggleTheme = useCallback(() => {
     setDark(!isDarkTheme);
