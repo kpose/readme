@@ -15,7 +15,6 @@ interface ICurrentWordPosition {
 
 const SpeachTextTitle: FC<ISpeachTextProps> = ({title}) => {
   const {speachLocation, isReading} = useSpeach();
-  console.log(isReading);
 
   const wordPosition = useCallback(() => {
     if (!title) {

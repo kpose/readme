@@ -13,8 +13,9 @@ import SpeachTextTitle from '../../components/Text/SpeachTextTitle';
 import {appcolors} from '../../utils/colors.util';
 import {useTheme} from '../../providers/ThemeProvider';
 import Button from '../../components/Button/Button';
+import {IFirstNameScreenProps} from './interfaces';
 
-const FirstName = () => {
+const FirstName = ({navigation}: IFirstNameScreenProps) => {
   const [firstname, setfirrstname] = useState<string>('');
   const [title /* setTitle */] = useState('What is your first name?');
   const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -65,14 +66,20 @@ const FirstName = () => {
           {color: isDarkTheme ? appcolors.light : appcolors.dark},
         ]}
         value={firstname}
+        keyboardAppearance={isDarkTheme ? 'dark' : 'light'}
         autoFocus={true}
         onChangeText={setfirrstname}
+        returnKeyType="done"
         placeholder="Your name"
         placeholderTextColor={appcolors.grey}
       />
 
       <View style={[styles.buttonContainer, {bottom: keyboardHeight}]}>
-        <Button title="Continue" disabled={firstname ? false : true} />
+        <Button
+          title="Continue"
+          disabled={firstname ? false : true}
+          onPress={() => navigation.navigate('AppStack')}
+        />
       </View>
     </Screen>
   );

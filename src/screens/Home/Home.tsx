@@ -1,14 +1,24 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text} from 'react-native';
 import React from 'react';
+import Screen from '../../components/Screen/Screen';
+import {IAppStackParamList} from '../../navigation/interfaces';
+import FAB from '../../components/FAB/FAB';
 
 const Home = () => {
   return (
-    <View>
+    <Screen>
       <Text>Home</Text>
-    </View>
+      <FAB />
+    </Screen>
   );
 };
 
 export default Home;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
