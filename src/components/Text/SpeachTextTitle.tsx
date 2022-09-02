@@ -14,7 +14,8 @@ interface ICurrentWordPosition {
 }
 
 const SpeachTextTitle: FC<ISpeachTextProps> = ({title}) => {
-  const {speachLocation} = useSpeach();
+  const {speachLocation, isReading} = useSpeach();
+  console.log(isReading);
 
   const wordPosition = useCallback(() => {
     if (!title) {
@@ -42,7 +43,11 @@ const SpeachTextTitle: FC<ISpeachTextProps> = ({title}) => {
       <ScreenTitle>
         {title.split(' ').map((t, index) => {
           const position = wordPosition();
-          if (position.currentWord === t && position.wordIndex === index) {
+          if (
+            position.currentWord === t &&
+            position.wordIndex === index &&
+            isReading
+          ) {
             return (
               // eslint-disable-next-line react-native/no-inline-styles
               <ScreenTitle style={{color: appcolors.primary}} key={index}>
@@ -54,7 +59,7 @@ const SpeachTextTitle: FC<ISpeachTextProps> = ({title}) => {
         })}
       </ScreenTitle>
     );
-  }, [wordPosition, title]);
+  }, [isReading, title, wordPosition]);
 
   return <View>{renderAnimatedText()}</View>;
 };
