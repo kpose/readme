@@ -1,4 +1,4 @@
-import {StyleSheet, Text} from 'react-native';
+import {StyleSheet, Text, Alert} from 'react-native';
 import React from 'react';
 import Screen from '../../components/Screen/Screen';
 import {IAppStackParamList} from '../../navigation/interfaces';
