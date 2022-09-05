@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {appcolors} from '../../utils/colors.util';
+import FABpopup from './FABpopup';
 const fabBottomPosition = 20;
 const fabRightPosition = 20;
 
@@ -46,13 +47,12 @@ const FAB = () => {
       {/* pop up */}
       <TouchableWithoutFeedback>
         <Animated.View
-          // eslint-disable-next-line react-native/no-inline-styles
           style={[
             styles.popupContainer,
-            {width: width / 2, opacity: opacityAnim},
+            {opacity: opacityAnim},
             animatedSpring,
           ]}>
-          <Animated.Text style={[styles.label]}>Order</Animated.Text>
+          <FABpopup />
         </Animated.View>
       </TouchableWithoutFeedback>
       {/* fab */}
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   popupContainer: {
     backgroundColor: '#FFF',
-    height: 90,
+    // height: 90,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,
