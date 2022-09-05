@@ -38,22 +38,22 @@ const getPopupIcon = (index: number) => {
 const FABpopup = () => {
   const renderItems = ({index, item}: any) => {
     return (
-      <Pressable style={styles.popupItem}>
-        {getPopupIcon(index)}
-        <Text weight="bold" style={styles.popupText}>
-          {item}
-        </Text>
-      </Pressable>
+      <>
+        <Pressable style={styles.popupItem}>
+          {getPopupIcon(index)}
+          <Text weight="bold" style={styles.popupText}>
+            {item}
+          </Text>
+        </Pressable>
+        {index === 0 ? (
+          <View style={styles.topSeperator} />
+        ) : index < 4 ? (
+          <View style={styles.bottomSeperator} />
+        ) : null}
+      </>
     );
   };
 
-  const renderSeperator = x => {
-    return (
-      <View>
-        <Text>{'yyy'}</Text>
-      </View>
-    );
-  };
   return (
     <View style={styles.popupContainer}>
       <FlatList
@@ -62,7 +62,6 @@ const FABpopup = () => {
         keyExtractor={x => {
           return x;
         }}
-        // ItemSeparatorComponent={renderSeperator}
       />
     </View>
   );
@@ -75,6 +74,16 @@ const styles = StyleSheet.create({
     backgroundColor: appcolors.grey,
     borderRadius: 10,
     paddingVertical: 5,
+  },
+  topSeperator: {
+    height: 4,
+    backgroundColor: '#adadad',
+    borderRadius: 10,
+  },
+  bottomSeperator: {
+    height: 2,
+    backgroundColor: '#adadad',
+    borderRadius: 10,
   },
   popupItem: {
     flexDirection: 'row',

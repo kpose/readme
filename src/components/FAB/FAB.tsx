@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {appcolors} from '../../utils/colors.util';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import FABpopup from './FABpopup';
 const fabBottomPosition = 20;
 const fabRightPosition = 20;
@@ -16,6 +17,12 @@ const FAB = () => {
   const [isOpen, setIsOpen] = useState(true);
 
   function toggleOpen() {
+    const options = {
+      enableVibrateFallback: true,
+      ignoreAndroidSystemSettings: false,
+    };
+
+    ReactNativeHapticFeedback.trigger('impactLight', options);
     setIsOpen(!isOpen);
   }
 
