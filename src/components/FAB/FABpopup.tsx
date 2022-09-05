@@ -18,6 +18,10 @@ const POPUP_OPTIONS = [
   'Paste Web Link',
 ];
 
+interface IPopupProps {
+  onPress: (x: number) => void;
+}
+
 const getPopupIcon = (index: number) => {
   switch (index) {
     case 0:
@@ -35,11 +39,11 @@ const getPopupIcon = (index: number) => {
   }
 };
 
-const FABpopup = () => {
+const FABpopup = ({onPress}: IPopupProps) => {
   const renderItems = ({index, item}: any) => {
     return (
       <>
-        <Pressable style={styles.popupItem}>
+        <Pressable style={styles.popupItem} onPress={() => onPress(index)}>
           {getPopupIcon(index)}
           <Text weight="bold" style={styles.popupText}>
             {item}
@@ -93,5 +97,6 @@ const styles = StyleSheet.create({
   },
   popupText: {
     marginHorizontal: 10,
+    marginRight: 30,
   },
 });

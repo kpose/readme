@@ -26,6 +26,10 @@ const FAB = () => {
     setIsOpen(!isOpen);
   }
 
+  const onPopUpItemPress = (index: number) => {
+    console.log(index);
+  };
+
   useEffect(() => {
     const opacityValue = isOpen ? 0 : 1;
     const springValue = isOpen ? 60 : 0;
@@ -57,7 +61,7 @@ const FAB = () => {
             {opacity: opacityAnim},
             animatedSpring,
           ]}>
-          <FABpopup />
+          <FABpopup onPress={onPopUpItemPress} />
         </Animated.View>
       </TouchableWithoutFeedback>
       {/* fab */}
