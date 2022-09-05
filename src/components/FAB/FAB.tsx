@@ -3,7 +3,6 @@ import {
   TouchableWithoutFeedback,
   StyleSheet,
   Animated,
-  useWindowDimensions,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {appcolors} from '../../utils/colors.util';
@@ -15,14 +14,13 @@ const FAB = () => {
   const springAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
   const [isOpen, setIsOpen] = useState(true);
-  const {width} = useWindowDimensions();
 
   function toggleOpen() {
     setIsOpen(!isOpen);
   }
 
   useEffect(() => {
-    const opacityValue = isOpen ? 0 : 0.7;
+    const opacityValue = isOpen ? 0 : 1;
     const springValue = isOpen ? 60 : 0;
     const spring = Animated.spring(springAnim, {
       toValue: springValue,
@@ -33,7 +31,7 @@ const FAB = () => {
     const opacity = Animated.timing(opacityAnim, {
       toValue: opacityValue,
       useNativeDriver: true,
-      duration: 1000,
+      duration: 500,
     });
     Animated.parallel([spring, opacity]).start();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -91,10 +89,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: appcolors.primary,
-    // shadowColor: '#333',
-    // shadowOpacity: 0.1,
-    // shadowOffset: {x: 2, y: 0},
-    // shadowRadius: 2,
     borderRadius: 30,
     position: 'absolute',
     bottom: fabBottomPosition,

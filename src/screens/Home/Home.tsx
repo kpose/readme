@@ -1,13 +1,14 @@
-import {StyleSheet, Text, Alert} from 'react-native';
+import {Text} from 'react-native';
 import React from 'react';
 import Screen from '../../components/Screen/Screen';
-import {IAppStackParamList} from '../../navigation/interfaces';
 import FAB from '../../components/FAB/FAB';
+import {FolderIcon} from '../../components/Icon/Icon';
 
 const Home = () => {
   return (
     <Screen>
       <Text>Home</Text>
+      <FolderIcon size={15} />
       <FAB />
     </Screen>
   );
@@ -15,10 +16,10 @@ const Home = () => {
 
 export default Home;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//   },
+// });
