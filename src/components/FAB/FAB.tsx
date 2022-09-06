@@ -8,12 +8,21 @@ import React, {useEffect, useRef, useState} from 'react';
 import {appcolors} from '../../utils/colors.util';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import FABpopup from './FABpopup';
+import DocumentPicker, {
+  DirectoryPickerResponse,
+  DocumentPickerResponse,
+  isInProgress,
+  types,
+} from 'react-native-document-picker';
 const fabBottomPosition = 20;
 const fabRightPosition = 20;
 
 const FAB = () => {
   const springAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
+  const [result, setResult] = React.useState<
+    Array<DocumentPickerResponse> | DirectoryPickerResponse | undefined | null
+  >();
   const [isOpen, setIsOpen] = useState(true);
 
   function toggleOpen() {
@@ -26,8 +35,34 @@ const FAB = () => {
     setIsOpen(!isOpen);
   }
 
+  const handleError = (err: unknown) => {
+    if (DocumentPicker.isCancel(err)) {
+      console.warn('cancelled');
+      // User cancelled the picker, exit any dialogs or menus and move on
+    } else if (isInProgress(err)) {
+      console.warn(
+        'multiple pickers were opened, only the last will be considered',
+      );
+    } else {
+      throw err;
+    }
+  };
+
   const onPopUpItemPress = (index: number) => {
-    console.log(index);
+    DocumentPicker.pick({
+      type: types.pdf,
+    })
+      .then(setResult)
+      .catch(handleError);
+    // try {
+    //   const pickerResult = await DocumentPicker.pickSingle({
+    //     presentationStyle: 'fullScreen',
+    //     copyTo: 'cachesDirectory',
+    //   });
+    //   setResult([pickerResult]);
+    // } catch (e) {
+    //   handleError(e);
+    // }
   };
 
   useEffect(() => {
@@ -47,6 +82,10 @@ const FAB = () => {
     Animated.parallel([spring, opacity]).start();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
+
+  useEffect(() => {
+    console.log(JSON.stringify(result, null, 2));
+  }, [result]);
 
   const animatedSpring = {
     transform: [{translateY: springAnim}, {translateX: springAnim}],
