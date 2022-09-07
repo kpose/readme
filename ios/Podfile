@@ -8,6 +8,7 @@ production = ENV["PRODUCTION"] == "1"
 
 target 'readme' do
   config = use_native_modules!
+  pod 'PDFNet', podspec: 'https://pdftron.com/downloads/ios/react-native/latest.podspec'
 
   # Flags change depending on the env values.
   flags = get_default_flags()
