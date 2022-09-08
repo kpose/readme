@@ -3,6 +3,7 @@ import {
   TouchableWithoutFeedback,
   StyleSheet,
   Animated,
+  Alert,
 } from 'react-native';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {appcolors} from '../../utils/colors.util';
@@ -15,8 +16,12 @@ import DocumentPicker, {
   types,
 } from 'react-native-document-picker';
 import RNFetchBlob from 'rn-fetch-blob';
+import {requestFilePermission} from '../../utils/Permissions.util';
+import {selectPdf} from '../../utils/FilePicker.util';
+import {usePDFViewer} from '../../providers/PDFViewerProvider';
 const fabBottomPosition = 20;
 const fabRightPosition = 20;
+const RNFS = require('react-native-fs');
 
 const FAB = () => {
   const springAnim = useRef(new Animated.Value(0)).current;
@@ -25,6 +30,7 @@ const FAB = () => {
     Array<DocumentPickerResponse> | DirectoryPickerResponse | undefined | null
   >();
   const [isOpen, setIsOpen] = useState(true);
+  const {openDocument} = usePDFViewer();
 
   const toggleOpen = useCallback(() => {
     const options = {
@@ -36,43 +42,39 @@ const FAB = () => {
     setIsOpen(!isOpen);
   }, [isOpen]);
 
-  const handleError = (err: unknown) => {
-    if (DocumentPicker.isCancel(err)) {
-      console.warn('cancelled');
-      // User cancelled the picker, exit any dialogs or menus and move on
-    } else if (isInProgress(err)) {
-      console.warn(
-        'multiple pickers were opened, only the last will be considered',
-      );
-    } else {
-      throw err;
-    }
-  };
-
-  // const openDocument = useCallback((item: any) => {
-  //   console.log(item)
-  // }, [])
-
+  // this method is used to handle selected files
+  const handleFileSelected = useCallback(
+    async (selectedFile: DocumentPickerResponse) => {
+      if (!selectedFile) {
+        return;
+      }
+    },
+    [],
+  );
   const onPopUpItemPress = useCallback(async () => {
     setIsOpen(!isOpen);
     try {
-      const res = await DocumentPicker.pickSingle({
-        type: types.pdf,
-        presentationStyle: 'fullScreen',
-      });
-      console.log(res);
-      // const jj = res.uri.replace('file:///Users', '');
-
-      RNFetchBlob.fs
-        .stat(res.uri)
-        .then(stat => console.log(stat.path))
-        .catch(err => {
-          console.log(err);
-        });
-    } catch (error) {
-      handleError;
+      const filesPermission = await requestFilePermission();
+      if (filesPermission === 'granted') {
+        const pdfFile = await selectPdf();
+        return handleFileSelected(pdfFile);
+      }
+      if (filesPermission === 'unavailable') {
+        throw new Error(
+          'Sorry but this feature appears to be unavailable on your device.',
+        );
+      }
+      throw new Error(
+        'Please go into settings and grant Flutterwave access to read your files to use this feature.',
+      );
+    } catch (e) {
+      // handle error
+      if (DocumentPicker.isCancel(e)) {
+        return;
+      }
+      Alert.alert('Error', e.message);
     }
-  }, [isOpen]);
+  }, [handleFileSelected, isOpen]);
 
   useEffect(() => {
     const opacityValue = isOpen ? 0 : 1;

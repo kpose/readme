@@ -363,6 +363,8 @@ PODS:
     - React-perflogger (= 0.69.4)
   - rn-fetch-blob (0.13.0-beta.2):
     - React-Core
+  - RNFS (2.20.0):
+    - React-Core
   - RNGestureHandler (2.6.0):
     - React-Core
   - RNPdftron (3.0.2-beta.130):
@@ -472,6 +474,7 @@ DEPENDENCIES:
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
+  - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNPdftron (from `../node_modules/react-native-pdftron`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
@@ -573,6 +576,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   rn-fetch-blob:
     :path: "../node_modules/rn-fetch-blob"
+  RNFS:
+    :path: "../node_modules/react-native-fs"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNPdftron:
@@ -642,6 +647,7 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: 61ee22a8cdf8b6bb2a7fb7b4ba2cc763e5285196
   ReactCommon: 8f67bd7e0a6afade0f20718f859dc8c2275f2e83
   rn-fetch-blob: d469adb2e1d17f9d02ceb2b7bdd35ae5bd5db66b
+  RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNGestureHandler: 920eb17f5b1e15dae6e5ed1904045f8f90e0b11e
   RNPdftron: 314f18b6bcfe767601dfc9ac69097f0c64f02ea2
   RNPermissions: dcdb7b99796bbeda6975a6e79ad519c41b251b1c
@@ -654,6 +660,6 @@ SPEC CHECKSUMS:
   Yoga: ff994563b2fd98c982ca58e8cd9db2cdaf4dda74
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 61ef6a2adce27c00bb4c124ca51a9192f874b23b
+PODFILE CHECKSUM: 7384bbf785340c1d9d6e9ea9dfcd8cb008856852
 
 COCOAPODS: 1.11.2

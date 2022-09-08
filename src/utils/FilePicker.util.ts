@@ -3,10 +3,10 @@ import DocumentPicker, {
 } from 'react-native-document-picker';
 import Logger from './Logger.util';
 
-export async function selectPdf(): Promise<DocumentPickerResponse[]> {
+export async function selectPdf(): Promise<DocumentPickerResponse> {
   try {
     // pick odf file
-    const file = await DocumentPicker.pick({
+    const file = await DocumentPicker.pickSingle({
       type: DocumentPicker.types.pdf,
     });
     // resolve selected file

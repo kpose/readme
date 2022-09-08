@@ -6,9 +6,9 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import {PermissionsAndroid, Platform} from 'react-native';
+import {View} from 'react-native';
 import {DocumentView, RNPdftron} from 'react-native-pdftron';
-import {Text} from 'react-native-svg';
+import Text from '../components/Text/Text';
 import RNFetchBlob from 'react-native-fetch-blob';
 
 interface IPDFViewerContextProps {
@@ -30,67 +30,38 @@ export const PDFViewerProvider: FC<IPDFViewerContextProps> = ({children}) => {
   const [isVisible, setIsVisible] = useState(false);
   const [documentPath, setDocumentPath] = useState<string>('');
 
-  const checkForPermissions = useCallback(async () => {
-    if (Platform.OS === 'android') {
-      const result = await PermissionsAndroid.check(
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-      );
-      if (result) {
-        setHasPermission(true);
-        return;
-      }
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-          {
-            title: 'Readme would like to access your storage',
-            message:
-              'This lets you import documents ' + 'you will love to isten to',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          setHasPermission(true);
-        } else {
-          setHasPermission(false);
-        }
-      } catch (err) {
-        console.warn(err);
-      }
-    }
-    if (Platform.OS === 'ios') {
-      setHasPermission(true);
-    }
+  useEffect(() => {
+    RNPdftron.initialize('');
   }, []);
 
-  useEffect(() => {
-    // RNPdftron.initialize('');
-    // RNPdftron.enableJavaScript(true);
-  }, [checkForPermissions]);
-
-  const openDocument = useCallback(
-    (uri: string) => {
-      checkForPermissions();
-      if (!hasPermission) {
-        console.log('no permission granted');
-        return;
-      }
-      console.log(uri);
-      setDocumentPath(uri);
-      setIsVisible(true);
-    },
-    [checkForPermissions, hasPermission],
-  );
-
-  console.log(hasPermission);
+  const openDocument = useCallback(async (uri: string) => {
+    setDocumentPath(uri);
+    setIsVisible(true);
+  }, []);
 
   return (
     <PDFViewerContext.Provider
       value={{permissionGranted: hasPermission, openDocument}}>
       {children}
-      {isVisible ? <Text>Document shown</Text> : null}
+      {isVisible && documentPath ? (
+        <View
+          style={{
+            flex: 1,
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            backgroundColor: 'red',
+          }}>
+          <DocumentView
+            document={
+              'https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf'
+            }
+            showLeadingNavButton={true}
+          />
+        </View>
+      ) : null}
     </PDFViewerContext.Provider>
   );
 };
