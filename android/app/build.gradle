@@ -142,8 +142,7 @@ android {
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
         multiDexEnabled true
         /* change PDFTRON LICENCE KEY IN PRODUCTION */
-+       manifestPlaceholders = [pdftronLicenseKey:PDFTRON_LICENSE_KEY]
-
+        manifestPlaceholders = [pdftronLicenseKey:PDFTRON_LICENSE_KEY]
         if (isNewArchitectureEnabled()) {
             // We configure the NDK build only if you decide to opt-in for the New Architecture.
             externalNativeBuild {

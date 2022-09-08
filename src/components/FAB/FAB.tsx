@@ -4,7 +4,7 @@ import {
   StyleSheet,
   Animated,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {appcolors} from '../../utils/colors.util';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import FABpopup from './FABpopup';
@@ -48,11 +48,18 @@ const FAB = () => {
     }
   };
 
+  const openDocument = useCallback((item: any) => {
+    console.log(item);
+  }, []);
+
   const onPopUpItemPress = (index: number) => {
     DocumentPicker.pick({
       type: types.pdf,
     })
-      .then(setResult)
+      .then(item => {
+        setResult(item);
+        openDocument(item);
+      })
       .catch(handleError);
     // try {
     //   const pickerResult = await DocumentPicker.pickSingle({

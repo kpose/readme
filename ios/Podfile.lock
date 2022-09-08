@@ -75,6 +75,9 @@ PODS:
   - glog (0.3.5)
   - libevent (2.1.12)
   - OpenSSL-Universal (1.1.1100)
+  - PDFNet (3.0.2-beta.126)
+  - Permission-MediaLibrary (3.6.1):
+    - RNPermissions
   - RCT-Folly (2021.06.28.00-v2):
     - boost
     - DoubleConversion
@@ -360,6 +363,11 @@ PODS:
     - React-perflogger (= 0.69.4)
   - RNGestureHandler (2.6.0):
     - React-Core
+  - RNPdftron (3.0.2-beta.130):
+    - PDFNet
+    - React-Core
+  - RNPermissions (3.6.1):
+    - React-Core
   - RNReactNativeHapticFeedback (1.14.0):
     - React-Core
   - RNReanimated (2.10.0):
@@ -429,6 +437,8 @@ DEPENDENCIES:
   - FlipperKit/SKIOSNetworkPlugin (= 0.125.0)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - OpenSSL-Universal (= 1.1.1100)
+  - PDFNet (from `https://pdftron.com/downloads/ios/react-native/latest.podspec`)
+  - Permission-MediaLibrary (from `../node_modules/react-native-permissions/ios/MediaLibrary`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
@@ -460,6 +470,8 @@ DEPENDENCIES:
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNPdftron (from `../node_modules/react-native-pdftron`)
+  - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -496,6 +508,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/React/FBReactNativeSpec"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
+  PDFNet:
+    :podspec: https://pdftron.com/downloads/ios/react-native/latest.podspec
+  Permission-MediaLibrary:
+    :path: "../node_modules/react-native-permissions/ios/MediaLibrary"
   RCT-Folly:
     :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTRequired:
@@ -554,6 +570,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNPdftron:
+    :path: "../node_modules/react-native-pdftron"
+  RNPermissions:
+    :path: "../node_modules/react-native-permissions"
   RNReactNativeHapticFeedback:
     :path: "../node_modules/react-native-haptic-feedback"
   RNReanimated:
@@ -586,6 +606,8 @@ SPEC CHECKSUMS:
   glog: 3d02b25ca00c2d456734d0bcff864cbc62f6ae1a
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
+  PDFNet: 2551c24b1e6a672983a2f5ea466fae90da21ae6d
+  Permission-MediaLibrary: a994236bae41b3597a376ff08298fb1c6d84729b
   RCT-Folly: b9d9fe1fc70114b751c076104e52f3b1b5e5a95a
   RCTRequired: bd9d2ab0fda10171fcbcf9ba61a7df4dc15a28f4
   RCTTypeSafety: e44e139bf6ec8042db396201834fc2372f6a21cd
@@ -615,6 +637,8 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: 61ee22a8cdf8b6bb2a7fb7b4ba2cc763e5285196
   ReactCommon: 8f67bd7e0a6afade0f20718f859dc8c2275f2e83
   RNGestureHandler: 920eb17f5b1e15dae6e5ed1904045f8f90e0b11e
+  RNPdftron: 314f18b6bcfe767601dfc9ac69097f0c64f02ea2
+  RNPermissions: dcdb7b99796bbeda6975a6e79ad519c41b251b1c
   RNReactNativeHapticFeedback: 1e3efeca9628ff9876ee7cdd9edec1b336913f8c
   RNReanimated: 7faa787e8d4493fbc95fab2ad331fa7625828cfa
   RNScreens: ee31ecdf23fe81e93c74feaa086cf173d758ab58
@@ -624,6 +648,6 @@ SPEC CHECKSUMS:
   Yoga: ff994563b2fd98c982ca58e8cd9db2cdaf4dda74
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 14bac435ed4d0ba87242aa9ca1ee7879f06ef8eb
+PODFILE CHECKSUM: 98f2b2974bb26f67360dafd013a513b3b07fc314
 
 COCOAPODS: 1.11.2
