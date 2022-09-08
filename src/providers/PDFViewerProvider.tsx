@@ -8,6 +8,8 @@ import React, {
 } from 'react';
 import {PermissionsAndroid, Platform} from 'react-native';
 import {DocumentView, RNPdftron} from 'react-native-pdftron';
+import {Text} from 'react-native-svg';
+import RNFetchBlob from 'react-native-fetch-blob';
 
 interface IPDFViewerContextProps {
   children: React.ReactNode;
@@ -25,6 +27,8 @@ const PDFViewerContext = createContext<IPDFViewerProps>(defaultState);
 
 export const PDFViewerProvider: FC<IPDFViewerContextProps> = ({children}) => {
   const [hasPermission, setHasPermission] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [documentPath, setDocumentPath] = useState<string>('');
 
   const checkForPermissions = useCallback(async () => {
     if (Platform.OS === 'android') {
@@ -62,8 +66,8 @@ export const PDFViewerProvider: FC<IPDFViewerContextProps> = ({children}) => {
   }, []);
 
   useEffect(() => {
-    RNPdftron.initialize('');
-    RNPdftron.enableJavaScript(true);
+    // RNPdftron.initialize('');
+    // RNPdftron.enableJavaScript(true);
   }, [checkForPermissions]);
 
   const openDocument = useCallback(
@@ -74,6 +78,8 @@ export const PDFViewerProvider: FC<IPDFViewerContextProps> = ({children}) => {
         return;
       }
       console.log(uri);
+      setDocumentPath(uri);
+      setIsVisible(true);
     },
     [checkForPermissions, hasPermission],
   );
@@ -84,6 +90,7 @@ export const PDFViewerProvider: FC<IPDFViewerContextProps> = ({children}) => {
     <PDFViewerContext.Provider
       value={{permissionGranted: hasPermission, openDocument}}>
       {children}
+      {isVisible ? <Text>Document shown</Text> : null}
     </PDFViewerContext.Provider>
   );
 };
