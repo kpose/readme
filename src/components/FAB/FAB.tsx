@@ -61,6 +61,8 @@ const FAB = () => {
         presentationStyle: 'fullScreen',
       });
       console.log(res);
+      // const jj = res.uri.replace('file:///Users', '');
+
       RNFetchBlob.fs
         .stat(res.uri)
         .then(stat => console.log(stat.path))
