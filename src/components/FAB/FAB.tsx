@@ -14,6 +14,7 @@ import DocumentPicker, {
   isInProgress,
   types,
 } from 'react-native-document-picker';
+import RNFetchBlob from 'rn-fetch-blob';
 const fabBottomPosition = 20;
 const fabRightPosition = 20;
 
@@ -25,7 +26,7 @@ const FAB = () => {
   >();
   const [isOpen, setIsOpen] = useState(true);
 
-  function toggleOpen() {
+  const toggleOpen = useCallback(() => {
     const options = {
       enableVibrateFallback: true,
       ignoreAndroidSystemSettings: false,
@@ -33,7 +34,7 @@ const FAB = () => {
 
     ReactNativeHapticFeedback.trigger('impactLight', options);
     setIsOpen(!isOpen);
-  }
+  }, [isOpen]);
 
   const handleError = (err: unknown) => {
     if (DocumentPicker.isCancel(err)) {
@@ -48,29 +49,28 @@ const FAB = () => {
     }
   };
 
-  const openDocument = useCallback((item: any) => {
-    console.log(item);
-  }, []);
+  // const openDocument = useCallback((item: any) => {
+  //   console.log(item)
+  // }, [])
 
-  const onPopUpItemPress = (index: number) => {
-    DocumentPicker.pick({
-      type: types.pdf,
-    })
-      .then(item => {
-        setResult(item);
-        openDocument(item);
-      })
-      .catch(handleError);
-    // try {
-    //   const pickerResult = await DocumentPicker.pickSingle({
-    //     presentationStyle: 'fullScreen',
-    //     copyTo: 'cachesDirectory',
-    //   });
-    //   setResult([pickerResult]);
-    // } catch (e) {
-    //   handleError(e);
-    // }
-  };
+  const onPopUpItemPress = useCallback(async () => {
+    setIsOpen(!isOpen);
+    try {
+      const res = await DocumentPicker.pickSingle({
+        type: types.pdf,
+        presentationStyle: 'fullScreen',
+      });
+      console.log(res);
+      RNFetchBlob.fs
+        .stat(res.uri)
+        .then(stat => console.log(stat.path))
+        .catch(err => {
+          console.log(err);
+        });
+    } catch (error) {
+      handleError;
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     const opacityValue = isOpen ? 0 : 1;

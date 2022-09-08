@@ -5043,6 +5043,11 @@
   "resolved" "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz"
   "version" "4.17.21"
 
+"lodash@4.17.15":
+  "integrity" "sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A=="
+  "resolved" "https://registry.npmjs.org/lodash/-/lodash-4.17.15.tgz"
+  "version" "4.17.15"
+
 "log-symbols@^4.1.0":
   "integrity" "sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg=="
   "resolved" "https://registry.npmjs.org/log-symbols/-/log-symbols-4.1.0.tgz"
@@ -6147,14 +6152,6 @@
   dependencies:
     "invariant" "^2.2.4"
 
-"react-native-fetch-blob@^0.10.8":
-  "integrity" "sha512-+zE/VjBO9HTjqNXL1KgtgS3ZTH8CNuxg9rJDml+GsO1UbIe4EgdRiCy/sIV9X8lVYimKfep8iJsVMTsjJvQHmA=="
-  "resolved" "https://registry.npmjs.org/react-native-fetch-blob/-/react-native-fetch-blob-0.10.8.tgz"
-  "version" "0.10.8"
-  dependencies:
-    "base-64" "0.1.0"
-    "glob" "7.0.6"
-
 "react-native-gesture-handler@^2.6.0":
   "integrity" "sha512-IwdYdt5FKjjbRSrSqh8hoNctlYZl5DFnqSJ6buKtrl4A4gyzkrtW6WcmOFl5LnCa6Bcw+znSD77O6UiZ8qda7g=="
   "resolved" "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.6.0.tgz"
@@ -6547,6 +6544,15 @@
   "version" "2.6.3"
   dependencies:
     "glob" "^7.1.3"
+
+"rn-fetch-blob@^0.13.0-beta.2":
+  "integrity" "sha512-sH7mhWS4fn9uACq/vn9Vjf//taOUxJKRkn39qpi4U2HzUo+WfmwPsbWT5RyeVyD81tkd/1jV2qQBB2t/ISuTuw=="
+  "resolved" "https://registry.npmjs.org/rn-fetch-blob/-/rn-fetch-blob-0.13.0-beta.2.tgz"
+  "version" "0.13.0-beta.2"
+  dependencies:
+    "base-64" "0.1.0"
+    "glob" "7.0.6"
+    "lodash" "4.17.15"
 
 "rsvp@^4.8.4":
   "integrity" "sha512-nfMOlASu9OnRJo1mbEk2cz0D56a1MBNrJ7orjRZQG10XDyuvwksKbuXNp6qa+kbn839HwjwhBzhFmdsaEAfauA=="
