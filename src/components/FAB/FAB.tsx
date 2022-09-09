@@ -10,27 +10,21 @@ import {appcolors} from '../../utils/colors.util';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import FABpopup from './FABpopup';
 import DocumentPicker, {
-  // DirectoryPickerResponse,
   DocumentPickerResponse,
 } from 'react-native-document-picker';
 import {requestFilePermission} from '../../utils/Permissions.util';
 import {selectPdf} from '../../utils/FilePicker.util';
 // import {usePDFViewer} from '../../providers/PDFViewerProvider';
 import useCloudStorage from '../../hooks/CloudStorage.hook';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import Text from '../Text/Text';
 const fabBottomPosition = 20;
 const fabRightPosition = 20;
 
 const FAB = () => {
   const springAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
-  // const [result, setResult] = React.useState<
-  //   Array<DocumentPickerResponse> | DirectoryPickerResponse | undefined | null
-  // >();
   const [isOpen, setIsOpen] = useState(true);
   // const {openDocument} = usePDFViewer();
-  const {/* percent */ uploadFile, getAllDocs} = useCloudStorage();
+  const {/* percent */ uploadFile} = useCloudStorage();
 
   const toggleOpen = useCallback(() => {
     const options = {
@@ -48,16 +42,10 @@ const FAB = () => {
       if (!selectedFile) {
         return;
       }
-      const ll = await uploadFile(selectedFile, 'testFolder');
-      console.log(ll);
+      await uploadFile(selectedFile, 'testFolder');
     },
     [uploadFile],
   );
-
-  const getAll = useCallback(async () => {
-    const hh = await getAllDocs('testFolder');
-    console.log(hh);
-  }, [getAllDocs]);
 
   const onPopUpItemPress = useCallback(async () => {
     setIsOpen(!isOpen);
@@ -75,7 +63,7 @@ const FAB = () => {
       throw new Error(
         'Please go into settings and grant Flutterwave access to read your files to use this feature.',
       );
-    } catch (e) {
+    } catch (e: any) {
       // handle error
       if (DocumentPicker.isCancel(e)) {
         return;
@@ -102,18 +90,11 @@ const FAB = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
-  // useEffect(() => {
-  //   console.log(JSON.stringify(result, null, 2));
-  // }, [result]);
-
   const animatedSpring = {
     transform: [{translateY: springAnim}, {translateX: springAnim}],
   };
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={getAll}>
-        <Text>Press</Text>
-      </TouchableOpacity>
       {/* pop up */}
       <TouchableWithoutFeedback>
         <Animated.View
