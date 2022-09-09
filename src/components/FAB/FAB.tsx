@@ -19,6 +19,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import {requestFilePermission} from '../../utils/Permissions.util';
 import {selectPdf} from '../../utils/FilePicker.util';
 import {usePDFViewer} from '../../providers/PDFViewerProvider';
+import {uploadPDF} from '../../utils/FileUploader.util';
 const fabBottomPosition = 20;
 const fabRightPosition = 20;
 const RNFS = require('react-native-fs');
@@ -49,6 +50,8 @@ const FAB = () => {
         return;
       }
       console.log(selectedFile);
+      const ll = await uploadPDF(selectedFile, 'testFolder');
+      console.log(ll);
     },
     [],
   );

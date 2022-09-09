@@ -1,16 +1,32 @@
-import DocumentPicker, {
-  DocumentPickerResponse,
-} from 'react-native-document-picker';
 import Logger from './Logger.util';
+import storage, {FirebaseStorageTypes} from '@react-native-firebase/storage';
 
-export async function uploadPDF(): Promise<DocumentPickerResponse> {
+
+export async function uploadPDF(
+  filePath: any,
+  userDirectory: string,
+): Promise<FirebaseStorageTypes.Task> {
   try {
-    // pick odf file
-    const file = await DocumentPicker.pickSingle({
-      type: DocumentPicker.types.pdf,
+    if (Object.keys(filePath).length === 0) {
+      let error = 'Please make sure you have selected a document';
+      return Promise.reject(error);
+    }
+    const reference = storage().ref(`/${userDirectory}/${filePath.name}`);
+    const task = reference.putFile(filePath.uri.replace('file://', ''));
+
+    task.on('state_changed', taskSnapshot => {
+      let percentage =
+        (Number(taskSnapshot.bytesTransferred) /
+          Number(taskSnapshot.totalBytes)) *
+        100;
+      console.log(`${percentage}%`);
     });
-    // resolve selected file
-    return Promise.resolve(file);
+
+    task.then(() => {
+      console.log('done');
+    });
+
+    return Promise.resolve(task);
   } catch (e) {
     // log error
     Logger(e);
