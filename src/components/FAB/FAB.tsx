@@ -10,28 +10,25 @@ import {appcolors} from '../../utils/colors.util';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import FABpopup from './FABpopup';
 import DocumentPicker, {
-  DirectoryPickerResponse,
+  // DirectoryPickerResponse,
   DocumentPickerResponse,
-  isInProgress,
-  types,
 } from 'react-native-document-picker';
-import RNFetchBlob from 'rn-fetch-blob';
 import {requestFilePermission} from '../../utils/Permissions.util';
 import {selectPdf} from '../../utils/FilePicker.util';
-import {usePDFViewer} from '../../providers/PDFViewerProvider';
-import {uploadPDF} from '../../utils/FileUploader.util';
+// import {usePDFViewer} from '../../providers/PDFViewerProvider';
+import useFileUpload from '../../hooks/FileUpload.hook';
 const fabBottomPosition = 20;
 const fabRightPosition = 20;
-const RNFS = require('react-native-fs');
 
 const FAB = () => {
   const springAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
-  const [result, setResult] = React.useState<
-    Array<DocumentPickerResponse> | DirectoryPickerResponse | undefined | null
-  >();
+  // const [result, setResult] = React.useState<
+  //   Array<DocumentPickerResponse> | DirectoryPickerResponse | undefined | null
+  // >();
   const [isOpen, setIsOpen] = useState(true);
-  const {openDocument} = usePDFViewer();
+  // const {openDocument} = usePDFViewer();
+  const {/* percent */ uploadFile} = useFileUpload();
 
   const toggleOpen = useCallback(() => {
     const options = {
@@ -49,11 +46,12 @@ const FAB = () => {
       if (!selectedFile) {
         return;
       }
-      console.log(selectedFile);
-      const ll = await uploadPDF(selectedFile, 'testFolder');
+      // const ll = await uploadPDF(selectedFile, 'testFolder');
+      const ll = await uploadFile(selectedFile, 'testFolder');
+
       console.log(ll);
     },
-    [],
+    [uploadFile],
   );
 
   const onPopUpItemPress = useCallback(async () => {
@@ -99,9 +97,9 @@ const FAB = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
-  useEffect(() => {
-    console.log(JSON.stringify(result, null, 2));
-  }, [result]);
+  // useEffect(() => {
+  //   console.log(JSON.stringify(result, null, 2));
+  // }, [result]);
 
   const animatedSpring = {
     transform: [{translateY: springAnim}, {translateX: springAnim}],
