@@ -42,15 +42,17 @@ const FAB = () => {
     setIsOpen(!isOpen);
   }, [isOpen]);
 
-  // this method is used to handle selected files
+  // this method is used to upload selected files
   const handleFileSelected = useCallback(
     async (selectedFile: DocumentPickerResponse) => {
       if (!selectedFile) {
         return;
       }
+      console.log(selectedFile);
     },
     [],
   );
+
   const onPopUpItemPress = useCallback(async () => {
     setIsOpen(!isOpen);
     try {

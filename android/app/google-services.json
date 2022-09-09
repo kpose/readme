@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1012047453231",
+    "project_id": "readmeapp-ddab1",
+    "storage_bucket": "readmeapp-ddab1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1012047453231:android:a1848ad4652ccb78987ada",
+        "android_client_info": {
+          "package_name": "com.readme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1012047453231-86u66tvl629bk7r4caulnf0ebg4rdnk3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDuMETTcJck9dNeIgBS06r6HJqRNnRjpQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1012047453231-86u66tvl629bk7r4caulnf0ebg4rdnk3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
