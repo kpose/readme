@@ -1,3 +1,5 @@
+
+$RNFirebaseAsStaticFramework = true
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
@@ -8,6 +10,7 @@ production = ENV["PRODUCTION"] == "1"
 
 target 'readme' do
   config = use_native_modules!
+  use_frameworks! :linkage => :static
   permissions_path = '../node_modules/react-native-permissions/ios'
 
   pod 'PDFNet', podspec: 'https://pdftron.com/downloads/ios/react-native/latest.podspec'
@@ -25,7 +28,7 @@ target 'readme' do
     :production => production,
     :hermes_enabled => flags[:hermes_enabled],
     :fabric_enabled => flags[:fabric_enabled],
-    :flipper_configuration => FlipperConfiguration.enabled,
+    # :flipper_configuration => FlipperConfiguration.enabled,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
