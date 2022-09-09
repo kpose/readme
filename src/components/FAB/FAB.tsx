@@ -16,7 +16,9 @@ import DocumentPicker, {
 import {requestFilePermission} from '../../utils/Permissions.util';
 import {selectPdf} from '../../utils/FilePicker.util';
 // import {usePDFViewer} from '../../providers/PDFViewerProvider';
-import useFileUpload from '../../hooks/FileUpload.hook';
+import useCloudStorage from '../../hooks/CloudStorage.hook';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import Text from '../Text/Text';
 const fabBottomPosition = 20;
 const fabRightPosition = 20;
 
@@ -28,7 +30,7 @@ const FAB = () => {
   // >();
   const [isOpen, setIsOpen] = useState(true);
   // const {openDocument} = usePDFViewer();
-  const {/* percent */ uploadFile} = useFileUpload();
+  const {/* percent */ uploadFile, getAllDocs} = useCloudStorage();
 
   const toggleOpen = useCallback(() => {
     const options = {
@@ -46,13 +48,16 @@ const FAB = () => {
       if (!selectedFile) {
         return;
       }
-      // const ll = await uploadPDF(selectedFile, 'testFolder');
       const ll = await uploadFile(selectedFile, 'testFolder');
-
       console.log(ll);
     },
     [uploadFile],
   );
+
+  const getAll = useCallback(async () => {
+    const hh = await getAllDocs('testFolder');
+    console.log(hh);
+  }, [getAllDocs]);
 
   const onPopUpItemPress = useCallback(async () => {
     setIsOpen(!isOpen);
@@ -106,6 +111,9 @@ const FAB = () => {
   };
   return (
     <View style={styles.container}>
+      <TouchableOpacity onPress={getAll}>
+        <Text>Press</Text>
+      </TouchableOpacity>
       {/* pop up */}
       <TouchableWithoutFeedback>
         <Animated.View

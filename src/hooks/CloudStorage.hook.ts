@@ -15,10 +15,14 @@ export interface IUseFileHook {
  * get access to the file upload state.
  * @returns IUseFileHook
  */
-const useFileUpload = () => {
+const useCloudStorage = () => {
   const [percent, setPercent] = useState<number>(0);
   const [isComplete, setIsComplete] = useState(false);
 
+  /**
+   * The function is used to upload pdf to firestore storage
+   * @returns FirebaseStorageTypes.Task
+   */
   const uploadFile = useCallback(
     async (
       filePath: DocumentPickerResponse,
@@ -47,7 +51,7 @@ const useFileUpload = () => {
         });
 
         return Promise.resolve(task);
-      } catch (e) {
+      } catch (e: any) {
         setIsComplete(true);
         // log error
         Logger(e);
@@ -57,12 +61,37 @@ const useFileUpload = () => {
     },
     [],
   );
+
+  /**
+   * The function is used to get all stored pdf's of the user
+   * @returns
+   */
+
+  function getAllDocs(userRef: string, pageToken?: string): Promise<any> {
+    const ref = storage().ref(userRef);
+    return ref
+      .list({pageToken})
+      .then((result: FirebaseStorageTypes.ListResult) => {
+        // Loop over each item
+        result.items.forEach(refId => {
+          console.log(refId.fullPath);
+        });
+
+        if (result.nextPageToken) {
+          return getAllDocs(userRef, result.nextPageToken);
+        }
+
+        return Promise.resolve(result.items);
+      });
+  }
+
   //  return hook props
   return {
     percent,
     isComplete,
     uploadFile,
+    getAllDocs,
   };
 };
 
-export default useFileUpload;
+export default useCloudStorage;
