@@ -36,7 +36,9 @@ const useCloudStorage = () => {
           return Promise.reject(error);
         }
         const reference = storage().ref(`/${userDirectory}/${filePath.name}`);
-        const task = reference.putFile(filePath.uri.replace('file://', ''));
+        const task = reference.putFile(
+          filePath.fileCopyUri.replace('file://', ''),
+        );
 
         task.on('state_changed', taskSnapshot => {
           let percentage =

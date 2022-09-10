@@ -95,7 +95,7 @@ const Home = () => {
       ) : null}
       <FAB />
 
-      {/* {jjj && <DocumentView document={jjj} showLeadingNavButton={true} />} */}
+      {jjj && <DocumentView document={jjj} showLeadingNavButton={true} />}
     </Screen>
   );
 };
