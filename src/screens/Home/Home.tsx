@@ -6,31 +6,53 @@ import FAB from '../../components/FAB/FAB';
 import {FolderIcon} from '../../components/Icon/Icon';
 import useCloudStorage from '../../hooks/CloudStorage.hook';
 import storage from '@react-native-firebase/storage';
+import RNFS from 'react-native-fs';
 import {DocumentView, RNPdftron} from 'react-native-pdftron';
 
 const Home = () => {
   const {getAllDocs} = useCloudStorage();
   const [userDocs, setUserDocs] = useState([]);
+  const [jjj, setFileLocation] = useState('');
 
   const getAll = useCallback(async () => {
     const data = await getAllDocs('testFolder');
     setUserDocs(data);
-  }, [getAllDocs]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
+    RNPdftron.initialize('');
     getAll();
-  }, [getAll]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const getItem = async (fullPath: any) => {
+  const getAndWritePdf = useCallback(async (fullPath: any, name: string) => {
     const url = await storage()
       .ref(fullPath)
       .getDownloadURL()
       .catch(e => {
         console.error(e);
       });
-    // Linking.openURL(url);
-    console.log(url);
-  };
+
+    // create a local file path from url
+    const localFile = `${RNFS.DocumentDirectoryPath}/${name}`;
+    const options = {
+      fromUrl: url,
+      toFile: localFile,
+    };
+
+    // last step it will download open it with fileviewer.
+    RNFS.downloadFile(options)
+      .promise.then(() => setFileLocation(localFile))
+      .then(() => {
+        // success
+        // Here you can perform any of your completion tasks
+      })
+      .catch(error => {
+        console.log(error);
+        // error
+      });
+  }, []);
 
   const ItemSeparatorView = () => {
     return (
@@ -48,7 +70,7 @@ const Home = () => {
   const ItemView = ({item}) => {
     return (
       <View style={{padding: 10}}>
-        <Text onPress={() => getItem(item.fullPath)}>
+        <Text onPress={() => getAndWritePdf(item.fullPath, item.name)}>
           File Name: {item.name}
           {'\n'}
           File Full Path: {item.fullPath}
@@ -72,6 +94,8 @@ const Home = () => {
         />
       ) : null}
       <FAB />
+
+      {/* {jjj && <DocumentView document={jjj} showLeadingNavButton={true} />} */}
     </Screen>
   );
 };
