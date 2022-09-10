@@ -1,5 +1,5 @@
 export type IAuthStackParamList = {
-  FirstName: undefined;
+  Onboarding: undefined;
   AppStack: undefined;
 };
 

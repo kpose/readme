@@ -20,6 +20,7 @@
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.6.0",
     "react-native-haptic-feedback": "^1.14.0",
+    "react-native-pager-view": "^6.0.0-rc.2",
     "react-native-pdftron": "github:PDFTron/pdftron-react-native",
     "react-native-permissions": "^3.6.1",
     "react-native-reanimated": "^2.10.0",
