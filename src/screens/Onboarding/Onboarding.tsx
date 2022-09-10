@@ -3,17 +3,16 @@ import {
   View,
   FlatList,
   Dimensions,
-  ImageBackground,
   SafeAreaView,
   TouchableOpacity,
   StatusBar,
+  Pressable,
 } from 'react-native';
 import React, {useRef, useState, useEffect} from 'react';
 import data from './onboarding_data';
 import {appcolors} from '../../utils/colors.util';
 import Text, {ScreenTitle} from '../../components/Text/Text';
 import {BackIcon, NextIcon} from '../../components/Icon/Icon';
-import LottieView from 'lottie-react-native';
 import Lottie from 'lottie-react-native';
 
 const {width} = Dimensions.get('window');
@@ -155,9 +154,21 @@ const Onboarding = () => {
             </TouchableOpacity>
           ) : (
             // Get Started Button
-            <TouchableOpacity style={styles.finishButton}>
-              <NextIcon size={35} />
-            </TouchableOpacity>
+            // <TouchableOpacity style={styles.finishButton}>
+            //   <NextIcon size={35} />
+            // </TouchableOpacity>
+            <View style={styles.actionButtonContainer}>
+              <Pressable style={styles.loginContainer}>
+                <Text weight="bold" style={styles.signup}>
+                  Log in
+                </Text>
+              </Pressable>
+              <Pressable>
+                <Text weight="bold" style={styles.signup}>
+                  Register
+                </Text>
+              </Pressable>
+            </View>
           )}
         </View>
       </SafeAreaView>
@@ -267,5 +278,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+  },
+  actionButtonContainer: {
+    flexDirection: 'row',
+  },
+  loginContainer: {
+    marginRight: 20,
+  },
+  signup: {
+    fontSize: 14,
   },
 });
