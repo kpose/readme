@@ -6,6 +6,7 @@ import CloudSVG from '../../assets/icons/cloud.svg';
 import LinkSVG from '../../assets/icons/link.svg';
 import PasteTextSVG from '../../assets/icons/paste-text.svg';
 import NextSVG from '../../assets/icons/next.svg';
+import BackSVG from '../../assets/icons/back.svg';
 import {appcolors} from '../../utils/colors.util';
 
 export const FolderIcon: React.FC<IconProps> = function FolderIcon({
@@ -98,6 +99,21 @@ export const NextIcon: React.FC<IconProps> = function NextIcon({
   );
 };
 
+export const BackIcon: React.FC<IconProps> = function BackIcon({
+  color,
+  size,
+  opacity,
+}) {
+  return (
+    <BackSVG
+      fill={color || appcolors.primary}
+      width={size || 16}
+      height={size || 16}
+      opacity={opacity || 1}
+    />
+  );
+};
+
 export default {
   FolderIcon,
   CameraIcon,
@@ -105,4 +121,5 @@ export default {
   LinkIcon,
   CloudIcon,
   NextIcon,
+  BackIcon,
 };

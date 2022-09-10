@@ -12,12 +12,15 @@ import React, {useRef, useState, useEffect} from 'react';
 import data from './onboarding_data';
 import {appcolors} from '../../utils/colors.util';
 import Text, {ScreenTitle} from '../../components/Text/Text';
-import {NextIcon} from '../../components/Icon/Icon';
+import {BackIcon, NextIcon} from '../../components/Icon/Icon';
+import LottieView from 'lottie-react-native';
+import Lottie from 'lottie-react-native';
 
 const {width} = Dimensions.get('window');
 const base = 10;
 const Onboarding = () => {
   const flatlistRef = useRef<null | FlatList>(null);
+  const animationRef = useRef<Lottie>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [viewableItems, setViewableItems] = useState([]);
 
@@ -26,9 +29,16 @@ const Onboarding = () => {
   });
 
   useEffect(() => {
-    if (!viewableItems[0] || currentPage === viewableItems[0].index) return;
+    if (!viewableItems[0] || currentPage === viewableItems[0].index) {
+      return;
+    }
     setCurrentPage(viewableItems[0].index);
   }, [currentPage, viewableItems]);
+
+  useEffect(() => {
+    animationRef.current?.play();
+    animationRef.current?.play(30, 120);
+  }, []);
 
   const handleSkipToEnd = () => {
     if (flatlistRef.current) {
@@ -67,7 +77,8 @@ const Onboarding = () => {
     return (
       <View style={styles.itemContainer}>
         <View style={styles.imageContainer}>
-          <ImageBackground source={item.img} style={styles.image} />
+          {/* <ImageBackground source={item.img} style={styles.image} /> */}
+          <Lottie ref={animationRef} source={item.img} style={styles.image} />
         </View>
         <View
           style={{
@@ -93,7 +104,7 @@ const Onboarding = () => {
             style={{
               padding: base,
             }}>
-            <Text>Left</Text>
+            <BackIcon size={15} color={appcolors.light} />
           </TouchableOpacity>
 
           {/* Skip button */}
@@ -191,13 +202,10 @@ const styles = StyleSheet.create({
   imageContainer: {
     alignItems: 'center',
     marginVertical: base * 2,
-    backgroundColor: 'blue',
   },
   image: {
     width: 335,
     height: 335,
-    resizeMode: 'contains',
-    borderRadius: 5,
   },
   title: {
     alignSelf: 'center',
