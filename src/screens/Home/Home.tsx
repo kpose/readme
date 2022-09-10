@@ -6,6 +6,7 @@ import FAB from '../../components/FAB/FAB';
 import {FolderIcon} from '../../components/Icon/Icon';
 import useCloudStorage from '../../hooks/CloudStorage.hook';
 import storage from '@react-native-firebase/storage';
+import {DocumentView, RNPdftron} from 'react-native-pdftron';
 
 const Home = () => {
   const {getAllDocs} = useCloudStorage();
