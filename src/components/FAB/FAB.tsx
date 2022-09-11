@@ -24,6 +24,7 @@ const FAB = () => {
   const springAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
   const [isOpen, setIsOpen] = useState(true);
+  const {user} = useUser();
   // const {openDocument} = usePDFViewer();
   const {/* percent */ uploadFile} = useCloudStorage();
   const {logoutUser} = useUser();
@@ -41,12 +42,12 @@ const FAB = () => {
   // this method is used to upload selected files
   const handleFileSelected = useCallback(
     async (selectedFile: DocumentPickerResponse) => {
-      if (!selectedFile) {
+      if (!selectedFile || !user) {
         return;
       }
-      await uploadFile(selectedFile, 'testFolder');
+      await uploadFile(selectedFile, user.email);
     },
-    [uploadFile],
+    [uploadFile, user],
   );
 
   const onPopUpItemPress = useCallback(

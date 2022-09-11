@@ -8,14 +8,20 @@ import useCloudStorage from '../../hooks/CloudStorage.hook';
 import storage from '@react-native-firebase/storage';
 import RNFS from 'react-native-fs';
 import {DocumentView, RNPdftron} from 'react-native-pdftron';
+import {useUser} from '../../providers/UserProvider';
 
 const Home = () => {
   const {getAllDocs} = useCloudStorage();
   const [userDocs, setUserDocs] = useState([]);
   const [jjj, setFileLocation] = useState('');
+  const {user} = useUser();
+  console.log(user?.email);
 
   const getAll = useCallback(async () => {
-    const data = await getAllDocs('testFolder');
+    if (!user?.email) {
+      return;
+    }
+    const data = await getAllDocs(user.email);
     setUserDocs(data);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
