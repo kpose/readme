@@ -32,6 +32,6 @@ export const appcolors = {
   light: '#FFFFFF',
   dark: '#222222',
   error: '#BF0000',
-  grey: '#E5E5E5',
-  // grey: '#808080',
+  // grey: '#E5E5E5',
+  grey: '#808080',
 };

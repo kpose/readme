@@ -16,6 +16,7 @@ import {requestFilePermission} from '../../utils/Permissions.util';
 import {selectPdf} from '../../utils/FilePicker.util';
 // import {usePDFViewer} from '../../providers/PDFViewerProvider';
 import useCloudStorage from '../../hooks/CloudStorage.hook';
+import {useUser} from '../../providers/UserProvider';
 const fabBottomPosition = 20;
 const fabRightPosition = 20;
 
@@ -25,6 +26,7 @@ const FAB = () => {
   const [isOpen, setIsOpen] = useState(true);
   // const {openDocument} = usePDFViewer();
   const {/* percent */ uploadFile} = useCloudStorage();
+  const {logoutUser} = useUser();
 
   const toggleOpen = useCallback(() => {
     const options = {
@@ -47,30 +49,41 @@ const FAB = () => {
     [uploadFile],
   );
 
-  const onPopUpItemPress = useCallback(async () => {
-    setIsOpen(!isOpen);
-    try {
-      const filesPermission = await requestFilePermission();
-      if (filesPermission === 'granted') {
-        const pdfFile = await selectPdf();
-        return handleFileSelected(pdfFile);
+  const onPopUpItemPress = useCallback(
+    async (index: number) => {
+      setIsOpen(!isOpen);
+      if (index === 0) {
+        try {
+          const filesPermission = await requestFilePermission();
+          if (filesPermission === 'granted') {
+            const pdfFile = await selectPdf();
+            return handleFileSelected(pdfFile);
+          }
+          if (filesPermission === 'unavailable') {
+            throw new Error(
+              'Sorry but this feature appears to be unavailable on your device.',
+            );
+          }
+          throw new Error(
+            'Please go into settings and grant Flutterwave access to read your files to use this feature.',
+          );
+        } catch (e: any) {
+          // handle error
+          if (DocumentPicker.isCancel(e)) {
+            return;
+          }
+          Alert.alert('Error', e.message);
+        }
       }
-      if (filesPermission === 'unavailable') {
-        throw new Error(
-          'Sorry but this feature appears to be unavailable on your device.',
-        );
+      if (index === 1) {
+        if (!logoutUser) {
+          return;
+        }
+        await logoutUser();
       }
-      throw new Error(
-        'Please go into settings and grant Flutterwave access to read your files to use this feature.',
-      );
-    } catch (e: any) {
-      // handle error
-      if (DocumentPicker.isCancel(e)) {
-        return;
-      }
-      Alert.alert('Error', e.message);
-    }
-  }, [handleFileSelected, isOpen]);
+    },
+    [handleFileSelected, isOpen, logoutUser],
+  );
 
   useEffect(() => {
     const opacityValue = isOpen ? 0 : 1;
