@@ -163,12 +163,15 @@ const Onboarding = ({navigation}: IOnboardingScreenProps) => {
             </TouchableOpacity>
           ) : (
             <View style={styles.actionButtonContainer}>
-              <Pressable style={styles.loginContainer} onPress={gotoSignin}>
+              <Pressable
+                // eslint-disable-next-line react-native/no-inline-styles
+                style={[styles.loginContainer, {marginRight: 20}]}
+                onPress={gotoSignin}>
                 <Text weight="bold" style={styles.signup}>
                   Log in
                 </Text>
               </Pressable>
-              <Pressable onPress={gotoSignup}>
+              <Pressable onPress={gotoSignup} style={styles.loginContainer}>
                 <Text weight="bold" style={styles.signup}>
                   Register
                 </Text>
@@ -263,9 +266,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    // width: 60,
+    // height: 60,
+    // borderRadius: 30,
+    // backgroundColor: 'red',
   },
   finishButton: {
     paddingHorizontal: base * 2,
@@ -288,7 +292,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   loginContainer: {
-    marginRight: 20,
+    backgroundColor: appcolors.primary,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    paddingVertical: 7,
   },
   signup: {
     fontSize: 14,

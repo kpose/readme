@@ -12,7 +12,11 @@ function AuthStack() {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="Onboarding" component={Onboarding} />
-      <Stack.Screen name="AuthScreen" component={AuthScreen} />
+      <Stack.Screen
+        name="AuthScreen"
+        component={AuthScreen}
+        options={{gestureEnabled: false}}
+      />
       <Stack.Screen name="AppStack" component={AppStack} />
     </Stack.Navigator>
   );
