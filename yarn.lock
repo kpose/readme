@@ -6365,11 +6365,6 @@
   "resolved" "https://registry.npmjs.org/react-native-haptic-feedback/-/react-native-haptic-feedback-1.14.0.tgz"
   "version" "1.14.0"
 
-"react-native-pager-view@^6.0.0-rc.2":
-  "integrity" "sha512-osWnYxGaTaKbH9+wxGULt8Q9c5h3AVo+njTEqf2jmxqaVpWzlaIsxU1MWF7Tbk1BN8RiC11szMtOQ0Jlx8Hcag=="
-  "resolved" "https://registry.npmjs.org/react-native-pager-view/-/react-native-pager-view-6.0.0-rc.2.tgz"
-  "version" "6.0.0-rc.2"
-
 "react-native-pdftron@github:PDFTron/pdftron-react-native":
   "resolved" "git+ssh://git@github.com/PDFTron/pdftron-react-native.git#8276c775d9c71796d1a937e386aeaa7ff3c7836c"
   "version" "3.0.2-beta.130"
@@ -6406,10 +6401,10 @@
   dependencies:
     "dedent" "^0.6.0"
 
-"react-native-screens@^3.16.0", "react-native-screens@>= 3.0.0":
-  "integrity" "sha512-h87K/r6Oj4VQkDiICorG8/4LscQfBfFwPCluAW4zmbQILSZGc/NWqWSFV1mOQlpDrqOsc1DohBmnsmV6imMkbQ=="
-  "resolved" "https://registry.npmjs.org/react-native-screens/-/react-native-screens-3.16.0.tgz"
-  "version" "3.16.0"
+"react-native-screens@^3.17.0", "react-native-screens@>= 3.0.0":
+  "integrity" "sha512-OZCQU7+3neHNaM19jBkYRjL50kXz7p7MUgWQTCcdRoshcCiolf8aXs4eRVQKGK6m1RmoB8UL0//m5R9KoR+41w=="
+  "resolved" "https://registry.npmjs.org/react-native-screens/-/react-native-screens-3.17.0.tgz"
+  "version" "3.17.0"
   dependencies:
     "react-freeze" "^1.0.0"
     "warn-once" "^0.1.0"
