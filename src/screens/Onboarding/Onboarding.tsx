@@ -14,10 +14,11 @@ import {appcolors} from '../../utils/colors.util';
 import Text, {ScreenTitle} from '../../components/Text/Text';
 import {BackIcon, NextIcon} from '../../components/Icon/Icon';
 import Lottie from 'lottie-react-native';
+import {IOnboardingScreenProps} from './interfaces';
 
 const {width} = Dimensions.get('window');
 const base = 10;
-const Onboarding = () => {
+const Onboarding = ({navigation}: IOnboardingScreenProps) => {
   const flatlistRef = useRef<null | FlatList>(null);
   const animationRef = useRef<Lottie>(null);
   const [currentPage, setCurrentPage] = useState(0);
@@ -38,6 +39,14 @@ const Onboarding = () => {
     animationRef.current?.play();
     animationRef.current?.play(30, 120);
   }, []);
+
+  const gotoSignin = () => {
+    navigation.navigate('AuthScreen', {isSignup: false});
+  };
+
+  const gotoSignup = () => {
+    navigation.navigate('AuthScreen', {isSignup: true});
+  };
 
   const handleSkipToEnd = () => {
     if (flatlistRef.current) {
@@ -153,17 +162,13 @@ const Onboarding = () => {
               <NextIcon size={35} />
             </TouchableOpacity>
           ) : (
-            // Get Started Button
-            // <TouchableOpacity style={styles.finishButton}>
-            //   <NextIcon size={35} />
-            // </TouchableOpacity>
             <View style={styles.actionButtonContainer}>
-              <Pressable style={styles.loginContainer}>
+              <Pressable style={styles.loginContainer} onPress={gotoSignin}>
                 <Text weight="bold" style={styles.signup}>
                   Log in
                 </Text>
               </Pressable>
-              <Pressable>
+              <Pressable onPress={gotoSignup}>
                 <Text weight="bold" style={styles.signup}>
                   Register
                 </Text>

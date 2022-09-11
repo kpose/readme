@@ -1,5 +1,6 @@
 export type IAuthStackParamList = {
   Onboarding: undefined;
+  AuthScreen: {isSignup: boolean};
   AppStack: undefined;
 };
 
