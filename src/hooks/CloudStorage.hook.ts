@@ -68,7 +68,6 @@ const useCloudStorage = () => {
    * The function is used to get all stored pdf's of the user
    * @returns
    */
-
   function getAllDocs(userRef: string, pageToken?: string): Promise<any> {
     const ref = storage().ref(userRef);
     return ref

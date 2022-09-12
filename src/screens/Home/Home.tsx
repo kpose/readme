@@ -7,9 +7,7 @@ import {FolderIcon} from '../../components/Icon/Icon';
 import UploadedDocs from '../../components/UploadedDocs/UploadedDocs';
 import {requestFilePermission} from '../../utils/Permissions.util';
 import {selectPdf} from '../../utils/FilePicker.util';
-import DocumentPicker, {
-  DocumentPickerResponse,
-} from 'react-native-document-picker';
+import DocumentPicker from 'react-native-document-picker';
 import {useUser} from '../../providers/UserProvider';
 import useCloudStorage from '../../hooks/CloudStorage.hook';
 
@@ -17,22 +15,15 @@ const Home = () => {
   const {user} = useUser();
   const {uploadFile} = useCloudStorage();
 
-  const handleFileSelected = useCallback(
-    async (selectedFile: DocumentPickerResponse) => {
-      if (!selectedFile || !user?.email) {
-        return;
-      }
-      await uploadFile(selectedFile, user.email);
-    },
-    [uploadFile, user],
-  );
-
   const onImportPress = useCallback(async () => {
+    if (!user?.email) {
+      return;
+    }
     try {
       const filesPermission = await requestFilePermission();
       if (filesPermission === 'granted') {
         const pdfFile = await selectPdf();
-        return handleFileSelected(pdfFile);
+        await uploadFile(pdfFile, user.email);
       }
       if (filesPermission === 'unavailable') {
         throw new Error(
@@ -49,7 +40,7 @@ const Home = () => {
       }
       Alert.alert('Error', e.message);
     }
-  }, [handleFileSelected]);
+  }, [uploadFile, user?.email]);
 
   return (
     <Screen>

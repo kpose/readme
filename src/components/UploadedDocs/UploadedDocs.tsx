@@ -1,18 +1,19 @@
-import {View, FlatList, StyleSheet} from 'react-native';
+import {View, FlatList, StyleSheet, Alert} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
-import Screen from '../Screen/Screen';
 import Text from '../Text/Text';
 import {RNPdftron} from 'react-native-pdftron';
 import {useUser} from '../../providers/UserProvider';
 import useCloudStorage from '../../hooks/CloudStorage.hook';
-import storage from '@react-native-firebase/storage';
+import storage, {FirebaseStorageTypes} from '@react-native-firebase/storage';
 import RNFS from 'react-native-fs';
 
 const UploadedDocs = () => {
-  const [userDocs, setUserDocs] = useState([]);
+  const [userDocs, setUserDocs] = useState<
+    FirebaseStorageTypes.Reference[] | null
+  >();
   const {user} = useUser();
   const {getAllDocs} = useCloudStorage();
-  const [jjj, setFileLocation] = useState('');
+  const [, /* jjj */ setFileLocation] = useState('');
 
   useEffect(() => {
     RNPdftron.initialize('');
@@ -40,6 +41,9 @@ const UploadedDocs = () => {
       .catch(e => {
         console.error(e);
       });
+    if (!url) {
+      return Alert.alert('Error', 'something went wrong');
+    }
     // create a local file path from url
     const localFile = `${RNFS.DocumentDirectoryPath}/${name}`;
     const options = {
@@ -72,8 +76,16 @@ const UploadedDocs = () => {
     );
   };
 
+  if (!userDocs) {
+    return (
+      <View>
+        <Text>Loading books</Text>
+      </View>
+    );
+  }
+
   return (
-    <Screen>
+    <View>
       {userDocs.length ? (
         <FlatList
           data={userDocs}
@@ -82,7 +94,7 @@ const UploadedDocs = () => {
           keyExtractor={(item, index) => index.toString()}
         />
       ) : null}
-    </Screen>
+    </View>
   );
 };
 
