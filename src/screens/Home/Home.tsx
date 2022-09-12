@@ -8,22 +8,17 @@ import UploadedDocs from '../../components/UploadedDocs/UploadedDocs';
 import {requestFilePermission} from '../../utils/Permissions.util';
 import {selectPdf} from '../../utils/FilePicker.util';
 import DocumentPicker from 'react-native-document-picker';
-import {useUser} from '../../providers/UserProvider';
 import useCloudStorage from '../../hooks/CloudStorage.hook';
 
 const Home = () => {
-  const {user} = useUser();
-  const {uploadFile} = useCloudStorage();
+  const {uploadFileToFirestore} = useCloudStorage();
 
   const onImportPress = useCallback(async () => {
-    if (!user?.email) {
-      return;
-    }
     try {
       const filesPermission = await requestFilePermission();
       if (filesPermission === 'granted') {
         const pdfFile = await selectPdf();
-        await uploadFile(pdfFile, user.email);
+        await uploadFileToFirestore(pdfFile);
       }
       if (filesPermission === 'unavailable') {
         throw new Error(
@@ -31,7 +26,7 @@ const Home = () => {
         );
       }
       throw new Error(
-        'Please go into settings and grant Flutterwave access to read your files to use this feature.',
+        'Please go into settings and grant Readme access to read your files to use this feature.',
       );
     } catch (e: any) {
       // handle error
@@ -40,7 +35,7 @@ const Home = () => {
       }
       Alert.alert('Error', e.message);
     }
-  }, [uploadFile, user?.email]);
+  }, [uploadFileToFirestore]);
 
   return (
     <Screen>

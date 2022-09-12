@@ -2,10 +2,11 @@ import Logger from '../utils/Logger.util';
 import storage, {FirebaseStorageTypes} from '@react-native-firebase/storage';
 import {useCallback, useState} from 'react';
 import {DocumentPickerResponse} from 'react-native-document-picker';
+import {useUser} from '../providers/UserProvider';
 
 export interface IUseFileHook {
   error?: string;
-  uploadFile: (file: DocumentPickerResponse) => void;
+  uploadFileToFirestore: (file: DocumentPickerResponse) => void;
   isComplete: boolean;
   percent: number;
 }
@@ -18,16 +19,19 @@ export interface IUseFileHook {
 const useCloudStorage = () => {
   const [percent, setPercent] = useState<number>(0);
   const [isComplete, setIsComplete] = useState(false);
+  const {user} = useUser();
 
   /**
    * The function is used to upload pdf to firestore storage
    * @returns FirebaseStorageTypes.Task
    */
-  const uploadFile = useCallback(
+  const uploadFileToFirestore = useCallback(
     async (
       filePath: DocumentPickerResponse,
-      userDirectory: string,
     ): Promise<FirebaseStorageTypes.Task> => {
+      if (!user) {
+        Promise.reject('Error getting user');
+      }
       try {
         setIsComplete(false);
         if (Object.keys(filePath).length === 0) {
@@ -35,7 +39,7 @@ const useCloudStorage = () => {
           setIsComplete(true);
           return Promise.reject(error);
         }
-        const reference = storage().ref(`/${userDirectory}/${filePath.name}`);
+        const reference = storage().ref(`/${user?.email}/${filePath.name}`);
         const task = reference.putFile(
           filePath.fileCopyUri.replace('file://', ''),
         );
@@ -61,25 +65,28 @@ const useCloudStorage = () => {
         return Promise.reject(e);
       }
     },
-    [],
+    [user],
   );
 
   /**
    * The function is used to get all stored pdf's of the user
    * @returns
    */
-  function getAllDocs(userRef: string, pageToken?: string): Promise<any> {
-    const ref = storage().ref(userRef);
+  function getAllUploadedPDFs(pageToken?: string): Promise<any> {
+    if (!user?.email) {
+      return Promise.reject('Error getting user');
+    }
+    const ref = storage().ref(user.email);
     return ref
       .list({pageToken})
       .then((result: FirebaseStorageTypes.ListResult) => {
         // Loop over each item
         result.items.forEach(refId => {
-          console.log(refId.fullPath);
+          // console.log(refId.fullPath);
         });
 
         if (result.nextPageToken) {
-          return getAllDocs(userRef, result.nextPageToken);
+          return getAllUploadedPDFs(result.nextPageToken);
         }
 
         return Promise.resolve(result.items);
@@ -90,8 +97,8 @@ const useCloudStorage = () => {
   return {
     percent,
     isComplete,
-    uploadFile,
-    getAllDocs,
+    uploadFileToFirestore,
+    getAllUploadedPDFs,
   };
 };
 

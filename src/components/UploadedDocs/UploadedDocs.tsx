@@ -12,23 +12,23 @@ const UploadedDocs = () => {
     FirebaseStorageTypes.Reference[] | null
   >();
   const {user} = useUser();
-  const {getAllDocs} = useCloudStorage();
+  const {getAllUploadedPDFs} = useCloudStorage();
   const [, /* jjj */ setFileLocation] = useState('');
 
   useEffect(() => {
     RNPdftron.initialize('');
-    getAll();
+    fatchDocs();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const getAll = useCallback(async () => {
+  const fatchDocs = useCallback(async () => {
     const email = user?.email;
     if (!email) {
       return;
     }
-    const data = await getAllDocs(email);
+    const data = await getAllUploadedPDFs();
     setUserDocs(data);
-  }, [getAllDocs, user?.email]);
+  }, [getAllUploadedPDFs, user?.email]);
 
   const ItemSeparatorView = () => {
     return <View style={styles.inputContainer} />;
