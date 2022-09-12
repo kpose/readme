@@ -11,12 +11,16 @@ import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import {appcolors} from '../utils/colors.util';
 
 interface IUserContext {
-  isSignedIn: boolean;
   user: FirebaseAuthTypes.User | null;
-  createUser?: ({email, password}: IAuthUserSignupProps) => {};
-  loginUser?: ({email, password}: IAuthUserSignupProps) => {};
+  createUser?: ({
+    email,
+    password,
+  }: IAuthUserSignupProps) => Promise<FirebaseAuthTypes.UpdateProfile>;
+  loginUser?: ({
+    email,
+    password,
+  }: IAuthUserSignupProps) => Promise<FirebaseAuthTypes.UpdateProfile>;
   logoutUser?: () => void;
-  authError?: string;
 }
 
 interface IUserContextProps {
@@ -29,7 +33,6 @@ interface IAuthUserSignupProps {
 }
 
 const initialState: IUserContext = {
-  isSignedIn: false,
   user: null,
 };
 
@@ -38,8 +41,6 @@ const UserContext = createContext<IUserContext>(initialState);
 export const UserProvider: FC<IUserContextProps> = ({children}) => {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  const [authError, setAuthError] = useState('');
 
   // Handle user state changes
   const onAuthStateChanged = useCallback(
@@ -63,56 +64,38 @@ export const UserProvider: FC<IUserContextProps> = ({children}) => {
     return subscriber; // unsubscribe on unmount
   }, [initializing, onAuthStateChanged]);
 
-  const createUser = useCallback(
-    async ({email, password}: IAuthUserSignupProps) => {
-      if (!email || !password) {
-        return;
-      }
-      try {
-        auth()
-          .createUserWithEmailAndPassword(email, password)
-          .then((x: any) => {
-            Promise.resolve(x);
-          })
-          .catch(error => {
-            if (error.code === 'auth/email-already-in-use') {
-              setAuthError("'That email address is already in use!'");
-            }
+  async function createUser({
+    email,
+    password,
+  }: IAuthUserSignupProps): Promise<FirebaseAuthTypes.UserCredential | null> {
+    if (!email || !password) {
+      return null;
+    }
+    try {
+      const response = await auth().createUserWithEmailAndPassword(
+        email,
+        password,
+      );
+      return Promise.resolve(response);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
 
-            if (error.code === 'auth/invalid-email') {
-              setAuthError('That email address is invalid!');
-            }
-
-            setAuthError(error.message);
-            return Promise.reject(error.message);
-          });
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    [],
-  );
-
-  const loginUser = useCallback(
-    async ({email, password}: IAuthUserSignupProps) => {
-      if (!email || !password) {
-        return;
-      }
-      try {
-        auth()
-          .signInWithEmailAndPassword(email, password)
-          .then(() => {
-            setIsSignedIn(true);
-          })
-          .catch(error => {
-            setAuthError(error.message);
-          });
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    [],
-  );
+  async function loginUser({
+    email,
+    password,
+  }: IAuthUserSignupProps): Promise<FirebaseAuthTypes.UserCredential | null> {
+    if (!email || !password) {
+      return null;
+    }
+    try {
+      const response = await auth().signInWithEmailAndPassword(email, password);
+      return Promise.resolve(response);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
 
   const logoutUser = useCallback(async () => {
     try {
@@ -133,8 +116,7 @@ export const UserProvider: FC<IUserContextProps> = ({children}) => {
   }
 
   return (
-    <UserContext.Provider
-      value={{isSignedIn, user, createUser, logoutUser, loginUser, authError}}>
+    <UserContext.Provider value={{user, createUser, logoutUser, loginUser}}>
       {children}
     </UserContext.Provider>
   );

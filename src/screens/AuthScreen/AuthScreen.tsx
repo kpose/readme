@@ -8,7 +8,6 @@ import {appcolors} from '../../utils/colors.util';
 import Button from '../../components/Button/Button';
 import Text from '../../components/Text/Text';
 import {useUser} from '../../providers/UserProvider';
-import auth from '@react-native-firebase/auth';
 
 const AuthScreen = ({navigation, route}: IAuthScreenProps) => {
   const {isSignup} = route.params;
@@ -16,10 +15,8 @@ const AuthScreen = ({navigation, route}: IAuthScreenProps) => {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
-  const [, /* authError */ setAuthError] = useState('');
 
-  const {user, createUser, loginUser, authError} = useUser();
-  console.log(user);
+  const {createUser, loginUser} = useUser();
 
   const onSwitchPress = useCallback(() => {
     if (isSignup) {
@@ -32,51 +29,50 @@ const AuthScreen = ({navigation, route}: IAuthScreenProps) => {
     if (!email || !password) {
       return;
     }
-
     if (isSignup) {
       try {
-        auth()
-          .createUserWithEmailAndPassword(email, password)
-          .then(() => {
-            return Alert.alert('User account created & signed in!');
+        if (!createUser) {
+          return;
+        }
+        setLoading(true);
+        await createUser({email, password})
+          .then(x => {
+            Alert.alert('User successfully created');
+            setLoading(false);
           })
-          .catch(error => {
-            if (error.code === 'auth/email-already-in-use') {
+          .catch(x => {
+            setLoading(false);
+            if (x.code === 'auth/email-already-in-use') {
               return Alert.alert('That email address is already in use!');
             }
-
-            if (error.code === 'auth/invalid-email') {
+            if (x.code === 'auth/invalid-email') {
               return Alert.alert('That email address is invalid!');
             }
-
-            console.error(error);
+            return Alert.alert(x.code);
           });
       } catch (error) {
-        console.log(error);
+        setLoading(false);
       }
     } else {
       try {
-        auth()
-          .signInWithEmailAndPassword(email, password)
-          .then(() => {
-            return Alert.alert('User account created & signed in!');
+        if (!loginUser) {
+          return;
+        }
+        setLoading(true);
+        await loginUser({email, password})
+          .then(x => {
+            Alert.alert('User successfully loged in');
+            setLoading(false);
           })
-          .catch(error => {
-            if (error.code === 'auth/email-already-in-use') {
-              return Alert.alert('That email address is already in use!');
-            }
-
-            if (error.code === 'auth/invalid-email') {
-              return Alert.alert('That email address is invalid!');
-            }
-
-            console.error(error);
+          .catch(x => {
+            setLoading(false);
+            return Alert.alert(x.code);
           });
       } catch (error) {
-        console.log(error);
+        setLoading(false);
       }
     }
-  }, [email, isSignup, password]);
+  }, [createUser, email, isSignup, loginUser, password]);
 
   const isButtonDisabled = useCallback(() => {
     if (!email || !password || loading) {
@@ -117,10 +113,11 @@ const AuthScreen = ({navigation, route}: IAuthScreenProps) => {
       />
 
       <Button
-        title={isSignup ? 'Sign Up' : loading ? 'loading' : 'Sign In'}
+        title={isSignup ? 'Sign Up' : 'Sign In'}
         style={styles.buttonContainer}
         onPress={handleButtonPress}
         disabled={isButtonDisabled()}
+        loading={loading}
       />
 
       <Pressable onPress={onSwitchPress}>

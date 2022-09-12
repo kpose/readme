@@ -1,4 +1,4 @@
-import {View, FlatList} from 'react-native';
+import {View, FlatList, StyleSheet, Alert} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import Screen from '../../components/Screen/Screen';
 import Text from '../../components/Text/Text';
@@ -7,24 +7,29 @@ import {FolderIcon} from '../../components/Icon/Icon';
 import useCloudStorage from '../../hooks/CloudStorage.hook';
 import storage from '@react-native-firebase/storage';
 import RNFS from 'react-native-fs';
-import {DocumentView, RNPdftron} from 'react-native-pdftron';
+import {RNPdftron} from 'react-native-pdftron';
+import {requestFilePermission} from '../../utils/Permissions.util';
+import {selectPdf} from '../../utils/FilePicker.util';
 import {useUser} from '../../providers/UserProvider';
+import DocumentPicker, {
+  DocumentPickerResponse,
+} from 'react-native-document-picker';
 
 const Home = () => {
   const {getAllDocs} = useCloudStorage();
   const [userDocs, setUserDocs] = useState([]);
   const [jjj, setFileLocation] = useState('');
+  const {/* percent */ uploadFile} = useCloudStorage();
   const {user} = useUser();
-  console.log(user?.email);
 
   const getAll = useCallback(async () => {
-    if (!user?.email) {
+    const email = user?.email;
+    if (!email) {
       return;
     }
-    const data = await getAllDocs(user.email);
+    const data = await getAllDocs(email);
     setUserDocs(data);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [getAllDocs, user?.email]);
 
   useEffect(() => {
     RNPdftron.initialize('');
@@ -39,20 +44,17 @@ const Home = () => {
       .catch(e => {
         console.error(e);
       });
-
     // create a local file path from url
     const localFile = `${RNFS.DocumentDirectoryPath}/${name}`;
     const options = {
       fromUrl: url,
       toFile: localFile,
     };
-
-    // last step it will download open it with fileviewer.
+    // download with fileviewer.
     RNFS.downloadFile(options)
       .promise.then(() => setFileLocation(localFile))
       .then(() => {
         // success
-        // Here you can perform any of your completion tasks
       })
       .catch(error => {
         console.log(error);
@@ -61,21 +63,12 @@ const Home = () => {
   }, []);
 
   const ItemSeparatorView = () => {
-    return (
-      // FlatList Item Separator
-      <View
-        style={{
-          height: 0.5,
-          width: '100%',
-          backgroundColor: '#C8C8C8',
-        }}
-      />
-    );
+    return <View style={styles.inputContainer} />;
   };
 
   const ItemView = ({item}) => {
     return (
-      <View style={{padding: 10}}>
+      <View style={styles.itemView}>
         <Text onPress={() => getAndWritePdf(item.fullPath, item.name)}>
           File Name: {item.name}
           {'\n'}
@@ -86,6 +79,40 @@ const Home = () => {
       </View>
     );
   };
+
+  const handleFileSelected = useCallback(
+    async (selectedFile: DocumentPickerResponse) => {
+      if (!selectedFile || !user?.email) {
+        return;
+      }
+      await uploadFile(selectedFile, user.email);
+    },
+    [uploadFile, user],
+  );
+
+  const onImportPress = useCallback(async () => {
+    try {
+      const filesPermission = await requestFilePermission();
+      if (filesPermission === 'granted') {
+        const pdfFile = await selectPdf();
+        return handleFileSelected(pdfFile);
+      }
+      if (filesPermission === 'unavailable') {
+        throw new Error(
+          'Sorry but this feature appears to be unavailable on your device.',
+        );
+      }
+      throw new Error(
+        'Please go into settings and grant Flutterwave access to read your files to use this feature.',
+      );
+    } catch (e: any) {
+      // handle error
+      if (DocumentPicker.isCancel(e)) {
+        return;
+      }
+      Alert.alert('Error', e.message);
+    }
+  }, [handleFileSelected]);
 
   return (
     <Screen>
@@ -99,7 +126,7 @@ const Home = () => {
           keyExtractor={(item, index) => index.toString()}
         />
       ) : null}
-      <FAB />
+      <FAB onImportPress={onImportPress} />
 
       {/* {jjj && <DocumentView document={jjj} showLeadingNavButton={true} />} */}
     </Screen>
@@ -107,3 +134,14 @@ const Home = () => {
 };
 
 export default Home;
+
+const styles = StyleSheet.create({
+  inputContainer: {
+    height: 0.5,
+    width: '100%',
+    backgroundColor: '#C8C8C8',
+  },
+  itemView: {
+    padding: 10,
+  },
+});

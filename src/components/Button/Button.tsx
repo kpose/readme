@@ -5,7 +5,13 @@ import Text from '../Text/Text';
 import {appcolors} from '../../utils/colors.util';
 import {useWindowDimensions} from 'react-native';
 
-const Button: FC<ButtonProps> = ({title, style, disabled, ...props}) => {
+const Button: FC<ButtonProps> = ({
+  title,
+  style,
+  disabled,
+  loading,
+  ...props
+}) => {
   const {width} = useWindowDimensions();
   return (
     <Pressable
@@ -16,7 +22,11 @@ const Button: FC<ButtonProps> = ({title, style, disabled, ...props}) => {
         {width: width / 1.2},
       ]}
       {...props}>
-      <Text style={styles.buttonText}>{title}</Text>
+      {loading ? (
+        <Text style={styles.loadingText}>{'Processing ...'}</Text>
+      ) : (
+        <Text style={styles.buttonText}>{title}</Text>
+      )}
     </Pressable>
   );
 };
@@ -35,5 +45,8 @@ const styles = StyleSheet.create({
   buttonText: {
     fontWeight: '500',
     fontSize: 20,
+  },
+  loadingText: {
+    fontSize: 14,
   },
 });
