@@ -7,23 +7,26 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {PDFViewerProvider} from './providers/PDFViewerProvider';
 import {UserProvider} from './providers/UserProvider';
 import {Provider as ReduxProvider} from 'react-redux';
-import {store} from './redux/store';
+import {store, persistor} from './redux/store';
+import {PersistGate} from 'redux-persist/integration/react';
 
 const App = () => {
   return (
     <SafeAreaProvider>
       <ReduxProvider store={store}>
-        <UserProvider>
-          <ThemeProvider>
-            <GestureHandlerRootView style={{flex: 1}}>
-              <SpeachProvider>
-                <PDFViewerProvider>
-                  <RootNavigator />
-                </PDFViewerProvider>
-              </SpeachProvider>
-            </GestureHandlerRootView>
-          </ThemeProvider>
-        </UserProvider>
+        <PersistGate loading={null} persistor={persistor}>
+          <UserProvider>
+            <ThemeProvider>
+              <GestureHandlerRootView style={{flex: 1}}>
+                <SpeachProvider>
+                  <PDFViewerProvider>
+                    <RootNavigator />
+                  </PDFViewerProvider>
+                </SpeachProvider>
+              </GestureHandlerRootView>
+            </ThemeProvider>
+          </UserProvider>
+        </PersistGate>
       </ReduxProvider>
     </SafeAreaProvider>
   );

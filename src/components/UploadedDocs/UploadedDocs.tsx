@@ -39,28 +39,36 @@ const UploadedDocs = () => {
           fromUrl: url,
           toFile: localFile,
         };
+        for (const _item of books) {
+          console.log(_item);
+          if (_item.name === item.name || _item.downloadUrl === url) {
+            return;
+          }
+          RNFS.downloadFile(options)
+            .promise.then(() => {
+              dispatch(
+                updateBookStore({
+                  location: localFile,
+                  name: item.name,
+                  downloadUrl: url,
+                }),
+              );
+            })
+            .then(() => {
+              // success
+            })
+            .catch(error => {
+              console.log(error);
+              // error
+            });
+        }
         // check for duplicates
-        RNFS.downloadFile(options)
-          .promise.then(() => {
-            dispatch(
-              updateBookStore({
-                location: localFile,
-                name: item.name,
-                downloadUrl: url,
-              }),
-            );
-          })
-          .then(() => {
-            // success
-          })
-          .catch(error => {
-            console.log(error);
-            // error
-          });
       }
     },
-    [dispatch],
+    [books, dispatch],
   );
+
+  console.log(books);
 
   const fatchDocs = useCallback(async () => {
     const email = user?.email;
