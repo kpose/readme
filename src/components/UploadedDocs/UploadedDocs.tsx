@@ -6,14 +6,18 @@ import {useUser} from '../../providers/UserProvider';
 import useCloudStorage from '../../hooks/CloudStorage.hook';
 import storage, {FirebaseStorageTypes} from '@react-native-firebase/storage';
 import RNFS from 'react-native-fs';
+import {useAppSelector} from '../../hooks/ReduxState.hook';
 
 const UploadedDocs = () => {
+  const books = useAppSelector(state => state.uploadedBooks.books);
   const [userDocs, setUserDocs] = useState<
     FirebaseStorageTypes.Reference[] | null
   >();
   const {user} = useUser();
   const {getAllUploadedPDFs} = useCloudStorage();
   const [, /* jjj */ setFileLocation] = useState('');
+
+  console.log(books);
 
   useEffect(() => {
     RNPdftron.initialize('');
