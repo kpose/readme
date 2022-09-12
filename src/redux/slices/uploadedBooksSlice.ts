@@ -30,6 +30,24 @@ export const uploadedBooksSlice = createSlice({
 export const {updateBookStore} = uploadedBooksSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
-export const uploadedPDFBooks = (state: RootState) => state.uploadedBooks;
+export const uploadedPDFBooks = (state: RootState) => state.books;
 
 export default uploadedBooksSlice.reducer;
+
+// RNFS.downloadFile(options)
+//   .promise.then(() => {
+//     dispatch(
+//       updateBookStore({
+//         location: localFile,
+//         name: item.name,
+//         downloadUrl: url,
+//       }),
+//     );
+//   })
+//   .then(() => {
+//     // success
+//   })
+//   .catch(error => {
+//     console.log(error);
+//     // error
+//   });

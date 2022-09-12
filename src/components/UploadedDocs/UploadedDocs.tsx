@@ -6,18 +6,15 @@ import {useUser} from '../../providers/UserProvider';
 import useCloudStorage from '../../hooks/CloudStorage.hook';
 import storage, {FirebaseStorageTypes} from '@react-native-firebase/storage';
 import RNFS from 'react-native-fs';
-import {useAppSelector} from '../../hooks/ReduxState.hook';
+import {useAppDispatch, useAppSelector} from '../../hooks/ReduxState.hook';
+import {IPDFBook, updateBookStore} from '../../redux/slices/uploadedBooksSlice';
 
 const UploadedDocs = () => {
-  const books = useAppSelector(state => state.uploadedBooks.books);
-  const [userDocs, setUserDocs] = useState<
-    FirebaseStorageTypes.Reference[] | null
-  >();
+  const books = useAppSelector(state => state.books.books);
+  const dispatch = useAppDispatch();
+  const [fetchingError, setFetchingError] = useState('');
   const {user} = useUser();
   const {getAllUploadedPDFs} = useCloudStorage();
-  const [, /* jjj */ setFileLocation] = useState('');
-
-  console.log(books);
 
   useEffect(() => {
     RNPdftron.initialize('');
@@ -25,62 +22,77 @@ const UploadedDocs = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const getAndWritePdf = useCallback(
+    async (doc: FirebaseStorageTypes.Reference[]) => {
+      for (const item of doc) {
+        const url = await storage()
+          .ref(item.fullPath)
+          .getDownloadURL()
+          .catch(e => {
+            console.error(e);
+          });
+        if (!url) {
+          return Alert.alert('Error', 'something went wrong');
+        }
+        const localFile = `${RNFS.DocumentDirectoryPath}/${item.name}`;
+        const options = {
+          fromUrl: url,
+          toFile: localFile,
+        };
+        // check for duplicates
+        RNFS.downloadFile(options)
+          .promise.then(() => {
+            dispatch(
+              updateBookStore({
+                location: localFile,
+                name: item.name,
+                downloadUrl: url,
+              }),
+            );
+          })
+          .then(() => {
+            // success
+          })
+          .catch(error => {
+            console.log(error);
+            // error
+          });
+      }
+    },
+    [dispatch],
+  );
+
   const fatchDocs = useCallback(async () => {
     const email = user?.email;
     if (!email) {
       return;
     }
-    const data = await getAllUploadedPDFs();
-    setUserDocs(data);
-  }, [getAllUploadedPDFs, user?.email]);
+    await getAllUploadedPDFs()
+      .then(doc => {
+        getAndWritePdf(doc);
+      })
+      .catch(error => {
+        setFetchingError(error);
+      });
+  }, [getAllUploadedPDFs, getAndWritePdf, user?.email]);
 
   const ItemSeparatorView = () => {
     return <View style={styles.inputContainer} />;
   };
 
-  const getAndWritePdf = useCallback(async (fullPath: any, name: string) => {
-    const url = await storage()
-      .ref(fullPath)
-      .getDownloadURL()
-      .catch(e => {
-        console.error(e);
-      });
-    if (!url) {
-      return Alert.alert('Error', 'something went wrong');
-    }
-    // create a local file path from url
-    const localFile = `${RNFS.DocumentDirectoryPath}/${name}`;
-    const options = {
-      fromUrl: url,
-      toFile: localFile,
-    };
-    // download with fileviewer.
-    RNFS.downloadFile(options)
-      .promise.then(() => setFileLocation(localFile))
-      .then(() => {
-        // success
-      })
-      .catch(error => {
-        console.log(error);
-        // error
-      });
-  }, []);
+  const ItemView = ({item}: IPDFBook) => (
+    <View style={styles.itemView}>
+      <Text /* onPress={() => getAndWritePdf(item.fullPath, item.name)} */>
+        File Name: {item.name}
+        {'\n'}
+        File Full Path: {item.fullPath}
+        {'\n'}
+        Bucket: {item.bucket}
+      </Text>
+    </View>
+  );
 
-  const ItemView = ({item}) => {
-    return (
-      <View style={styles.itemView}>
-        <Text onPress={() => getAndWritePdf(item.fullPath, item.name)}>
-          File Name: {item.name}
-          {'\n'}
-          File Full Path: {item.fullPath}
-          {'\n'}
-          Bucket: {item.bucket}
-        </Text>
-      </View>
-    );
-  };
-
-  if (!userDocs) {
+  if (!books) {
     return (
       <View>
         <Text>Loading books</Text>
@@ -90,9 +102,9 @@ const UploadedDocs = () => {
 
   return (
     <View>
-      {userDocs.length ? (
+      {books.length ? (
         <FlatList
-          data={userDocs}
+          data={books}
           ItemSeparatorComponent={ItemSeparatorView}
           renderItem={ItemView}
           keyExtractor={(item, index) => index.toString()}

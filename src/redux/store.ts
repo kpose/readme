@@ -1,10 +1,12 @@
-import {configureStore} from '@reduxjs/toolkit';
+import {configureStore, combineReducers} from '@reduxjs/toolkit';
 import uploadedBooksReducer from './slices/uploadedBooksSlice';
 
+const rootReducer = combineReducers({
+  books: uploadedBooksReducer,
+});
+
 export const store = configureStore({
-  reducer: {
-    uploadedBooks: uploadedBooksReducer,
-  },
+  reducer: rootReducer,
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -72,7 +72,9 @@ const useCloudStorage = () => {
    * The function is used to get all stored pdf's of the user
    * @returns
    */
-  function getAllUploadedPDFs(pageToken?: string): Promise<any> {
+  function getAllUploadedPDFs(
+    pageToken?: string,
+  ): Promise<FirebaseStorageTypes.Reference[]> {
     if (!user?.email) {
       return Promise.reject('Error getting user');
     }
