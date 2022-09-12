@@ -39,11 +39,11 @@ const UploadedDocs = () => {
           fromUrl: url,
           toFile: localFile,
         };
-        for (const _item of books) {
-          console.log(_item);
-          if (_item.name === item.name || _item.downloadUrl === url) {
-            return;
-          }
+
+        const found = books.some(el => {
+          return el.name === item.name || el.downloadUrl === url;
+        });
+        if (!found) {
           RNFS.downloadFile(options)
             .promise.then(() => {
               dispatch(
@@ -62,7 +62,7 @@ const UploadedDocs = () => {
               // error
             });
         }
-        // check for duplicates
+        return;
       }
     },
     [books, dispatch],
@@ -88,7 +88,7 @@ const UploadedDocs = () => {
     return <View style={styles.inputContainer} />;
   };
 
-  const ItemView = ({item}: IPDFBook) => (
+  const ItemView = ({item}) => (
     <View style={styles.itemView}>
       <Text /* onPress={() => getAndWritePdf(item.fullPath, item.name)} */>
         File Name: {item.name}
