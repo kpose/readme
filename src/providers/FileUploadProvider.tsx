@@ -14,6 +14,7 @@ import RNFS from 'react-native-fs';
 import {useAppDispatch, useAppSelector} from '../hooks/ReduxState.hook';
 import storage, {FirebaseStorageTypes} from '@react-native-firebase/storage';
 import {updateBookStore} from '../redux/slices/uploadedBooksSlice';
+import PdfThumbnail from 'react-native-pdf-thumbnail';
 
 interface IFileUploadContext {
   isUploadingFile: boolean;
@@ -65,7 +66,19 @@ export const FileUploadProvider: FC<FileUploadProps> = ({children}) => {
           });
           if (!found) {
             RNFS.downloadFile(options)
-              .promise.then(() => {
+              .promise.then(async () => {
+                console.log('ioioio');
+                const filePath = localFile;
+                const page = 0;
+
+                const {uri, width, height} = await PdfThumbnail.generate(
+                  filePath,
+                  page,
+                );
+
+                console.log(uri, width, height);
+                // get pdf thumbnail
+
                 dispatch(
                   updateBookStore({
                     location: localFile,

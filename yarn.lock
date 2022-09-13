@@ -6412,6 +6412,11 @@
   "resolved" "https://registry.npmjs.org/react-native-haptic-feedback/-/react-native-haptic-feedback-1.14.0.tgz"
   "version" "1.14.0"
 
+"react-native-pdf-thumbnail@^1.0.2":
+  "integrity" "sha512-cgc0eeFJ8jF7Qd6mmPc+6zggqeWuW1a6nwR1s6ocp/H8EYG40wo/aU3PBPpgma2deuBokh/DJD5NrlbmPN3+lw=="
+  "resolved" "https://registry.npmjs.org/react-native-pdf-thumbnail/-/react-native-pdf-thumbnail-1.0.2.tgz"
+  "version" "1.0.2"
+
 "react-native-pdftron@github:PDFTron/pdftron-react-native":
   "resolved" "git+ssh://git@github.com/PDFTron/pdftron-react-native.git#8276c775d9c71796d1a937e386aeaa7ff3c7836c"
   "version" "3.0.2-beta.130"

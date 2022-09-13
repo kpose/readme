@@ -29,7 +29,7 @@ const Home = () => {
 
   return (
     <Screen>
-      <Text>{isUploadingFile ? 'loading' : 'Home'}</Text>
+      <Text>{loading ? 'loading' : 'Home'}</Text>
       <FolderIcon size={15} />
 
       <UploadedDocs />
