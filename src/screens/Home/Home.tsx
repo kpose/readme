@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useState} from 'react';
 import Screen from '../../components/Screen/Screen';
 import Text from '../../components/Text/Text';
 import FAB from '../../components/FAB/FAB';
@@ -7,18 +7,21 @@ import UploadedDocs from '../../components/UploadedDocs/UploadedDocs';
 import {useFileUpload} from '../../providers/FileUploadProvider';
 
 const Home = () => {
+  const [loading, setisLoading] = useState(false);
   const {uploadPDF, isUploadingFile, getAllUploadedPDFs, savePdfToStorage} =
     useFileUpload();
 
   const onImportPress = useCallback(async () => {
     if (uploadPDF && getAllUploadedPDFs && savePdfToStorage) {
+      setisLoading(true);
       await uploadPDF()
         .then(async () => {
           await getAllUploadedPDFs().then(async files => {
-            await savePdfToStorage(files).then(x => console.log(x));
+            await savePdfToStorage(files).then(() => setisLoading(false));
           });
         })
         .catch(x => {
+          setisLoading(false);
           console.log(x);
         });
     }
