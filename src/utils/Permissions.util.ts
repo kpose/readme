@@ -13,10 +13,10 @@ type PermissionResult = 'granted' | 'denied' | 'blocked' | 'unavailable';
 export function requestCameraPermission(): Promise<PermissionResult> {
   return new Promise((res, rej) => {
     request(CAMERA_PERMSION)
-      .then(async (result) => {
+      .then(async result => {
         res(result);
       })
-      .catch((e) => {
+      .catch(e => {
         //  log error
         Logger(e);
         rej(e);
@@ -27,10 +27,10 @@ export function requestCameraPermission(): Promise<PermissionResult> {
 export function requestPhotosPermission(): Promise<PermissionResult> {
   return new Promise((res, rej) => {
     request(PHOTOS_PERMSION)
-      .then(async (result) => {
+      .then(async result => {
         res(result);
       })
-      .catch((e) => {
+      .catch(e => {
         //  log error
         Logger(e);
         rej(e);
@@ -45,10 +45,10 @@ export function requestFilePermission(): Promise<PermissionResult> {
     }
     // check permission status
     request(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE)
-      .then(async (result) => {
+      .then(async result => {
         res(result);
       })
-      .catch((e) => {
+      .catch(e => {
         //  log error
         Logger(e);
         rej(e);

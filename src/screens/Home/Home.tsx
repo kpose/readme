@@ -1,45 +1,32 @@
-import {Alert} from 'react-native';
 import React, {useCallback} from 'react';
 import Screen from '../../components/Screen/Screen';
 import Text from '../../components/Text/Text';
 import FAB from '../../components/FAB/FAB';
 import {FolderIcon} from '../../components/Icon/Icon';
 import UploadedDocs from '../../components/UploadedDocs/UploadedDocs';
-import {requestFilePermission} from '../../utils/Permissions.util';
-import {selectPdf} from '../../utils/FilePicker.util';
-import DocumentPicker from 'react-native-document-picker';
-import useCloudStorage from '../../hooks/CloudStorage.hook';
+import {useFileUpload} from '../../providers/FileUploadProvider';
 
 const Home = () => {
-  const {uploadFileToFirestore} = useCloudStorage();
+  const {uploadPDF, isUploadingFile, getAllUploadedPDFs, savePdfToStorage} =
+    useFileUpload();
 
   const onImportPress = useCallback(async () => {
-    try {
-      const filesPermission = await requestFilePermission();
-      if (filesPermission === 'granted') {
-        const pdfFile = await selectPdf();
-        await uploadFileToFirestore(pdfFile);
-      }
-      if (filesPermission === 'unavailable') {
-        throw new Error(
-          'Sorry but this feature appears to be unavailable on your device.',
-        );
-      }
-      throw new Error(
-        'Please go into settings and grant Readme access to read your files to use this feature.',
-      );
-    } catch (e: any) {
-      // handle error
-      if (DocumentPicker.isCancel(e)) {
-        return;
-      }
-      Alert.alert('Error', e.message);
+    if (uploadPDF && getAllUploadedPDFs && savePdfToStorage) {
+      await uploadPDF()
+        .then(async () => {
+          await getAllUploadedPDFs().then(async files => {
+            await savePdfToStorage(files).then(x => console.log(x));
+          });
+        })
+        .catch(x => {
+          console.log(x);
+        });
     }
-  }, [uploadFileToFirestore]);
+  }, [getAllUploadedPDFs, savePdfToStorage, uploadPDF]);
 
   return (
     <Screen>
-      <Text>Home</Text>
+      <Text>{isUploadingFile ? 'loading' : 'Home'}</Text>
       <FolderIcon size={15} />
 
       <UploadedDocs />
