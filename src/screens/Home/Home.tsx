@@ -5,27 +5,27 @@ import FAB from '../../components/FAB/FAB';
 import {FolderIcon} from '../../components/Icon/Icon';
 import UploadedDocs from '../../components/UploadedDocs/UploadedDocs';
 import {useFileUpload} from '../../providers/FileUploadProvider';
+import {Alert} from 'react-native';
 
 const Home = () => {
   const [loading, setisLoading] = useState(false);
-  const {uploadPDF, isUploadingFile, getAllUploadedPDFs, savePdfToStorage} =
-    useFileUpload();
+  const {uploadPDF} = useFileUpload();
 
   const onImportPress = useCallback(async () => {
-    if (uploadPDF && getAllUploadedPDFs && savePdfToStorage) {
+    if (uploadPDF) {
       setisLoading(true);
       await uploadPDF()
-        .then(async () => {
-          await getAllUploadedPDFs().then(async files => {
-            await savePdfToStorage(files).then(() => setisLoading(false));
-          });
-        })
-        .catch(x => {
+        .then(x => {
           setisLoading(false);
           console.log(x);
+          return;
+        })
+        .catch(err => {
+          setisLoading(false);
+          Alert.alert(err);
         });
     }
-  }, [getAllUploadedPDFs, savePdfToStorage, uploadPDF]);
+  }, [uploadPDF]);
 
   return (
     <Screen>

@@ -1,5 +1,11 @@
-import {View, FlatList, StyleSheet, useWindowDimensions} from 'react-native';
-import React from 'react';
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  useWindowDimensions,
+  Image,
+} from 'react-native';
+import React, {useEffect} from 'react';
 import Text from '../Text/Text';
 
 import {useAppSelector} from '../../hooks/ReduxState.hook';
@@ -11,9 +17,18 @@ const UploadedDocs = () => {
     return <View style={styles.inputContainer} />;
   };
 
+  useEffect(() => {
+    console.log(books);
+  }, [books]);
+
   const renderPdfView = ({item}) => (
-    <View style={[styles.pdfView, {height: height / 3, width: width / 3}]}>
-      <Text>hhhh</Text>
+    <View>
+      <Text>{item.thumbnail.width}</Text>
+      <Image
+        source={item.thumbnail}
+        resizeMode="contain"
+        style={styles.thumbnailImage}
+      />
     </View>
   );
 
@@ -49,6 +64,11 @@ const styles = StyleSheet.create({
   },
   pdfView: {
     backgroundColor: 'red',
+  },
+  thumbnailImage: {
+    width: 200,
+    height: 200,
+    marginBottom: 20,
   },
 });
 
