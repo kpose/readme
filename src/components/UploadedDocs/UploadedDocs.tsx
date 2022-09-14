@@ -1,10 +1,4 @@
-import {
-  View,
-  FlatList,
-  StyleSheet,
-  useWindowDimensions,
-  Image,
-} from 'react-native';
+import {View, FlatList, StyleSheet, Image} from 'react-native';
 import React, {useEffect} from 'react';
 import Text from '../Text/Text';
 import {RootState} from '../../redux/store';
@@ -13,24 +7,36 @@ const pdfHeight = 190;
 
 import {useAppSelector} from '../../hooks/ReduxState.hook';
 import {appcolors} from '../../utils/colors.util';
+import {usePDFViewer} from '../../providers/PDFViewerProvider';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const UploadedDocs = () => {
   const books = useAppSelector((state: RootState) => state.books);
-  const {height, width} = useWindowDimensions();
+  const {openDocument} = usePDFViewer();
 
   useEffect(() => {
-    console.log(books);
+    // console.log(books);
   }, [books]);
 
   const renderPdfView = ({item}) => {
     return (
       <View style={styles.pdfContainer}>
-        <Image
-          source={item.thumbnail}
-          style={styles.thumbnailImage}
-          resizeMode="contain"
-        />
-        <Text style={styles.pdfTitle}>{item.name.split('.pdf')}</Text>
+        <TouchableOpacity
+          onPress={() => {
+            if (openDocument) {
+              openDocument(item.location);
+            }
+          }}>
+          <Image
+            source={item.thumbnail}
+            style={styles.thumbnailImage}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+        <Text numberOfLines={1} style={styles.pdfTitle}>
+          {item.name.split('.pdf')}
+        </Text>
+        <View style={styles.progressBar} />
       </View>
     );
   };
@@ -45,13 +51,16 @@ const UploadedDocs = () => {
   return (
     <View>
       {books.length ? (
-        <FlatList
-          data={books}
-          horizontal
-          renderItem={renderPdfView}
-          keyExtractor={item => item.id}
-          contentContainerStyle={styles.pdfContent}
-        />
+        <View>
+          <Text style={styles.heading}> Recently added </Text>
+          <FlatList
+            data={books}
+            horizontal
+            renderItem={renderPdfView}
+            keyExtractor={item => item.id}
+            contentContainerStyle={styles.pdfContent}
+          />
+        </View>
       ) : null}
     </View>
   );
@@ -75,7 +84,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   pdfContainer: {
-    marginRight: 10,
+    marginRight: 20,
     alignItems: 'center',
     width: pdfWidth,
     shadowColor: appcolors.primary,
@@ -90,5 +99,16 @@ const styles = StyleSheet.create({
   pdfTitle: {
     flexWrap: 'wrap',
     textAlign: 'center',
+  },
+  progressBar: {
+    backgroundColor: appcolors.primary,
+    borderRadius: 10,
+    width: '100%',
+    height: 2,
+    marginTop: 6,
+  },
+  heading: {
+    fontSize: 20,
+    fontWeight: '600',
   },
 });

@@ -30,9 +30,7 @@ const Home = () => {
   return (
     <Screen>
       <UploadedDocs />
-
       <FAB onImportPress={onImportPress} />
-      {/* {jjj && <DocumentView document={jjj} showLeadingNavButton={true} />} */}
     </Screen>
   );
 };

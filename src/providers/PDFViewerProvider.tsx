@@ -54,12 +54,7 @@ export const PDFViewerProvider: FC<IPDFViewerContextProps> = ({children}) => {
             bottom: 0,
             backgroundColor: 'red',
           }}>
-          <DocumentView
-            document={
-              'https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf'
-            }
-            showLeadingNavButton={true}
-          />
+          <DocumentView document={documentPath} showLeadingNavButton={true} />
         </View>
       ) : null}
     </PDFViewerContext.Provider>
