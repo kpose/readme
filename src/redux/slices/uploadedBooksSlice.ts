@@ -22,7 +22,7 @@ export const uploadedBooksSlice = createSlice({
   initialState: initialState.books,
   reducers: {
     updateBookStore: (state, action: PayloadAction<IPDFBook>) => {
-      state.push(action.payload);
+      state.unshift(action.payload);
     },
   },
 });

@@ -29,9 +29,6 @@ const Home = () => {
 
   return (
     <Screen>
-      <Text>{loading ? 'loading' : 'Home'}</Text>
-      <FolderIcon size={15} />
-
       <UploadedDocs />
 
       <FAB onImportPress={onImportPress} />

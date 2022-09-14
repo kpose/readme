@@ -78,6 +78,11 @@ const styles = StyleSheet.create({
     marginRight: 10,
     alignItems: 'center',
     width: pdfWidth,
+    shadowColor: appcolors.primary,
+    shadowOffset: {width: 2, height: 2},
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 2,
   },
   pdfContent: {
     // paddingHorizontal: 10,
