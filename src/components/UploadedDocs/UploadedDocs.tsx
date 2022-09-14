@@ -7,31 +7,33 @@ import {
 } from 'react-native';
 import React, {useEffect} from 'react';
 import Text from '../Text/Text';
+import {RootState} from '../../redux/store';
+const pdfWidth = 120;
+const pdfHeight = 190;
 
 import {useAppSelector} from '../../hooks/ReduxState.hook';
+import {appcolors} from '../../utils/colors.util';
 
 const UploadedDocs = () => {
-  const books = useAppSelector(state => state.books.books);
+  const books = useAppSelector((state: RootState) => state.books);
   const {height, width} = useWindowDimensions();
-  const ItemSeparatorView = () => {
-    return <View style={styles.inputContainer} />;
-  };
 
   useEffect(() => {
     console.log(books);
   }, [books]);
 
-  const renderPdfView = ({item}) => (
-    <View>
-      <Text>{item.thumbnail.width}</Text>
-      <Image
-        source={item.thumbnail}
-        resizeMode="contain"
-        style={styles.thumbnailImage}
-      />
-    </View>
-  );
-
+  const renderPdfView = ({item}) => {
+    return (
+      <View style={styles.pdfContainer}>
+        <Image
+          source={item.thumbnail}
+          style={styles.thumbnailImage}
+          resizeMode="contain"
+        />
+        <Text style={styles.pdfTitle}>{item.name.split('.pdf')}</Text>
+      </View>
+    );
+  };
   if (!books) {
     return (
       <View>
@@ -45,9 +47,10 @@ const UploadedDocs = () => {
       {books.length ? (
         <FlatList
           data={books}
-          ItemSeparatorComponent={ItemSeparatorView}
+          horizontal
           renderItem={renderPdfView}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={item => item.id}
+          contentContainerStyle={styles.pdfContent}
         />
       ) : null}
     </View>
@@ -66,18 +69,21 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
   },
   thumbnailImage: {
-    width: 200,
-    height: 200,
-    marginBottom: 20,
+    width: pdfWidth,
+    height: pdfHeight,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  pdfContainer: {
+    marginRight: 10,
+    alignItems: 'center',
+    width: pdfWidth,
+  },
+  pdfContent: {
+    // paddingHorizontal: 10,
+  },
+  pdfTitle: {
+    flexWrap: 'wrap',
+    textAlign: 'center',
   },
 });
-
-{
-  /* <Text onPress={() => getAndWritePdf(item.fullPath, item.name)}>
-  File Name: {item.name}
-  {'\n'}
-  File Full Path: {item.fullPath}
-  {'\n'}
-  Bucket: {item.bucket}
-</Text>; */
-}

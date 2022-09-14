@@ -1,5 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
-import type {PayloadAction} from '@reduxjs/toolkit';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import type {RootState} from '../store';
 import {ThumbnailResult} from 'react-native-pdf-thumbnail';
 
@@ -8,6 +7,7 @@ export interface IPDFBook {
   name: string;
   downloadUrl: string;
   thumbnail: ThumbnailResult;
+  id: string;
 }
 interface IUploadedBooksState {
   books: IPDFBook[];
@@ -19,10 +19,10 @@ const initialState: IUploadedBooksState = {
 
 export const uploadedBooksSlice = createSlice({
   name: 'uploadedBooks',
-  initialState,
+  initialState: initialState.books,
   reducers: {
     updateBookStore: (state, action: PayloadAction<IPDFBook>) => {
-      state.books.push(action.payload);
+      state.push(action.payload);
     },
   },
 });

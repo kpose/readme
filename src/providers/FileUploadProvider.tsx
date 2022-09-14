@@ -13,6 +13,7 @@ import RNFS from 'react-native-fs';
 import {useAppDispatch /* useAppSelector */} from '../hooks/ReduxState.hook';
 import {updateBookStore, IPDFBook} from '../redux/slices/uploadedBooksSlice';
 import PdfThumbnail from 'react-native-pdf-thumbnail';
+import {getUniqueID} from '../utils/Helpers.util';
 
 interface IFileUploadContext {
   isUploadingFile: boolean;
@@ -50,17 +51,21 @@ export const FileUploadProvider: FC<FileUploadProps> = ({children}) => {
 
         let destPath = RNFS.DocumentDirectoryPath + '/' + `${filePath.name}`;
         let decodedURL = decodeURIComponent(filePath.uri);
+        let ID = getUniqueID(10);
         const thumbnail = await PdfThumbnail.generate(filePath.uri, 0);
         let bookData = {
+          id: ID,
           name: filePath.name,
           location: destPath,
           downloadUrl: decodedURL,
           thumbnail: thumbnail,
         };
-        await RNFS.moveFile(decodedURL, destPath).then(() =>
-          // write file details to redux
-          dispatch(updateBookStore(bookData)),
-        );
+        await RNFS.moveFile(decodedURL, destPath)
+          .then(() =>
+            // write file details to redux
+            dispatch(updateBookStore(bookData)),
+          )
+          .catch(err => Promise.reject(err));
         return Promise.resolve(bookData);
       }
       if (filesPermission === 'unavailable') {
