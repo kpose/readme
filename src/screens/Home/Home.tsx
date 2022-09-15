@@ -1,8 +1,6 @@
 import React, {useCallback, useState} from 'react';
 import Screen from '../../components/Screen/Screen';
-import Text from '../../components/Text/Text';
 import FAB from '../../components/FAB/FAB';
-import {FolderIcon} from '../../components/Icon/Icon';
 import UploadedDocs from '../../components/UploadedDocs/UploadedDocs';
 import {useFileUpload} from '../../providers/FileUploadProvider';
 import {Alert} from 'react-native';
