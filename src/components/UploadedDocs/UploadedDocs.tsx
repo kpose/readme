@@ -1,10 +1,11 @@
 import {View, FlatList, StyleSheet, Image, Pressable} from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import Text from '../Text/Text';
 import {RootState} from '../../redux/store';
 import {useAppSelector} from '../../hooks/ReduxState.hook';
 import {appcolors} from '../../utils/colors.util';
 import {usePDFViewer} from '../../providers/PDFViewerProvider';
+import RNFS from 'react-native-fs';
 
 const pdfWidth = 120;
 const pdfHeight = 190;
@@ -17,14 +18,26 @@ const UploadedDocs = () => {
     // console.log(books);
   }, [books]);
 
+  const open = useCallback(async (x: string) => {
+    // console.log(x);
+    RNFS.readFile(x, 'base64')
+      .then(y => {
+        console.log(y);
+      })
+      .catch(z => {
+        console.log(z);
+      });
+  }, []);
+
   const renderPdfView = ({item}) => {
     return (
       <View style={styles.pdfContainer}>
         <Pressable
           onPress={() => {
-            if (openDocument) {
-              openDocument(item.location);
-            }
+            // if (openDocument) {
+            //   openDocument(item.location);
+            // }
+            // open(item.location);
           }}>
           <Image
             source={item.thumbnail}
