@@ -1,5 +1,5 @@
 import {View, FlatList, StyleSheet, Image, Pressable} from 'react-native';
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Text from '../Text/Text';
 import {RootState} from '../../redux/store';
 import {useAppSelector} from '../../hooks/ReduxState.hook';
@@ -12,21 +12,40 @@ const pdfHeight = 190;
 
 const UploadedDocs = () => {
   const books = useAppSelector((state: RootState) => state.books);
+  const [book, setBook] = useState([]);
   const {openDocument} = usePDFViewer();
 
   useEffect(() => {
     // console.log(books);
   }, [books]);
 
-  const open = useCallback(async (x: string) => {
-    // console.log(x);
-    RNFS.readFile(x, 'base64')
-      .then(y => {
-        console.log(y);
-      })
-      .catch(z => {
-        console.log(z);
-      });
+  const open = useCallback(async x => {
+    const file = {
+      uri: x.location,
+      name: x.name,
+      type: 'application/pdf',
+    };
+
+    const body = new FormData();
+    body.append('pdfFile', file);
+
+    try {
+      const responseOfFileUpload = await fetch(
+        'http://172.20.10.2:4000/extract',
+        {
+          method: 'POST',
+          body: body,
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      );
+      let responseInJs = await responseOfFileUpload.json();
+      setBook(responseInJs.data);
+    } catch (error) {
+      console.log(error);
+    }
   }, []);
 
   const renderPdfView = ({item}) => {
@@ -34,10 +53,7 @@ const UploadedDocs = () => {
       <View style={styles.pdfContainer}>
         <Pressable
           onPress={() => {
-            // if (openDocument) {
-            //   openDocument(item.location);
-            // }
-            // open(item.location);
+            open(item);
           }}>
           <Image
             source={item.thumbnail}
@@ -49,6 +65,14 @@ const UploadedDocs = () => {
           {item.name.split('.pdf')}
         </Text>
         <View style={styles.progressBar} />
+      </View>
+    );
+  };
+
+  const renderBook = item => {
+    return (
+      <View>
+        <Text>{item.item}</Text>
       </View>
     );
   };
@@ -70,6 +94,18 @@ const UploadedDocs = () => {
             horizontal
             renderItem={renderPdfView}
             keyExtractor={item => item.id}
+            contentContainerStyle={styles.pdfContent}
+          />
+        </View>
+      ) : null}
+
+      {book.length ? (
+        <View>
+          <Text style={styles.heading}> Book </Text>
+          <FlatList
+            data={book}
+            renderItem={renderBook}
+            keyExtractor={item => item}
             contentContainerStyle={styles.pdfContent}
           />
         </View>
