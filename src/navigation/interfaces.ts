@@ -1,9 +1,16 @@
 export type IAuthStackParamList = {
   Onboarding: undefined;
   AuthScreen: {isSignup: boolean};
-  AppStack: undefined;
+  AppBottomTabs: undefined;
 };
 
-export type IAppStackParamList = {
+export type IHomeStackParamList = {
   Home: undefined;
+};
+
+export type IAppStackBottomTabList = {
+  HomeStack: undefined;
+  SearchStack: undefined;
+  DownloadStack: undefined;
+  ProfileStack: undefined;
 };

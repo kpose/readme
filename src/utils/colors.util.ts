@@ -28,10 +28,10 @@ export const DarkTheme = {
 };
 
 export const appcolors = {
-  primary: '#d4a373',
+  primary: '#BC6C25',
   light: '#FFFFFF',
   dark: '#222222',
   error: '#BF0000',
-  // grey: '#E5E5E5',
   grey: '#808080',
+  secondary: 'FEFAE0',
 };

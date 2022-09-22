@@ -1,11 +1,11 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {IAppStackParamList} from './interfaces';
+import {IHomeStackParamList} from './interfaces';
 import Home from '../screens/Home/Home';
 
-const Stack = createNativeStackNavigator<IAppStackParamList>();
+const Stack = createNativeStackNavigator<IHomeStackParamList>();
 
-function AppStack() {
+function SearchStack() {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="Home" component={Home} />
@@ -13,4 +13,4 @@ function AppStack() {
   );
 }
 
-export default AppStack;
+export default SearchStack;

@@ -1,10 +1,9 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-// import FirstName from '../screens/FirstName/FirstName';
 import {IAuthStackParamList} from './interfaces';
-import AppStack from './AppStack';
 import Onboarding from '../screens/Onboarding/Onboarding';
 import AuthScreen from '../screens/AuthScreen/AuthScreen';
+import AppBottomTabs from './AppBottomTabs';
 
 const Stack = createNativeStackNavigator<IAuthStackParamList>();
 
@@ -17,7 +16,7 @@ function AuthStack() {
         component={AuthScreen}
         options={{gestureEnabled: false}}
       />
-      <Stack.Screen name="AppStack" component={AppStack} />
+      <Stack.Screen name="AppBottomTabs" component={AppBottomTabs} />
     </Stack.Navigator>
   );
 }
