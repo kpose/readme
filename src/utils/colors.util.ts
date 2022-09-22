@@ -1,32 +1,3 @@
-import {
-  DefaultTheme,
-  DarkTheme as NavigationDarkTheme,
-} from '@react-navigation/native';
-
-export const LightTheme = {
-  ...DefaultTheme,
-  colors: {
-    primary: '#d4a373',
-    background: '#DEE4E7',
-    text: '#222222',
-    // card: 'rgb(255, 255, 255)',
-    // border: 'rgb(199, 199, 204)',
-    // notification: 'rgb(255, 69, 58)',
-  },
-};
-
-export const DarkTheme = {
-  ...NavigationDarkTheme,
-  colors: {
-    primary: '#d4a373',
-    background: '#263238',
-    text: '#FFFFFF',
-    // border: 'rgb(199, 199, 204)',
-    // notification: 'rgb(255, 69, 58)',
-    // card: 'rgb(255, 255, 255)',
-  },
-};
-
 export const appcolors = {
   primary: '#BC6C25',
   light: '#FFFFFF',
@@ -34,4 +5,30 @@ export const appcolors = {
   error: '#BF0000',
   grey: '#808080',
   secondary: '#FEFAE0',
+  lightBackground: '#DEE4E7',
+  darkBackground: '#263238',
+};
+
+export const DarkTheme = {
+  dark: true,
+  colors: {
+    primary: appcolors.primary,
+    background: appcolors.darkBackground,
+    text: appcolors.light,
+    card: appcolors.darkBackground,
+    border: appcolors.grey,
+    notification: appcolors.primary,
+  },
+};
+
+export const LightTheme = {
+  dark: false,
+  colors: {
+    primary: appcolors.primary,
+    background: appcolors.lightBackground,
+    text: appcolors.dark,
+    card: appcolors.lightBackground,
+    border: appcolors.grey,
+    notification: appcolors.primary,
+  },
 };
