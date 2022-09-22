@@ -33,5 +33,5 @@ export const appcolors = {
   dark: '#222222',
   error: '#BF0000',
   grey: '#808080',
-  secondary: 'FEFAE0',
+  secondary: '#FEFAE0',
 };
