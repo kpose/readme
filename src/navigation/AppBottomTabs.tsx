@@ -20,6 +20,10 @@ function AppBottomTabs() {
     <Tab.Navigator
       screenOptions={({route}) => ({
         title: '',
+        headerShown: false,
+        tabBarIconStyle: {
+          marginTop: 20,
+        },
         tabBarIcon: ({color, size}) => {
           switch (route.name) {
             case 'HomeStack':

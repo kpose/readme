@@ -1,7 +1,7 @@
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {IAppStackParamList} from '../../navigation/interfaces';
+import {IHomeStackParamList} from '../../navigation/interfaces';
 
 export type IFirstNameScreenProps = NativeStackScreenProps<
-  IAppStackParamList,
+  IHomeStackParamList,
   'Home'
 >;

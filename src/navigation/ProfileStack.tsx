@@ -1,14 +1,14 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {IHomeStackParamList} from './interfaces';
-import Home from '../screens/Home/Home';
+import {IProfileStackParamList} from './interfaces';
+import ProfileScreen from '../screens/ProfileScreen/ProfileScreen';
 
-const Stack = createNativeStackNavigator<IHomeStackParamList>();
+const Stack = createNativeStackNavigator<IProfileStackParamList>();
 
 function ProfileStack() {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
     </Stack.Navigator>
   );
 }
