@@ -16,14 +16,13 @@ import PdfThumbnail from 'react-native-pdf-thumbnail';
 import {getUniqueID} from '../utils/Helpers.util';
 
 interface IFileUploadContext {
-  isUploadingFile: boolean;
+  isUploadingPDF: boolean;
   uploadPDF?: () => Promise<IPDFBook | undefined>;
 }
 
 const initialState = {
-  isUploadingFile: false,
+  isUploadingPDF: false,
 };
-
 interface FileUploadProps {
   children: React.ReactNode;
 }
@@ -42,9 +41,11 @@ export const FileUploadProvider: FC<FileUploadProps> = ({children}) => {
       }
       const filesPermission = await requestFilePermission();
       if (filesPermission === 'granted') {
+        setIsUploading(true);
         // pick single pdf and get temp location
         const filePath = await selectPdf();
         if (Object.keys(filePath).length === 0) {
+          setIsUploading(false);
           let error = 'Please make sure you have selected a pdf document';
           return Promise.reject(error);
         }
@@ -66,6 +67,7 @@ export const FileUploadProvider: FC<FileUploadProps> = ({children}) => {
             dispatch(updateBookStore(bookData)),
           )
           .catch(err => Promise.reject(err));
+        setIsUploading(false);
         return Promise.resolve(bookData);
       }
       if (filesPermission === 'unavailable') {
@@ -77,7 +79,6 @@ export const FileUploadProvider: FC<FileUploadProps> = ({children}) => {
         'Please go into settings and grant Readme access to read your files to use this feature.',
       );
     } catch (e: any) {
-      // handle error
       if (DocumentPicker.isCancel(e)) {
         return;
       }
@@ -87,7 +88,7 @@ export const FileUploadProvider: FC<FileUploadProps> = ({children}) => {
   return (
     <FileUploadContext.Provider
       value={{
-        isUploadingFile: isUploading,
+        isUploadingPDF: isUploading,
         uploadPDF: uploadAndSavePDF,
       }}>
       {children}

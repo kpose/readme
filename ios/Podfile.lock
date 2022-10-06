@@ -129,7 +129,7 @@ PODS:
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
   - OpenSSL-Universal (1.1.1100)
-  - PDFNet (3.0.2-beta.126)
+  - PDFNet (3.0.2-beta.136)
   - Permission-MediaLibrary (3.6.1):
     - RNPermissions
   - PromisesObjC (2.1.1)
@@ -327,11 +327,6 @@ PODS:
     - glog
     - RCT-Folly (= 2021.06.28.00-v2)
     - React-jsi/Default (= 0.69.4)
-  - React-jsi/Default (0.69.4):
-    - boost (= 1.76.0)
-    - DoubleConversion
-    - glog
-    - RCT-Folly (= 2021.06.28.00-v2)
   - React-jsiexecutor (0.69.4):
     - DoubleConversion
     - glog
@@ -728,7 +723,7 @@ SPEC CHECKSUMS:
   lottie-react-native: b702fab740cdb952a8e2354713d3beda63ff97b0
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
-  PDFNet: 2551c24b1e6a672983a2f5ea466fae90da21ae6d
+  PDFNet: 29d12476d6e3d2454d423f5895b0b22876ec69b9
   Permission-MediaLibrary: a994236bae41b3597a376ff08298fb1c6d84729b
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   RCT-Folly: b9d9fe1fc70114b751c076104e52f3b1b5e5a95a
@@ -778,6 +773,6 @@ SPEC CHECKSUMS:
   Yoga: ff994563b2fd98c982ca58e8cd9db2cdaf4dda74
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 7384bbf785340c1d9d6e9ea9dfcd8cb008856852
+PODFILE CHECKSUM: b9917835df39c7d271d4e76f291eb4b194b29c6b
 
 COCOAPODS: 1.11.2
