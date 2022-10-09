@@ -12,7 +12,7 @@ const DownloadScreen = () => {
     if (uploadPDF) {
       await uploadPDF()
         .then(x => {
-          console.log(x);
+          // console.log(x);
           return;
         })
         .catch(err => {

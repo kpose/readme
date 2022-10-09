@@ -43,24 +43,27 @@ export const FileUploadProvider: FC<FileUploadProps> = ({children}) => {
       if (filesPermission === 'granted') {
         setIsUploading(true);
         // pick single pdf and get temp location
-        const filePath = await selectPdf();
-        if (Object.keys(filePath).length === 0) {
+        const file = await selectPdf();
+        if (Object.keys(file).length === 0) {
           setIsUploading(false);
           let error = 'Please make sure you have selected a pdf document';
           return Promise.reject(error);
         }
 
-        let destPath = RNFS.DocumentDirectoryPath + '/' + `${filePath.name}`;
-        let decodedURL = decodeURIComponent(filePath.uri);
+        let destPath = RNFS.DocumentDirectoryPath + '/' + `${file.name}`;
+        let decodedURL = decodeURIComponent(file.uri);
         let ID = getUniqueID(10);
-        const thumbnail = await PdfThumbnail.generate(filePath.uri, 0);
+        const thumbnail = await PdfThumbnail.generate(file.uri, 0);
         let bookData = {
           id: ID,
-          name: filePath.name,
+          name: file.name,
           location: destPath,
           downloadUrl: decodedURL,
           thumbnail: thumbnail,
         };
+        console.log(bookData);
+        return Promise.resolve(bookData);
+
         await RNFS.moveFile(decodedURL, destPath)
           .then(() =>
             // write file details to redux
