@@ -37,21 +37,27 @@ const AuthScreen = ({navigation, route}: IAuthScreenProps) => {
           return;
         }
         setLoading(true);
-        await createUser({email, password})
-          .then(x => {
-            Alert.alert('User successfully created');
-            setLoading(false);
-          })
-          .catch(x => {
-            setLoading(false);
-            if (x.code === 'auth/email-already-in-use') {
-              return Alert.alert('That email address is already in use!');
-            }
-            if (x.code === 'auth/invalid-email') {
-              return Alert.alert('That email address is invalid!');
-            }
-            return Alert.alert(x.code);
+        const response = await fetch('http://localhost:4000/api/register', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email.toLowerCase(),
+            password,
+            username: username.toLowerCase(),
+          }),
+        });
+        let json = await response.json();
+        console.log(json);
+        if (json.accessToken) {
+          // persist data and login
+          await asyncStore(STORE_KEYS.AUTH_TOKEN, json.accessToken).then(() => {
+            navigation.navigate('AppBottomTabs');
           });
+        }
+        setLoading(false);
       } catch (error) {
         setLoading(false);
       }
@@ -80,13 +86,11 @@ const AuthScreen = ({navigation, route}: IAuthScreenProps) => {
           });
         }
         setLoading(false);
-
-        // return Promise.resolve(responseInJs);
       } catch (error) {
         setLoading(false);
       }
     }
-  }, [createUser, email, isSignup, loginUser, navigation, password]);
+  }, [createUser, email, isSignup, loginUser, navigation, password, username]);
 
   const isButtonDisabled = useCallback(() => {
     if (!email || !password || loading) {
