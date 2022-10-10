@@ -1,4 +1,4 @@
-import {Alert, Pressable, StyleSheet} from 'react-native';
+import {Pressable, StyleSheet} from 'react-native';
 import React, {useCallback, useState} from 'react';
 import Screen from '../../components/Screen/Screen';
 import {ScreenTitle} from '../../components/Text/Text';
@@ -7,8 +7,7 @@ import Input from '../../components/Input/Input';
 import {appcolors} from '../../utils/colors.util';
 import Button from '../../components/Button/Button';
 import Text from '../../components/Text/Text';
-import {useUser} from '../../providers/UserProvider';
-import {asyncStore, storeData} from '../../utils/Async.util';
+import {asyncStore} from '../../utils/Async.util';
 import {STORE_KEYS} from '../../utils/Keys.util';
 
 const AuthScreen = ({navigation, route}: IAuthScreenProps) => {
@@ -17,8 +16,6 @@ const AuthScreen = ({navigation, route}: IAuthScreenProps) => {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
-
-  const {createUser, loginUser} = useUser();
 
   const onSwitchPress = useCallback(() => {
     if (isSignup) {
@@ -33,9 +30,6 @@ const AuthScreen = ({navigation, route}: IAuthScreenProps) => {
     }
     if (isSignup) {
       try {
-        if (!createUser) {
-          return;
-        }
         setLoading(true);
         const response = await fetch('http://localhost:4000/api/register', {
           method: 'POST',
@@ -50,7 +44,7 @@ const AuthScreen = ({navigation, route}: IAuthScreenProps) => {
           }),
         });
         let json = await response.json();
-        console.log(json);
+
         if (json.accessToken) {
           // persist data and login
           await asyncStore(STORE_KEYS.AUTH_TOKEN, json.accessToken).then(() => {
@@ -63,9 +57,6 @@ const AuthScreen = ({navigation, route}: IAuthScreenProps) => {
       }
     } else {
       try {
-        if (!loginUser) {
-          return;
-        }
         setLoading(true);
         const response = await fetch('http://localhost:4000/api/login', {
           method: 'POST',
@@ -90,7 +81,7 @@ const AuthScreen = ({navigation, route}: IAuthScreenProps) => {
         setLoading(false);
       }
     }
-  }, [createUser, email, isSignup, loginUser, navigation, password, username]);
+  }, [email, isSignup, navigation, password, username]);
 
   const isButtonDisabled = useCallback(() => {
     if (!email || !password || loading) {
