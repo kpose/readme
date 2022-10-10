@@ -7,13 +7,13 @@ import React, {
 } from 'react';
 import {selectPdf} from '../utils/FilePicker.util';
 import {requestFilePermission} from '../utils/Permissions.util';
-import {useUser} from './UserProvider';
 import DocumentPicker from 'react-native-document-picker';
-import RNFS from 'react-native-fs';
+
 import {useAppDispatch /* useAppSelector */} from '../hooks/ReduxState.hook';
 import {updateBookStore, IPDFBook} from '../redux/slices/uploadedBooksSlice';
-import PdfThumbnail from 'react-native-pdf-thumbnail';
-import {getUniqueID} from '../utils/Helpers.util';
+// import PdfThumbnail from 'react-native-pdf-thumbnail';
+import {asyncGet} from '../utils/Async.util';
+import {STORE_KEYS} from '../utils/Keys.util';
 
 interface IFileUploadContext {
   isUploadingPDF: boolean;
@@ -29,51 +29,51 @@ interface FileUploadProps {
 const FileUploadContext = createContext<IFileUploadContext>(initialState);
 
 export const FileUploadProvider: FC<FileUploadProps> = ({children}) => {
-  const {user} = useUser();
   const [isUploading, setIsUploading] = useState(false);
   //   const books = useAppSelector(state => state.books.books);
   const dispatch = useAppDispatch();
 
   const uploadAndSavePDF = useCallback(async () => {
     try {
-      if (!user?.email) {
-        return Promise.reject('Please log out and log in again');
-      }
       const filesPermission = await requestFilePermission();
+      const token = await asyncGet(STORE_KEYS.AUTH_TOKEN);
+      if (!token) {
+        return;
+      }
+
       if (filesPermission === 'granted') {
         setIsUploading(true);
         // pick single pdf and get temp location
-        const file = await selectPdf();
-        if (Object.keys(file).length === 0) {
+        const filePath = await selectPdf();
+        // console.log(filePath);
+        // return;
+        if (Object.keys(filePath).length === 0) {
           setIsUploading(false);
           let error = 'Please make sure you have selected a pdf document';
           return Promise.reject(error);
         }
 
-        let destPath = RNFS.DocumentDirectoryPath + '/' + `${file.name}`;
-        let decodedURL = decodeURIComponent(file.uri);
-        let ID = getUniqueID(10);
-        const thumbnail = await PdfThumbnail.generate(file.uri, 0);
-        let bookData = {
-          id: ID,
-          name: file.name,
-          location: destPath,
-          downloadUrl: decodedURL,
-          thumbnail: thumbnail,
-        };
-        console.log(bookData);
-        return Promise.resolve(bookData);
+        let data = new FormData();
+        data.append('pdfFile', filePath);
 
-        await RNFS.moveFile(decodedURL, destPath)
-          .then(() =>
-            // write file details to redux
-            dispatch(updateBookStore(bookData)),
-          )
-          .catch(err => Promise.reject(err));
+        const responseOfFileUpload = await fetch(
+          'http://localhost:4000/api/upload',
+          {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              Authorization: token,
+            },
+            body: data,
+          },
+        );
+        let responseInJs = await responseOfFileUpload.json();
         setIsUploading(false);
-        return Promise.resolve(bookData);
+
+        return Promise.resolve(responseInJs);
       }
       if (filesPermission === 'unavailable') {
+        setIsUploading(false);
         throw new Error(
           'Sorry but this feature appears to be unavailable on your device.',
         );
@@ -86,7 +86,7 @@ export const FileUploadProvider: FC<FileUploadProps> = ({children}) => {
         return;
       }
     }
-  }, [dispatch, user?.email]);
+  }, []);
 
   return (
     <FileUploadContext.Provider

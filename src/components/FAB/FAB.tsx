@@ -8,7 +8,6 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {appcolors} from '../../utils/colors.util';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import FABpopup from './FABpopup';
-import {useUser} from '../../providers/UserProvider';
 const fabBottomPosition = 20;
 const fabRightPosition = 20;
 
@@ -20,7 +19,6 @@ const FAB = ({onImportPress}: IFABPopupProps) => {
   const springAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
   const [isOpen, setIsOpen] = useState(true);
-  const {logoutUser} = useUser();
 
   const toggleOpen = useCallback(() => {
     const options = {
@@ -38,14 +36,14 @@ const FAB = ({onImportPress}: IFABPopupProps) => {
       if (index === 0) {
         return onImportPress();
       }
-      if (index === 1) {
-        if (!logoutUser) {
-          return;
-        }
-        await logoutUser();
-      }
+      // if (index === 1) {
+      //   if (!logoutUser) {
+      //     return;
+      //   }
+      //   await logoutUser();
+      // }
     },
-    [isOpen, logoutUser, onImportPress],
+    [isOpen, onImportPress],
   );
 
   useEffect(() => {
