@@ -3,25 +3,23 @@ import Screen from '../../components/Screen/Screen';
 import FAB from '../../components/FAB/FAB';
 import UploadedDocs from '../../components/UploadedDocs/UploadedDocs';
 import {useFileUpload} from '../../providers/FileUploadProvider';
-import {Alert, TouchableOpacity} from 'react-native';
+import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
 import Text from '../../components/Text/Text';
 import {usePDFViewer} from '../../providers/PDFViewerProvider';
 
 const DownloadScreen = () => {
-  const {uploadPDF} = useFileUpload();
+  const {uploadPDF, isUploadingPDF} = useFileUpload();
   const {openDocument} = usePDFViewer();
 
   const onImportPress = useCallback(async () => {
-    if (uploadPDF) {
-      await uploadPDF()
-        .then(x => {
-          console.log(x);
-          return;
-        })
-        .catch(err => {
-          Alert.alert(err);
-        });
-    }
+    await uploadPDF()
+      .then(x => {
+        console.log(x);
+        return;
+      })
+      .catch(err => {
+        Alert.alert(err);
+      });
   }, [uploadPDF]);
 
   const openDoc = useCallback(async () => {
@@ -31,6 +29,14 @@ const DownloadScreen = () => {
       );
     }
   }, [openDocument]);
+
+  if (isUploadingPDF) {
+    return (
+      <View style={styles.uploading}>
+        <Text>Processing PDF...</Text>
+      </View>
+    );
+  }
 
   return (
     <Screen>
@@ -43,4 +49,17 @@ const DownloadScreen = () => {
   );
 };
 
+const styles = StyleSheet.create({
+  uploading: {
+    flex: 1,
+    position: 'absolute',
+    opacity: 0.3,
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 export default DownloadScreen;

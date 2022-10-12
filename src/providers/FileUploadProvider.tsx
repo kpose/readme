@@ -8,30 +8,27 @@ import React, {
 import {selectPdf} from '../utils/FilePicker.util';
 import {requestFilePermission} from '../utils/Permissions.util';
 import DocumentPicker from 'react-native-document-picker';
-
-import {useAppDispatch /* useAppSelector */} from '../hooks/ReduxState.hook';
-import {updateBookStore, IPDFBook} from '../redux/slices/uploadedBooksSlice';
+// import {useAppDispatch, useAppSelector} from '../hooks/ReduxState.hook';
+// import {updateBookStore, IPDFBook} from '../redux/slices/uploadedBooksSlice';
 // import PdfThumbnail from 'react-native-pdf-thumbnail';
 import {asyncGet} from '../utils/Async.util';
 import {STORE_KEYS} from '../utils/Keys.util';
-
-interface IFileUploadContext {
-  isUploadingPDF: boolean;
-  uploadPDF?: () => Promise<IPDFBook | undefined>;
-}
+import {IFileUploadContext} from './interfaces';
 
 const initialState = {
   isUploadingPDF: false,
 };
-interface FileUploadProps {
+interface IFileUploadProviderProps {
   children: React.ReactNode;
 }
 const FileUploadContext = createContext<IFileUploadContext>(initialState);
 
-export const FileUploadProvider: FC<FileUploadProps> = ({children}) => {
+export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
+  children,
+}) => {
   const [isUploading, setIsUploading] = useState(false);
   //   const books = useAppSelector(state => state.books.books);
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
 
   const uploadAndSavePDF = useCallback(async () => {
     try {
@@ -45,8 +42,6 @@ export const FileUploadProvider: FC<FileUploadProps> = ({children}) => {
         setIsUploading(true);
         // pick single pdf and get temp location
         const filePath = await selectPdf();
-        // console.log(filePath);
-        // return;
         if (Object.keys(filePath).length === 0) {
           setIsUploading(false);
           let error = 'Please make sure you have selected a pdf document';
@@ -55,20 +50,16 @@ export const FileUploadProvider: FC<FileUploadProps> = ({children}) => {
         let data = new FormData();
         data.append('pdfFile', filePath);
 
-        const responseOfFileUpload = await fetch(
-          'http://localhost:4000/api/upload',
-          {
-            method: 'POST',
-            headers: {
-              Accept: 'application/json',
-              Authorization: token,
-            },
-            body: data,
+        const response = await fetch('http://localhost:4000/api/upload', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            Authorization: token,
           },
-        );
-        let responseInJs = await responseOfFileUpload.json();
+          body: data,
+        });
+        let responseInJs = await response.json();
         setIsUploading(false);
-
         return Promise.resolve(responseInJs);
       }
       if (filesPermission === 'unavailable') {
