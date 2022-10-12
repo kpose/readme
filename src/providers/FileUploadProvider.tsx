@@ -68,6 +68,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
           'Sorry but this feature appears to be unavailable on your device.',
         );
       }
+      setIsUploading(false);
       throw new Error(
         'Please go into settings and grant Readme access to read your files to use this feature.',
       );

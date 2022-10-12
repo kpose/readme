@@ -13,9 +13,12 @@ const DownloadScreen = () => {
 
   const onImportPress = useCallback(async () => {
     await uploadPDF()
-      .then(x => {
-        console.log(x);
-        return;
+      .then(resp => {
+        console.log(resp);
+        if (!resp.books) {
+          return Alert.alert(resp.message);
+        }
+        return Alert.alert(resp.message);
       })
       .catch(err => {
         Alert.alert(err);
