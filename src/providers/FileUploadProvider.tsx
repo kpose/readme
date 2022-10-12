@@ -52,7 +52,6 @@ export const FileUploadProvider: FC<FileUploadProps> = ({children}) => {
           let error = 'Please make sure you have selected a pdf document';
           return Promise.reject(error);
         }
-
         let data = new FormData();
         data.append('pdfFile', filePath);
 
