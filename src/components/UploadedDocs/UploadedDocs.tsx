@@ -1,60 +1,27 @@
 import {View, FlatList, StyleSheet, Image, Pressable} from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import Text from '../Text/Text';
 import {RootState} from '../../redux/store';
 import {useAppSelector} from '../../hooks/ReduxState.hook';
 import {appcolors} from '../../utils/colors.util';
-import {usePDFViewer} from '../../providers/PDFViewerProvider';
-import RNFS from 'react-native-fs';
+// import {usePDFViewer} from '../../providers/PDFViewerProvider';
 
 const pdfWidth = 120;
 const pdfHeight = 190;
 
 const UploadedDocs = () => {
   const books = useAppSelector((state: RootState) => state.books);
-  const [book, setBook] = useState([]);
-  const {openDocument} = usePDFViewer();
+  // const {openDocument} = usePDFViewer();
 
   useEffect(() => {
     // console.log(books);
   }, [books]);
 
-  const open = useCallback(async x => {
-    const file = {
-      uri: x.location,
-      name: x.name,
-      type: 'application/pdf',
-    };
-
-    const body = new FormData();
-    body.append('pdfFile', file);
-
-    try {
-      const responseOfFileUpload = await fetch(
-        'http://172.20.10.2:4000/extract',
-        {
-          method: 'POST',
-          body: body,
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'multipart/form-data',
-          },
-        },
-      );
-      let responseInJs = await responseOfFileUpload.json();
-      setBook(responseInJs.data);
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
-
-  const renderPdfView = ({item}) => {
+  const renderPdfFiles = ({item}) => {
+    console.log(item);
     return (
       <View style={styles.pdfContainer}>
-        <Pressable
-          onPress={() => {
-            open(item);
-          }}>
+        <Pressable>
           <Image
             source={item.thumbnail}
             style={styles.thumbnailImage}
@@ -69,17 +36,10 @@ const UploadedDocs = () => {
     );
   };
 
-  const renderBook = item => {
-    return (
-      <View>
-        <Text>{item.item}</Text>
-      </View>
-    );
-  };
   if (!books) {
     return (
       <View>
-        <Text>Loading books</Text>
+        <Text>You currently don't have any books uploaded</Text>
       </View>
     );
   }
@@ -92,20 +52,8 @@ const UploadedDocs = () => {
           <FlatList
             data={books}
             horizontal
-            renderItem={renderPdfView}
+            renderItem={renderPdfFiles}
             keyExtractor={item => item.id}
-            contentContainerStyle={styles.pdfContent}
-          />
-        </View>
-      ) : null}
-
-      {book.length ? (
-        <View>
-          <Text style={styles.heading}> Book </Text>
-          <FlatList
-            data={book}
-            renderItem={renderBook}
-            keyExtractor={item => item}
             contentContainerStyle={styles.pdfContent}
           />
         </View>
