@@ -10,12 +10,8 @@ export interface IPDFBook {
   tilte: string;
   content: IBookContent[];
 }
-export interface IUploadedBookProps {
-  message: string;
-  books: IPDFBook[];
-}
 
 export interface IFileUploadContext {
   isUploadingPDF: boolean;
-  uploadPDF: () => Promise<IUploadedBookProps>;
+  uploadPDF: () => Promise<string | undefined>;
 }

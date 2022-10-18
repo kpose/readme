@@ -3,11 +3,10 @@ import type {RootState} from '../store';
 import {ThumbnailResult} from 'react-native-pdf-thumbnail';
 
 export interface IPDFBook {
-  location: string;
   name: string;
-  downloadUrl: string;
-  thumbnail: ThumbnailResult;
+  thumbnail?: ThumbnailResult;
   id: string;
+  bookData: {pagenumber: number; text: string}[];
 }
 interface IUploadedBooksState {
   books: IPDFBook[];
@@ -21,13 +20,13 @@ export const uploadedBooksSlice = createSlice({
   name: 'uploadedBooks',
   initialState: initialState.books,
   reducers: {
-    updateBookStore: (state, action: PayloadAction<IPDFBook>) => {
+    updateBooks: (state, action: PayloadAction<IPDFBook>) => {
       state.unshift(action.payload);
     },
   },
 });
 
-export const {updateBookStore} = uploadedBooksSlice.actions;
+export const {updateBooks} = uploadedBooksSlice.actions;
 
 export const uploadedPDFBooks = (state: RootState) => state.books;
 

@@ -8,12 +8,13 @@ import React, {
 import {selectPdf} from '../utils/FilePicker.util';
 import {requestFilePermission} from '../utils/Permissions.util';
 import DocumentPicker from 'react-native-document-picker';
-import {useAppDispatch, useAppSelector} from '../hooks/ReduxState.hook';
-import {updateBookStore, IPDFBook} from '../redux/slices/uploadedBooksSlice';
+import {useAppDispatch} from '../hooks/ReduxState.hook';
+import {updateBooks, IPDFBook} from '../redux/slices/uploadedBooksSlice';
 // import PdfThumbnail from 'react-native-pdf-thumbnail';
 import {asyncGet} from '../utils/Async.util';
 import {STORE_KEYS} from '../utils/Keys.util';
-import {IFileUploadContext, ITextExtractionResponse} from './interfaces';
+import {IFileUploadContext} from './interfaces';
+import {getUniqueID} from '../utils/Helpers.util';
 
 const initialState = {
   isUploadingPDF: false,
@@ -27,8 +28,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
   children,
 }) => {
   const [isUploading, setIsUploading] = useState(false);
-  //   const books = useAppSelector(state => state.books.books);
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
   const uploadAndSavePDF = useCallback(async () => {
     try {
@@ -68,9 +68,18 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         });
 
         /* save book information to redux */
+        let bookData: IPDFBook = {
+          name: filePath.name,
+          // thumbnail: add thumbnail here
+          id: getUniqueID(10),
+          bookData: responseInJs.data,
+        };
+        dispatch(updateBooks(bookData));
 
         setIsUploading(false);
-        return Promise.resolve(responseInJs);
+        return Promise.resolve(
+          'Document have been uploaded/extracted successfully',
+        );
       }
       if (filesPermission === 'unavailable') {
         setIsUploading(false);
@@ -88,7 +97,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         return;
       }
     }
-  }, []);
+  }, [dispatch]);
 
   return (
     <FileUploadContext.Provider

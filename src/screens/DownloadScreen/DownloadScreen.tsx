@@ -14,7 +14,7 @@ const DownloadScreen = () => {
   const onImportPress = useCallback(async () => {
     await uploadPDF()
       .then(resp => {
-        console.log(resp);
+        Alert.alert(resp);
       })
       .catch(err => {
         Alert.alert(err);
@@ -29,13 +29,13 @@ const DownloadScreen = () => {
     }
   }, [openDocument]);
 
-  // if (isUploadingPDF) {
-  //   return (
-  //     <View style={styles.uploading}>
-  //       <Text>Processing PDF...</Text>
-  //     </View>
-  //   );
-  // }
+  if (isUploadingPDF) {
+    return (
+      <View style={styles.uploading}>
+        <Text>Processing PDF...</Text>
+      </View>
+    );
+  }
 
   return (
     <Screen>
@@ -59,10 +59,6 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  jjjj: {
-    // textAlign: 'center',
-    // alignSelf: 'center',
   },
 });
 export default DownloadScreen;
