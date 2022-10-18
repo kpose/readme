@@ -10,7 +10,7 @@ import {requestFilePermission} from '../utils/Permissions.util';
 import DocumentPicker from 'react-native-document-picker';
 import {useAppDispatch} from '../hooks/ReduxState.hook';
 import {updateBooks, IPDFBook} from '../redux/slices/uploadedBooksSlice';
-// import PdfThumbnail from 'react-native-pdf-thumbnail';
+import PdfThumbnail from 'react-native-pdf-thumbnail';
 import {asyncGet} from '../utils/Async.util';
 import {STORE_KEYS} from '../utils/Keys.util';
 import {IFileUploadContext} from './interfaces';
@@ -68,9 +68,11 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         });
 
         /* save book information to redux */
+        const thumbnail = await PdfThumbnail.generate(filePath.uri, 0);
+
         let bookData: IPDFBook = {
           name: filePath.name,
-          // thumbnail: add thumbnail here
+          thumbnail,
           id: getUniqueID(10),
           bookData: responseInJs.data,
         };
