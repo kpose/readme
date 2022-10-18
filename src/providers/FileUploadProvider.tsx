@@ -8,12 +8,12 @@ import React, {
 import {selectPdf} from '../utils/FilePicker.util';
 import {requestFilePermission} from '../utils/Permissions.util';
 import DocumentPicker from 'react-native-document-picker';
-// import {useAppDispatch, useAppSelector} from '../hooks/ReduxState.hook';
-// import {updateBookStore, IPDFBook} from '../redux/slices/uploadedBooksSlice';
+import {useAppDispatch, useAppSelector} from '../hooks/ReduxState.hook';
+import {updateBookStore, IPDFBook} from '../redux/slices/uploadedBooksSlice';
 // import PdfThumbnail from 'react-native-pdf-thumbnail';
 import {asyncGet} from '../utils/Async.util';
 import {STORE_KEYS} from '../utils/Keys.util';
-import {IFileUploadContext} from './interfaces';
+import {IFileUploadContext, ITextExtractionResponse} from './interfaces';
 
 const initialState = {
   isUploadingPDF: false,
@@ -47,9 +47,11 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
           let error = 'Please make sure you have selected a pdf document';
           return Promise.reject(error);
         }
+
         let data = new FormData();
         data.append('pdfFile', filePath);
 
+        /* make http call for text extraction */
         const response = await fetch('http://localhost:4000/api/upload', {
           method: 'POST',
           headers: {
@@ -59,6 +61,14 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
           body: data,
         });
         let responseInJs = await response.json();
+
+        /* sort pdf pages */
+        responseInJs.data.sort(function (a, b) {
+          return a.pageNumber - b.pageNumber;
+        });
+
+        /* save book information to redux */
+
         setIsUploading(false);
         return Promise.resolve(responseInJs);
       }
@@ -73,6 +83,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         'Please go into settings and grant Readme access to read your files to use this feature.',
       );
     } catch (e: any) {
+      setIsUploading(false);
       if (DocumentPicker.isCancel(e)) {
         return;
       }

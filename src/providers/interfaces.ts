@@ -1,13 +1,10 @@
 /* File Upload Provider Interfaces */
-
-import {IPDFBook} from '../redux/slices/uploadedBooksSlice';
-
 interface IBookContent {
   _id: string;
   body: string;
   page: number;
 }
-export interface IPdfBook {
+export interface IPDFBook {
   _id: string;
   url: string;
   tilte: string;

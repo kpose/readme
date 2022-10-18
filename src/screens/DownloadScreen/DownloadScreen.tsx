@@ -15,10 +15,6 @@ const DownloadScreen = () => {
     await uploadPDF()
       .then(resp => {
         console.log(resp);
-        if (!resp.books) {
-          return Alert.alert(resp.message);
-        }
-        return Alert.alert(resp.message);
       })
       .catch(err => {
         Alert.alert(err);
@@ -33,13 +29,13 @@ const DownloadScreen = () => {
     }
   }, [openDocument]);
 
-  if (isUploadingPDF) {
-    return (
-      <View style={styles.uploading}>
-        <Text>Processing PDF...</Text>
-      </View>
-    );
-  }
+  // if (isUploadingPDF) {
+  //   return (
+  //     <View style={styles.uploading}>
+  //       <Text>Processing PDF...</Text>
+  //     </View>
+  //   );
+  // }
 
   return (
     <Screen>
@@ -63,6 +59,10 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  jjjj: {
+    // textAlign: 'center',
+    // alignSelf: 'center',
   },
 });
 export default DownloadScreen;
