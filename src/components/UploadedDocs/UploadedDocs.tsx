@@ -55,6 +55,7 @@ const UploadedDocs = () => {
             renderItem={renderPdfFiles}
             keyExtractor={item => item.id}
             contentContainerStyle={styles.pdfContent}
+            showsHorizontalScrollIndicator={false}
           />
         </View>
       ) : null}

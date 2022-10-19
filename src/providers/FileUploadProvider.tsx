@@ -13,15 +13,21 @@ import {updateBooks, IPDFBook} from '../redux/slices/uploadedBooksSlice';
 import PdfThumbnail from 'react-native-pdf-thumbnail';
 import {asyncGet} from '../utils/Async.util';
 import {STORE_KEYS} from '../utils/Keys.util';
-import {IFileUploadContext} from './interfaces';
 import {getUniqueID} from '../utils/Helpers.util';
 
 const initialState = {
   isUploadingPDF: false,
+  uploadPDF: () => {},
 };
 interface IFileUploadProviderProps {
   children: React.ReactNode;
 }
+
+interface IFileUploadContext {
+  isUploadingPDF: boolean;
+  uploadPDF: () => Promise<string | undefined>;
+}
+
 const FileUploadContext = createContext<IFileUploadContext>(initialState);
 
 export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
@@ -47,7 +53,6 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
           let error = 'Please make sure you have selected a pdf document';
           return Promise.reject(error);
         }
-
         let data = new FormData();
         data.append('pdfFile', filePath);
 
@@ -62,14 +67,13 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         });
         let responseInJs = await response.json();
 
-        /* sort pdf pages */
+        /* sort pdf pages in > order */
         responseInJs.data.sort(function (a, b) {
           return a.pageNumber - b.pageNumber;
         });
 
         /* save book information to redux */
         const thumbnail = await PdfThumbnail.generate(filePath.uri, 0);
-
         let bookData: IPDFBook = {
           name: filePath.name,
           thumbnail,

@@ -13,9 +13,10 @@ const fabRightPosition = 20;
 
 interface IFABPopupProps {
   onImportPress: () => void;
+  disabled?: boolean;
 }
 
-const FAB = ({onImportPress}: IFABPopupProps) => {
+const FAB = ({onImportPress, disabled}: IFABPopupProps) => {
   const springAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
   const [isOpen, setIsOpen] = useState(true);
@@ -70,7 +71,7 @@ const FAB = ({onImportPress}: IFABPopupProps) => {
   return (
     <View style={styles.container}>
       {/* pop up */}
-      <TouchableWithoutFeedback>
+      <TouchableWithoutFeedback disabled={disabled}>
         <Animated.View
           style={[
             styles.popupContainer,
@@ -81,7 +82,7 @@ const FAB = ({onImportPress}: IFABPopupProps) => {
         </Animated.View>
       </TouchableWithoutFeedback>
       {/* fab */}
-      <TouchableWithoutFeedback onPress={toggleOpen}>
+      <TouchableWithoutFeedback onPress={toggleOpen} disabled={disabled}>
         <View style={[styles.fab]}>
           <Animated.Text style={[styles.label]}>+</Animated.Text>
         </View>
