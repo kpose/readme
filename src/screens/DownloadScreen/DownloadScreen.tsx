@@ -1,7 +1,7 @@
 import React, {useCallback} from 'react';
 import Screen from '../../components/Screen/Screen';
 import FAB from '../../components/FAB/FAB';
-import UploadedDocs from '../../components/UploadedDocs/UploadedDocs';
+import UploadedPDFs from '../../components/UploadedPDFs/UploadedPDFs';
 import {useFileUpload} from '../../providers/FileUploadProvider';
 import {Alert, TouchableOpacity} from 'react-native';
 import Text from '../../components/Text/Text';
@@ -31,7 +31,7 @@ const DownloadScreen = () => {
 
   return (
     <Screen>
-      <UploadedDocs />
+      <UploadedPDFs />
       <FAB onImportPress={onImportPress} disabled={isUploadingPDF} />
       <TouchableOpacity onPress={openDoc}>
         <Text>press</Text>

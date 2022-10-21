@@ -9,7 +9,7 @@ import {appcolors} from '../../utils/colors.util';
 const pdfWidth = 120;
 const pdfHeight = 190;
 
-const UploadedDocs = () => {
+const UploadedPDFs = () => {
   const books = useAppSelector((state: RootState) => state.books);
   // const {openDocument} = usePDFViewer();
 
@@ -18,12 +18,12 @@ const UploadedDocs = () => {
   }, [books]);
 
   const renderPdfFiles = ({item}) => {
-    console.log(item);
     return (
       <View style={styles.pdfContainer}>
         <Pressable>
           <Image
-            source={item.thumbnail}
+            // source={item.thumbnail}
+            source={require('../../assets/images/thumbnail.png')}
             style={styles.thumbnailImage}
             resizeMode="contain"
           />
@@ -36,7 +36,7 @@ const UploadedDocs = () => {
     );
   };
 
-  if (!books) {
+  if (!books.length) {
     return (
       <View>
         <Text>You currently don't have any books uploaded</Text>
@@ -63,7 +63,7 @@ const UploadedDocs = () => {
   );
 };
 
-export default UploadedDocs;
+export default UploadedPDFs;
 
 const styles = StyleSheet.create({
   inputContainer: {

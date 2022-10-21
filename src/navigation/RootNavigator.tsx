@@ -25,7 +25,7 @@ export default function RootNavigator() {
   return (
     <NavigationContainer theme={isDarkTheme ? DarkTheme : LightTheme}>
       {/* {hasToken ? <AppBottomTabs /> : <AuthStack />} */}
-      <AppBottomTabs />
+      <AuthStack />
     </NavigationContainer>
   );
 }
