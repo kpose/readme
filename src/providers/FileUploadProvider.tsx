@@ -65,7 +65,10 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
           },
           body: data,
         });
+
         let responseInJs = await response.json();
+
+        console.log(responseInJs);
 
         /* sort pdf pages in > order */
         responseInJs.data.sort(function (a, b) {
