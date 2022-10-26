@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import Screen from '../../components/Screen/Screen';
 import FAB from '../../components/FAB/FAB';
 import UploadedPDFs from '../../components/UploadedPDFs/UploadedPDFs';
@@ -8,18 +8,40 @@ import Text from '../../components/Text/Text';
 import {usePDFViewer} from '../../providers/PDFViewerProvider';
 
 const DownloadScreen = () => {
-  const {uploadPDF, isUploadingPDF} = useFileUpload();
+  const {uploadPDF, isUploadingPDF, getUserBooks} = useFileUpload();
   const {openDocument} = usePDFViewer();
+
+  useEffect(
+    function componentDidMount() {
+      async function fetchAllUserBooks() {
+        await getUserBooks()
+          .then(x => {
+            // do nothing
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }
+      fetchAllUserBooks();
+    },
+    [getUserBooks],
+  );
 
   const onImportPress = useCallback(async () => {
     await uploadPDF()
       .then(() => {
-        // do nothing
+        getUserBooks()
+          .then(() => {
+            // do nothing
+          })
+          .catch(err => {
+            Alert.alert(err);
+          });
       })
       .catch(err => {
         Alert.alert(err);
       });
-  }, [uploadPDF]);
+  }, [getUserBooks, uploadPDF]);
 
   const openDoc = useCallback(async () => {
     if (openDocument) {

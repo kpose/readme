@@ -8,16 +8,19 @@ import React, {
 import {selectPdf} from '../utils/FilePicker.util';
 import {requestFilePermission} from '../utils/Permissions.util';
 import DocumentPicker from 'react-native-document-picker';
-import {useAppDispatch} from '../hooks/ReduxState.hook';
+import {useAppDispatch, useAppSelector} from '../hooks/ReduxState.hook';
 import {updateBooks, IPDFBook} from '../redux/slices/uploadedBooksSlice';
 import PdfThumbnail from 'react-native-pdf-thumbnail';
 import {asyncGet} from '../utils/Async.util';
 import {STORE_KEYS} from '../utils/Keys.util';
 import {getUniqueID} from '../utils/Helpers.util';
+import {RootState} from '../redux/store';
 
 const initialState = {
   isUploadingPDF: false,
+  isFetchingBooks: false,
   uploadPDF: () => {},
+  getUserBooks: () => {},
 };
 interface IFileUploadProviderProps {
   children: React.ReactNode;
@@ -25,7 +28,9 @@ interface IFileUploadProviderProps {
 
 interface IFileUploadContext {
   isUploadingPDF: boolean;
+  isFetchingBooks: boolean;
   uploadPDF: () => Promise<string | undefined>;
+  getUserBooks: () => Promise<any>;
 }
 
 const FileUploadContext = createContext<IFileUploadContext>(initialState);
@@ -34,6 +39,8 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
   children,
 }) => {
   const [isUploading, setIsUploading] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
+  const SAVEDBOOKS = useAppSelector((state: RootState) => state.books);
   const dispatch = useAppDispatch();
 
   const uploadAndSavePDF = useCallback(async () => {
@@ -67,23 +74,24 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         });
 
         let responseInJs = await response.json();
+        if (responseInJs.error) {
+          return Promise.reject(responseInJs.error);
+        }
 
-        console.log(responseInJs);
+        // /* sort pdf pages in > order */
+        // responseInJs.data.sort(function (a, b) {
+        //   return a.pageNumber - b.pageNumber;
+        // });
 
-        /* sort pdf pages in > order */
-        responseInJs.data.sort(function (a, b) {
-          return a.pageNumber - b.pageNumber;
-        });
-
-        /* save book information to redux */
-        const thumbnail = await PdfThumbnail.generate(filePath.uri, 0);
-        let bookData: IPDFBook = {
-          name: filePath.name,
-          thumbnail,
-          id: getUniqueID(10),
-          bookData: responseInJs.data,
-        };
-        dispatch(updateBooks(bookData));
+        // /* save book information to redux */
+        // const thumbnail = await PdfThumbnail.generate(filePath.uri, 0);
+        // let bookData: IPDFBook = {
+        //   name: filePath.name,
+        //   thumbnail,
+        //   id: getUniqueID(10),
+        //   bookData: responseInJs.data,
+        // };
+        // dispatch(updateBooks(bookData));
 
         setIsUploading(false);
         return Promise.resolve(
@@ -106,13 +114,59 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         return;
       }
     }
-  }, [dispatch]);
+  }, []);
+
+  const getAllUserBooks = useCallback(async () => {
+    try {
+      /* make http call for text extraction */
+      const token = await asyncGet(STORE_KEYS.AUTH_TOKEN);
+      if (!token) {
+        return;
+      }
+      setIsFetching(true);
+      const response = await fetch('http://localhost:4000/api/getBooks', {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          Authorization: token,
+        },
+      });
+
+      let responseInJs = await response.json();
+      if (responseInJs.error) {
+        setIsFetching(false);
+        return Promise.reject(responseInJs.error);
+      }
+      // check if database books habve been updated
+      let missingBooks = responseInJs.data.filter(
+        e => !SAVEDBOOKS.find(a => e.title === a.title),
+      );
+      // const thumbnail = await PdfThumbnail.generate(filePath.uri, 0);
+
+      // /* update device books storage if necessary*/
+      if (missingBooks.length) {
+        let newBook = missingBooks[0];
+        let bookData: IPDFBook = {
+          title: newBook.title,
+          // thumbnail,
+          id: getUniqueID(10),
+          url: newBook.url,
+          bookData: newBook.content,
+        };
+        dispatch(updateBooks(bookData));
+      }
+    } catch (error) {
+      setIsFetching(false);
+    }
+  }, [SAVEDBOOKS, dispatch]);
 
   return (
     <FileUploadContext.Provider
       value={{
         isUploadingPDF: isUploading,
+        isFetchingBooks: isFetching,
         uploadPDF: uploadAndSavePDF,
+        getUserBooks: getAllUserBooks,
       }}>
       {children}
     </FileUploadContext.Provider>

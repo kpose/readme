@@ -3,9 +3,10 @@ import type {RootState} from '../store';
 import {ThumbnailResult} from 'react-native-pdf-thumbnail';
 
 export interface IPDFBook {
-  name: string;
+  title: string;
   thumbnail?: ThumbnailResult;
   id: string;
+  url: string;
   bookData: {pagenumber: number; text: string}[];
 }
 interface IUploadedBooksState {

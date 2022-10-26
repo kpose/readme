@@ -1,4 +1,4 @@
-import {Pressable, StyleSheet} from 'react-native';
+import {Alert, Pressable, StyleSheet} from 'react-native';
 import React, {useCallback, useState} from 'react';
 import Screen from '../../components/Screen/Screen';
 import {ScreenTitle} from '../../components/Text/Text';
@@ -43,7 +43,12 @@ const AuthScreen = ({navigation, route}: IAuthScreenProps) => {
             username: username.toLowerCase(),
           }),
         });
+
         let json = await response.json();
+        if (json.error) {
+          setLoading(false);
+          return Alert.alert(json.error);
+        }
 
         if (json.accessToken) {
           // persist data and login
@@ -70,12 +75,18 @@ const AuthScreen = ({navigation, route}: IAuthScreenProps) => {
           }),
         });
         let json = await response.json();
+
+        if (json.error) {
+          setLoading(false);
+          return Alert.alert(json.error);
+        }
         if (json.accessToken) {
           // persist data and login
           await asyncStore(STORE_KEYS.AUTH_TOKEN, json.accessToken).then(() => {
             navigation.navigate('AppBottomTabs');
           });
         }
+
         setLoading(false);
       } catch (error) {
         setLoading(false);
