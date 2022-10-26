@@ -1,9 +1,17 @@
-import {View, FlatList, StyleSheet, Image, Pressable} from 'react-native';
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  Image,
+  Pressable,
+  ListRenderItem,
+} from 'react-native';
 import React, {useEffect} from 'react';
 import Text from '../Text/Text';
 import {RootState} from '../../redux/store';
 import {useAppSelector} from '../../hooks/ReduxState.hook';
 import {appcolors} from '../../utils/colors.util';
+import {IPDFBook} from '../../redux/slices/uploadedBooksSlice';
 // import {usePDFViewer} from '../../providers/PDFViewerProvider';
 
 const pdfWidth = 120;
@@ -17,7 +25,7 @@ const UploadedPDFs = () => {
     // console.log(books);
   }, [books]);
 
-  const renderPdfFiles = ({item}) => {
+  const renderPdfFiles: ListRenderItem<IPDFBook> = ({item}) => {
     return (
       <View style={styles.pdfContainer}>
         <Pressable>
@@ -29,7 +37,7 @@ const UploadedPDFs = () => {
           />
         </Pressable>
         <Text numberOfLines={1} style={styles.pdfTitle}>
-          {item.name.split('.pdf')}
+          {item.title.split('.pdf')}
         </Text>
         <View style={styles.progressBar} />
       </View>
@@ -53,6 +61,7 @@ const UploadedPDFs = () => {
             data={books}
             horizontal
             renderItem={renderPdfFiles}
+            // renderItem={({item}) => <RenderPdfFiles album={item} />}
             keyExtractor={item => item.id}
             contentContainerStyle={styles.pdfContent}
             showsHorizontalScrollIndicator={false}
