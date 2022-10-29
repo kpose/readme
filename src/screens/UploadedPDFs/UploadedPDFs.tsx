@@ -6,7 +6,7 @@ import {
   Pressable,
   ListRenderItem,
 } from 'react-native';
-import React, {useCallback, useEffect, useState, useRef, useMemo} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Text from '../../components/Text/Text';
 import {RootState} from '../../redux/store';
 import {useAppSelector} from '../../hooks/ReduxState.hook';
@@ -14,6 +14,7 @@ import {appcolors} from '../../utils/colors.util';
 import {IPDFBook} from '../../redux/slices/uploadedBooksSlice';
 import {IOpenDocProps} from './interfaces';
 import BottomSheet from '../../components/BottomSheet/BottomSheet';
+import {ReadIcon, ListenIcon} from '../../components/Icon/Icon';
 // import {usePDFViewer} from '../../providers/PDFViewerProvider';
 
 const pdfWidth = 120;
@@ -30,27 +31,27 @@ const UploadedPDFs = () => {
     // console.log(books);
   }, [books]);
 
-  const onOpen = () => {
-    setopenModal(true);
-  };
-
   const onDismiss = () => {
     setopenModal(false);
   };
 
-  const handleDocPress = useCallback((doc: IPDFBook) => {
-    // if (popupOpen) {
-    //   return;
-    // }
-    // setPopupOpen(true);
-    // setOpenDoc({title: doc.title});
-    onOpen;
-  }, []);
+  const handleDocPress = useCallback(
+    (doc: IPDFBook) => {
+      if (openModal) {
+        return;
+      }
+      // set bottom sheet details
+      setOpenDoc({title: doc.title});
+      // open modal
+      setopenModal(true);
+    },
+    [openModal],
+  );
 
   const renderPdfFiles: ListRenderItem<IPDFBook> = ({item}) => {
     return (
       <View style={styles.pdfContainer}>
-        <Pressable onPress={onOpen}>
+        <Pressable onPress={() => handleDocPress(item)}>
           <Image
             // source={item.thumbnail}
             source={require('../../assets/images/thumbnail.png')}
@@ -62,6 +63,39 @@ const UploadedPDFs = () => {
           {item.title.split('.pdf')}
         </Text>
         <View style={styles.progressBar} />
+      </View>
+    );
+  };
+
+  const BottomSheetContent = () => {
+    return (
+      <View>
+        <Image
+          source={require('../../assets/images/thumbnail.png')}
+          style={styles.bottomSheetThumbnail}
+          resizeMode="contain"
+        />
+        <Text weight="bold" style={styles.title}>
+          Title: {openDoc?.title.split('.pdf')}
+        </Text>
+
+        <View style={styles.sheetButtonsContainer}>
+          {/* Listen button */}
+          <Pressable style={styles.sheetButton}>
+            <Text weight="bold" style={styles.sheetText}>
+              Listen
+            </Text>
+            <ListenIcon />
+          </Pressable>
+
+          {/* Read button */}
+          <Pressable style={styles.sheetButton}>
+            <Text weight="bold" style={styles.sheetText}>
+              Read
+            </Text>
+            <ReadIcon />
+          </Pressable>
+        </View>
       </View>
     );
   };
@@ -91,7 +125,7 @@ const UploadedPDFs = () => {
       ) : null}
 
       <BottomSheet onDismiss={onDismiss} isVisible={openModal}>
-        <Text>hello</Text>
+        <BottomSheetContent />
       </BottomSheet>
     </View>
   );
@@ -116,6 +150,33 @@ const styles = StyleSheet.create({
     height: pdfHeight,
     borderRadius: 20,
     overflow: 'hidden',
+  },
+  title: {
+    alignSelf: 'center',
+  },
+
+  bottomSheetThumbnail: {
+    height: 150,
+    width: pdfWidth,
+    alignSelf: 'center',
+    overflow: 'hidden',
+  },
+  sheetButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 30,
+  },
+  sheetText: {
+    marginRight: 7,
+  },
+  sheetButton: {
+    backgroundColor: appcolors.grey,
+    borderRadius: 7,
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 40,
+    width: 120,
+    justifyContent: 'center',
   },
   pdfContainer: {
     marginRight: 20,

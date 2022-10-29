@@ -8,6 +8,8 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import React, {useRef, useEffect} from 'react';
+import {appcolors} from '../../utils/colors.util';
+import {useTheme} from '../../providers/ThemeProvider';
 
 interface IBottomSheetProps {
   isVisible: boolean;
@@ -18,6 +20,7 @@ interface IBottomSheetProps {
 const BottomSheet = ({isVisible, onDismiss, children}: IBottomSheetProps) => {
   const screenHeight = Dimensions.get('screen').height;
   const panY = useRef(new Animated.Value(screenHeight)).current;
+  const {isDarkTheme} = useTheme();
 
   const resetPositionAnim = Animated.timing(panY, {
     toValue: 0,
@@ -60,14 +63,20 @@ const BottomSheet = ({isVisible, onDismiss, children}: IBottomSheetProps) => {
 
   return (
     <Modal
-      animationType="fade"
+      animationType="slide"
       visible={isVisible}
       onRequestClose={handleDismiss}
       transparent>
       <TouchableWithoutFeedback onPress={handleDismiss}>
         <View style={styles.overlay}>
           <Animated.View
-            style={{...styles.container, transform: [{translateY: translateY}]}}
+            style={{
+              ...styles.container,
+              backgroundColor: isDarkTheme
+                ? appcolors.darkBackground
+                : appcolors.lightBackground,
+              transform: [{translateY: translateY}],
+            }}
             {...panResponders.panHandlers}>
             <View style={styles.sliderIndicatorRow}>
               <View style={styles.sliderIndicator} />
@@ -84,12 +93,11 @@ export default BottomSheet;
 
 const styles = StyleSheet.create({
   overlay: {
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(0,0,0,0.6)',
     flex: 1,
     justifyContent: 'flex-end',
   },
   container: {
-    backgroundColor: 'white',
     paddingTop: 12,
     paddingHorizontal: 12,
     borderTopRightRadius: 12,

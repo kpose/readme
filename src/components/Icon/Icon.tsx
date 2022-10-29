@@ -11,6 +11,8 @@ import HomeSvg from '../../assets/icons/home.svg';
 import SearchSvg from '../../assets/icons/search.svg';
 import DownloadSvg from '../../assets/icons/download.svg';
 import UserSvg from '../../assets/icons/user.svg';
+import ListenSVG from '../../assets/icons/listen.svg';
+import ReadSVG from '../../assets/icons/read.svg';
 
 import {appcolors} from '../../utils/colors.util';
 
@@ -179,6 +181,36 @@ export const UserIcon: React.FC<IconProps> = function UserIcon({
   );
 };
 
+export const ReadIcon: React.FC<IconProps> = function ReadIcon({
+  color,
+  size,
+  opacity,
+}) {
+  return (
+    <ReadSVG
+      fill={color || appcolors.primary}
+      width={size || 16}
+      height={size || 16}
+      opacity={opacity || 1}
+    />
+  );
+};
+
+export const ListenIcon: React.FC<IconProps> = function ListenIcon({
+  color,
+  size,
+  opacity,
+}) {
+  return (
+    <ListenSVG
+      fill={color || appcolors.primary}
+      width={size || 16}
+      height={size || 16}
+      opacity={opacity || 1}
+    />
+  );
+};
+
 export default {
   FolderIcon,
   CameraIcon,
@@ -191,4 +223,6 @@ export default {
   SearchIcon,
   DownloadIcon,
   UserIcon,
+  ReadIcon,
+  ListenIcon,
 };
