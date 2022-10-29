@@ -6,12 +6,13 @@ import {
   Pressable,
   ListRenderItem,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Text from '../Text/Text';
 import {RootState} from '../../redux/store';
 import {useAppSelector} from '../../hooks/ReduxState.hook';
 import {appcolors} from '../../utils/colors.util';
 import {IPDFBook} from '../../redux/slices/uploadedBooksSlice';
+import {IOpenDocProps} from './interfaces';
 // import {usePDFViewer} from '../../providers/PDFViewerProvider';
 
 const pdfWidth = 120;
@@ -19,16 +20,29 @@ const pdfHeight = 190;
 
 const UploadedPDFs = () => {
   const books = useAppSelector((state: RootState) => state.books);
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [openDoc, setOpenDoc] = useState<IOpenDocProps>();
   // const {openDocument} = usePDFViewer();
 
   useEffect(() => {
     // console.log(books);
   }, [books]);
 
+  const handleDocPress = useCallback(
+    (doc: IPDFBook) => {
+      if (popupOpen) {
+        return;
+      }
+      setPopupOpen(true);
+      setOpenDoc({title: doc.title});
+    },
+    [popupOpen],
+  );
+
   const renderPdfFiles: ListRenderItem<IPDFBook> = ({item}) => {
     return (
       <View style={styles.pdfContainer}>
-        <Pressable>
+        <Pressable onPress={() => handleDocPress(item)}>
           <Image
             // source={item.thumbnail}
             source={require('../../assets/images/thumbnail.png')}

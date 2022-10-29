@@ -60,6 +60,13 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
           let error = 'Please make sure you have selected a pdf document';
           return Promise.reject(error);
         }
+        const found = SAVEDBOOKS.some(doc => doc.title === filePath.name);
+        if (found) {
+          setIsUploading(false);
+          let error =
+            'This document already exist in your library, select another';
+          return Promise.reject(error);
+        }
         let data = new FormData();
         data.append('pdfFile', filePath);
 
@@ -77,21 +84,6 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         if (responseInJs.error) {
           return Promise.reject(responseInJs.error);
         }
-
-        // /* sort pdf pages in > order */
-        // responseInJs.data.sort(function (a, b) {
-        //   return a.pageNumber - b.pageNumber;
-        // });
-
-        // /* save book information to redux */
-        // const thumbnail = await PdfThumbnail.generate(filePath.uri, 0);
-        // let bookData: IPDFBook = {
-        //   name: filePath.name,
-        //   thumbnail,
-        //   id: getUniqueID(10),
-        //   bookData: responseInJs.data,
-        // };
-        // dispatch(updateBooks(bookData));
 
         setIsUploading(false);
         return Promise.resolve(
