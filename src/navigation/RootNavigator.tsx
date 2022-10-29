@@ -9,22 +9,25 @@ import {STORE_KEYS} from '../utils/Keys.util';
 
 export default function RootNavigator() {
   const {isDarkTheme} = useTheme();
-  // const [hasToken, setHasToken] = React.useState(false);
+  const [hasToken, setHasToken] = React.useState<boolean>();
 
-  // const getAuthToken = React.useCallback(async () => {
-  //   const token = await asyncGet(STORE_KEYS.AUTH_TOKEN);
-  //   if (token) {
-  //     setHasToken(true);
-  //   }
-  // }, []);
+  const getAuthToken = React.useCallback(async () => {
+    const token = await asyncGet(STORE_KEYS.AUTH_TOKEN);
+    if (token) {
+      setHasToken(true);
+    }
+  }, []);
 
-  // React.useEffect(() => {
-  //   getAuthToken();
-  // }, [getAuthToken]);
+  React.useEffect(() => {
+    getAuthToken();
+  }, [getAuthToken]);
 
-  return (
+  return hasToken ? (
     <NavigationContainer theme={isDarkTheme ? DarkTheme : LightTheme}>
-      {/* {hasToken ? <AppBottomTabs /> : <AuthStack />} */}
+      <AppBottomTabs />
+    </NavigationContainer>
+  ) : (
+    <NavigationContainer theme={isDarkTheme ? DarkTheme : LightTheme}>
       <AuthStack />
     </NavigationContainer>
   );
