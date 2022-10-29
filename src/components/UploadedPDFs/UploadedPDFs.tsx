@@ -61,7 +61,6 @@ const UploadedPDFs = () => {
             data={books}
             horizontal
             renderItem={renderPdfFiles}
-            // renderItem={({item}) => <RenderPdfFiles album={item} />}
             keyExtractor={item => item.id}
             contentContainerStyle={styles.pdfContent}
             showsHorizontalScrollIndicator={false}
