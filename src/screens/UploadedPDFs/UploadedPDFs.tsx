@@ -6,13 +6,14 @@ import {
   Pressable,
   ListRenderItem,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
-import Text from '../Text/Text';
+import React, {useCallback, useEffect, useState, useRef, useMemo} from 'react';
+import Text from '../../components/Text/Text';
 import {RootState} from '../../redux/store';
 import {useAppSelector} from '../../hooks/ReduxState.hook';
 import {appcolors} from '../../utils/colors.util';
 import {IPDFBook} from '../../redux/slices/uploadedBooksSlice';
 import {IOpenDocProps} from './interfaces';
+import BottomSheet from '../../components/BottomSheet/BottomSheet';
 // import {usePDFViewer} from '../../providers/PDFViewerProvider';
 
 const pdfWidth = 120;
@@ -20,29 +21,36 @@ const pdfHeight = 190;
 
 const UploadedPDFs = () => {
   const books = useAppSelector((state: RootState) => state.books);
-  const [popupOpen, setPopupOpen] = useState(false);
+  const [openModal, setopenModal] = useState<boolean>(false);
   const [openDoc, setOpenDoc] = useState<IOpenDocProps>();
+
   // const {openDocument} = usePDFViewer();
 
   useEffect(() => {
     // console.log(books);
   }, [books]);
 
-  const handleDocPress = useCallback(
-    (doc: IPDFBook) => {
-      if (popupOpen) {
-        return;
-      }
-      setPopupOpen(true);
-      setOpenDoc({title: doc.title});
-    },
-    [popupOpen],
-  );
+  const onOpen = () => {
+    setopenModal(true);
+  };
+
+  const onDismiss = () => {
+    setopenModal(false);
+  };
+
+  const handleDocPress = useCallback((doc: IPDFBook) => {
+    // if (popupOpen) {
+    //   return;
+    // }
+    // setPopupOpen(true);
+    // setOpenDoc({title: doc.title});
+    onOpen;
+  }, []);
 
   const renderPdfFiles: ListRenderItem<IPDFBook> = ({item}) => {
     return (
       <View style={styles.pdfContainer}>
-        <Pressable onPress={() => handleDocPress(item)}>
+        <Pressable onPress={onOpen}>
           <Image
             // source={item.thumbnail}
             source={require('../../assets/images/thumbnail.png')}
@@ -67,7 +75,7 @@ const UploadedPDFs = () => {
   }
 
   return (
-    <View>
+    <View style={styles.container}>
       {books.length ? (
         <View>
           <Text style={styles.heading}> Recently added </Text>
@@ -81,6 +89,10 @@ const UploadedPDFs = () => {
           />
         </View>
       ) : null}
+
+      <BottomSheet onDismiss={onDismiss} isVisible={openModal}>
+        <Text>hello</Text>
+      </BottomSheet>
     </View>
   );
 };
@@ -88,6 +100,9 @@ const UploadedPDFs = () => {
 export default UploadedPDFs;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   inputContainer: {
     height: 0.5,
     width: '100%',

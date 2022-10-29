@@ -10,6 +10,7 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
+    "@gorhom/bottom-sheet": "^4.4.5",
     "@pdftron/pdfnet-node": "^9.3.0",
     "@react-native-async-storage/async-storage": "^1.17.10",
     "@react-native-firebase/app": "^14.11.0",
@@ -43,7 +44,6 @@
     "react-redux": "^8.0.2",
     "redux-persist": "^6.0.0",
     "rn-fetch-blob": "^0.13.0-beta.2"
-
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
