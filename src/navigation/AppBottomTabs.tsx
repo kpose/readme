@@ -3,7 +3,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {IAppStackBottomTabList} from './interfaces';
 import {HomeIcon, UserIcon} from '../components/Icon/Icon';
 import {appcolors} from '../utils/colors.util';
-import DownloadStack from './DownloadStack';
+import HomeStack from './HomeStack';
 import ProfileStack from './ProfileStack';
 
 const Tab = createBottomTabNavigator<IAppStackBottomTabList>();
@@ -19,7 +19,7 @@ function AppBottomTabs() {
         },
         tabBarIcon: ({color, size}) => {
           switch (route.name) {
-            case 'DownloadStack':
+            case 'HomeStack':
               return <HomeIcon size={size} color={color} />;
             case 'ProfileStack':
               return <UserIcon size={size} color={color} />;
@@ -30,7 +30,7 @@ function AppBottomTabs() {
         tabBarActiveTintColor: appcolors.primary,
         tabBarInactiveTintColor: appcolors.grey,
       })}>
-      <Tab.Screen name="DownloadStack" component={DownloadStack} />
+      <Tab.Screen name="HomeStack" component={HomeStack} />
       <Tab.Screen name="ProfileStack" component={ProfileStack} />
     </Tab.Navigator>
   );

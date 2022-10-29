@@ -7,7 +7,7 @@ import {Alert, TouchableOpacity} from 'react-native';
 import Text from '../../components/Text/Text';
 import {usePDFViewer} from '../../providers/PDFViewerProvider';
 
-const DownloadScreen = () => {
+const HomeScreen = () => {
   const {uploadPDF, isUploadingPDF, getUserBooks} = useFileUpload();
   const {openDocument} = usePDFViewer();
 
@@ -62,4 +62,4 @@ const DownloadScreen = () => {
   );
 };
 
-export default DownloadScreen;
+export default HomeScreen;
