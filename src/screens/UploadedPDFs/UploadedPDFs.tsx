@@ -15,6 +15,7 @@ import {IPDFBook} from '../../redux/slices/uploadedBooksSlice';
 import {IOpenDocProps} from './interfaces';
 import BottomSheet from '../../components/BottomSheet/BottomSheet';
 import {ReadIcon, ListenIcon} from '../../components/Icon/Icon';
+import {useNavigation} from '@react-navigation/native';
 // import {usePDFViewer} from '../../providers/PDFViewerProvider';
 
 const pdfWidth = 120;
@@ -24,7 +25,7 @@ const UploadedPDFs = () => {
   const books = useAppSelector((state: RootState) => state.books);
   const [openModal, setopenModal] = useState<boolean>(false);
   const [openDoc, setOpenDoc] = useState<IOpenDocProps>();
-
+  const navigation = useNavigation();
   // const {openDocument} = usePDFViewer();
 
   useEffect(() => {
@@ -48,24 +49,17 @@ const UploadedPDFs = () => {
     [openModal],
   );
 
-  const renderPdfFiles: ListRenderItem<IPDFBook> = ({item}) => {
-    return (
-      <View style={styles.pdfContainer}>
-        <Pressable onPress={() => handleDocPress(item)}>
-          <Image
-            // source={item.thumbnail}
-            source={require('../../assets/images/thumbnail.png')}
-            style={styles.thumbnailImage}
-            resizeMode="contain"
-          />
-        </Pressable>
-        <Text numberOfLines={1} style={styles.pdfTitle}>
-          {item.title.split('.pdf')}
-        </Text>
-        <View style={styles.progressBar} />
-      </View>
+  const onReadPress = useCallback(() => {
+    console.log('reading');
+  }, []);
+
+  const onListenPress = useCallback(() => {
+    setopenModal(false);
+    navigation.navigate(
+      'ListenScreen' as never,
+      {title: openDoc?.title} as never,
     );
-  };
+  }, [navigation, openDoc?.title]);
 
   const BottomSheetContent = () => {
     return (
@@ -81,7 +75,7 @@ const UploadedPDFs = () => {
 
         <View style={styles.sheetButtonsContainer}>
           {/* Listen button */}
-          <Pressable style={styles.sheetButton}>
+          <Pressable style={styles.sheetButton} onPress={onListenPress}>
             <Text weight="bold" style={styles.sheetText}>
               Listen
             </Text>
@@ -89,7 +83,7 @@ const UploadedPDFs = () => {
           </Pressable>
 
           {/* Read button */}
-          <Pressable style={styles.sheetButton}>
+          <Pressable style={styles.sheetButton} onPress={onReadPress}>
             <Text weight="bold" style={styles.sheetText}>
               Read
             </Text>
@@ -97,6 +91,25 @@ const UploadedPDFs = () => {
           </Pressable>
         </View>
       </View>
+    );
+  };
+
+  const renderPdfFiles: ListRenderItem<IPDFBook> = ({item}) => {
+    return (
+      <Pressable
+        style={styles.pdfContainer}
+        onPress={() => handleDocPress(item)}>
+        <Image
+          // source={item.thumbnail}
+          source={require('../../assets/images/thumbnail.png')}
+          style={styles.thumbnailImage}
+          resizeMode="contain"
+        />
+        <Text numberOfLines={1} style={styles.pdfTitle}>
+          {item.title.split('.pdf')}
+        </Text>
+        <View style={styles.progressBar} />
+      </Pressable>
     );
   };
 

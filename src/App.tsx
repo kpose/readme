@@ -9,6 +9,7 @@ import {Provider as ReduxProvider} from 'react-redux';
 import {store, persistor} from './redux/store';
 import {PersistGate} from 'redux-persist/integration/react';
 import {FileUploadProvider} from './providers/FileUploadProvider';
+import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 
 const App = () => {
   return (
@@ -20,7 +21,9 @@ const App = () => {
               <SpeachProvider>
                 <PDFViewerProvider>
                   <FileUploadProvider>
-                    <RootNavigator />
+                    <BottomSheetModalProvider>
+                      <RootNavigator />
+                    </BottomSheetModalProvider>
                   </FileUploadProvider>
                 </PDFViewerProvider>
               </SpeachProvider>
