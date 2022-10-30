@@ -7,6 +7,8 @@ export const appcolors = {
   secondary: '#FEFAE0',
   lightBackground: '#DEE4E7',
   darkBackground: '#263238',
+  darkGrey: '#4C4E52',
+  lightGrey: '#ABB0B8',
 };
 
 export const DarkTheme = {

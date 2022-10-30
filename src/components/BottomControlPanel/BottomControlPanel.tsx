@@ -1,9 +1,20 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
+import {useTheme} from '../../providers/ThemeProvider';
+import {appcolors} from '../../utils/colors.util';
 
 const BottomControlPanel = () => {
+  const {isDarkTheme} = useTheme();
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: isDarkTheme
+            ? appcolors.darkGrey
+            : appcolors.lightGrey,
+        },
+      ]}>
       <Text>BottomControlPanel</Text>
     </View>
   );
@@ -17,7 +28,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: 200,
-    backgroundColor: 'red',
+    height: 100,
   },
 });

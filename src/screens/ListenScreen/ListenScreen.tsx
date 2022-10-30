@@ -1,7 +1,7 @@
 import {StyleSheet, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {IListenScreenProps} from './interfaces';
-import Screen from '../../components/Screen/Screen';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import Text from '../../components/Text/Text';
 import {useAppSelector} from '../../hooks/ReduxState.hook';
 import {RootState} from '../../redux/store';
@@ -21,10 +21,10 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
   }, [books, route.params.title]);
 
   return (
-    <Screen style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text>{doc?.title}</Text>
       <BottomControlPanel />
-    </Screen>
+    </SafeAreaView>
   );
 };
 
@@ -33,5 +33,6 @@ export default ListenScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 20,
   },
 });
