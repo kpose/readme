@@ -1,10 +1,27 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {Pressable, StyleSheet, useWindowDimensions, View} from 'react-native';
 import React from 'react';
 import {useTheme} from '../../providers/ThemeProvider';
 import {appcolors} from '../../utils/colors.util';
+import {IBottomControlPanelProps} from './interfaces';
+import Text from '../Text/Text';
+import {
+  RewindIcon,
+  FastForwardIcon,
+  PlayIcon,
+  MicrophoneIcon,
+} from '../Icon/Icon';
 
-const BottomControlPanel = () => {
+const ICON_SIZE = 24;
+
+const BottomControlPanel = ({
+  onBackwardPress,
+  onForwardPress,
+  onPlayPress,
+  onSpeakerPress,
+  onSpeedPress,
+}: IBottomControlPanelProps) => {
   const {isDarkTheme} = useTheme();
+  const {width} = useWindowDimensions();
   return (
     <View
       style={[
@@ -15,7 +32,40 @@ const BottomControlPanel = () => {
             : appcolors.lightGrey,
         },
       ]}>
-      <Text>BottomControlPanel</Text>
+      <Pressable onPress={onSpeakerPress}>
+        <MicrophoneIcon
+          size={ICON_SIZE}
+          color={isDarkTheme ? appcolors.lightGrey : appcolors.darkGrey}
+        />
+      </Pressable>
+
+      {/* controls */}
+      <View style={[styles.ctrlContainer, {width: width / 3}]}>
+        <Pressable onPress={onBackwardPress} style={styles.playContainer}>
+          <RewindIcon
+            size={ICON_SIZE}
+            color={isDarkTheme ? appcolors.lightGrey : appcolors.darkGrey}
+          />
+        </Pressable>
+        <Pressable
+          onPress={onPlayPress}
+          style={[styles.playContainer, {backgroundColor: appcolors.primary}]}>
+          <PlayIcon
+            size={ICON_SIZE}
+            color={isDarkTheme ? appcolors.lightGrey : appcolors.darkGrey}
+          />
+        </Pressable>
+        <Pressable onPress={onForwardPress} style={styles.playContainer}>
+          <FastForwardIcon
+            size={ICON_SIZE}
+            color={isDarkTheme ? appcolors.lightGrey : appcolors.darkGrey}
+          />
+        </Pressable>
+      </View>
+
+      <Pressable onPress={onSpeedPress}>
+        <Text weight="bold">1.1X</Text>
+      </Pressable>
     </View>
   );
 };
@@ -28,6 +78,20 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: 100,
+    height: 90,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  ctrlContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  playContainer: {
+    borderRadius: 50,
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
