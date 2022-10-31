@@ -5,10 +5,11 @@ import {
   ListRenderItem,
   useWindowDimensions,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {IListenScreenProps} from './interfaces';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Text, {ScreenTitle} from '../../components/Text/Text';
+import SpeachText from '../../components/Text/SpeachText';
 
 import {useAppSelector} from '../../hooks/ReduxState.hook';
 import {RootState} from '../../redux/store';
@@ -23,6 +24,7 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
   const ITEM_HEIGHT = 65; // fixed height of item component
   const {height} = useWindowDimensions();
   const {startSpeach} = useSpeach();
+  //   const messageRef = useRef<IPDFBookData>();
 
   useEffect(() => {
     if (!books.length) {
@@ -32,9 +34,30 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
     setDoc(book);
   }, [books, route.params.title]);
 
+  //   useEffect(() => {
+  //     if (!doc) {
+  //       return;
+  //     }
+  //     const book = doc;
+  //     messageRef.current = book.bookData;
+  //   }, [doc]);
+
+  /* Speach Controls */
   const onPlayPress = useCallback(() => {
-    setTimeout(() => startSpeach('hello, we are speaking'), 500);
-  }, [startSpeach]);
+    if (!doc) {
+      return;
+    }
+    // check here if user already started
+    // reading, then start from last word location
+
+    const book = doc.bookData;
+    startSpeach(book[2].text);
+    // book.forEach((page, index) => {
+    //   setTimeout(() => {
+    //     startSpeach(page.text);
+    //   }, index * 1000);
+    // });
+  }, [doc, startSpeach]);
 
   /* Flatlist components */
   const keyExtractor = _ => `${_._id}`;
@@ -55,7 +78,8 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
           {'Page: '}
           {item.pageNumber}
         </Text>
-        <Text style={styles.textContent}>{item.text}</Text>
+        <SpeachText text={item.text} />
+        {/* <SpeachText style={styles.textContent}>{item.text}  /></SpeachText> */}
       </View>
     );
   };
@@ -90,11 +114,7 @@ const styles = StyleSheet.create({
   docContentContainer: {
     flex: 1,
   },
-  textContent: {
-    lineHeight: 30,
 
-    flex: 1,
-  },
   pageNumber: {
     alignSelf: 'center',
     marginVertical: 10,
@@ -104,6 +124,7 @@ const styles = StyleSheet.create({
     backgroundColor: appcolors.secondary,
     height: 1,
     borderRadius: 10,
+    marginVertical: 30,
   },
 
   readerContainer: {
