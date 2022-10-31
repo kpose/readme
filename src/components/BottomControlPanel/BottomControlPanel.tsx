@@ -9,6 +9,7 @@ import {
   FastForwardIcon,
   PlayIcon,
   MicrophoneIcon,
+  PauseIcon,
 } from '../Icon/Icon';
 
 const ICON_SIZE = 24;
@@ -40,7 +41,7 @@ const BottomControlPanel = ({
       </Pressable>
 
       {/* controls */}
-      <View style={[styles.ctrlContainer, {width: width / 3}]}>
+      <View style={[styles.ctrlContainer, {width: width / 2.5}]}>
         <Pressable onPress={onBackwardPress} style={styles.playContainer}>
           <RewindIcon
             size={ICON_SIZE}
@@ -78,7 +79,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: 90,
+    height: 100,
     paddingHorizontal: 20,
     alignItems: 'center',
     flexDirection: 'row',
@@ -90,7 +91,8 @@ const styles = StyleSheet.create({
   },
   playContainer: {
     borderRadius: 50,
-    padding: 10,
+    height: 50,
+    width: 50,
     alignItems: 'center',
     justifyContent: 'center',
   },

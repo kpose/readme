@@ -2,12 +2,17 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import type {RootState} from '../store';
 import {ThumbnailResult} from 'react-native-pdf-thumbnail';
 
+export interface IPDFBookData {
+  pageNumber: number;
+  text: string;
+  _id?: string;
+}
 export interface IPDFBook {
   title: string;
   thumbnail?: ThumbnailResult;
   id: string;
   url: string;
-  bookData: {pagenumber: number; text: string}[];
+  bookData: IPDFBookData[];
 }
 interface IUploadedBooksState {
   books: IPDFBook[];
