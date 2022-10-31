@@ -2,6 +2,7 @@ import React, {FC, useCallback} from 'react';
 import Text from './Text';
 import {View} from 'react-native';
 import {useSpeach} from '../../providers/SpeachProvider';
+import {appcolors} from '../../utils/colors.util';
 
 interface ISpeachTextProps {
   text: string;
@@ -44,7 +45,7 @@ const SpeachText: FC<ISpeachTextProps> = ({text}) => {
           if (position.currentWord === t && position.wordIndex === index) {
             return (
               // eslint-disable-next-line react-native/no-inline-styles
-              <Text style={{color: 'red'}} key={index}>
+              <Text style={{color: appcolors.primary}} key={index}>
                 {t}{' '}
               </Text>
             );

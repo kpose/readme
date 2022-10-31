@@ -5,7 +5,7 @@ import {
   ListRenderItem,
   useWindowDimensions,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {IListenScreenProps} from './interfaces';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Text, {ScreenTitle} from '../../components/Text/Text';
@@ -15,12 +15,14 @@ import {RootState} from '../../redux/store';
 import {IPDFBook, IPDFBookData} from '../../redux/slices/uploadedBooksSlice';
 import BottomControlPanel from '../../components/BottomControlPanel/BottomControlPanel';
 import {appcolors} from '../../utils/colors.util';
+import {useSpeach} from '../../providers/SpeachProvider';
 
 const ListenScreen = ({navigation, route}: IListenScreenProps) => {
   const books = useAppSelector((state: RootState) => state.books);
   const [doc, setDoc] = useState<IPDFBook>();
   const ITEM_HEIGHT = 65; // fixed height of item component
   const {height} = useWindowDimensions();
+  const {startSpeach} = useSpeach();
 
   useEffect(() => {
     if (!books.length) {
@@ -30,6 +32,11 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
     setDoc(book);
   }, [books, route.params.title]);
 
+  const onPlayPress = useCallback(() => {
+    setTimeout(() => startSpeach('hello, we are speaking'), 500);
+  }, [startSpeach]);
+
+  /* Flatlist components */
   const keyExtractor = _ => `${_._id}`;
   const getItemLayout = (data, index) => {
     return {
@@ -38,11 +45,9 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
       index,
     };
   };
-
   const itemSeperator = () => {
     return <View style={styles.itemSeperator} />;
   };
-
   const renderDocContent: ListRenderItem<IPDFBookData> = ({item}) => {
     return (
       <View style={[styles.docContentContainer, {height: height / 1.3}]}>
@@ -71,7 +76,7 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
         />
       </View>
 
-      <BottomControlPanel />
+      <BottomControlPanel onPlayPress={onPlayPress} />
     </SafeAreaView>
   );
 };

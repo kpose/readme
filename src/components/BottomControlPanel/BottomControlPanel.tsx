@@ -11,6 +11,7 @@ import {
   MicrophoneIcon,
   PauseIcon,
 } from '../Icon/Icon';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const ICON_SIZE = 24;
 
@@ -33,40 +34,42 @@ const BottomControlPanel = ({
             : appcolors.lightGrey,
         },
       ]}>
-      <Pressable onPress={onSpeakerPress}>
+      <TouchableOpacity onPress={onSpeakerPress}>
         <MicrophoneIcon
           size={ICON_SIZE}
           color={isDarkTheme ? appcolors.lightGrey : appcolors.darkGrey}
         />
-      </Pressable>
+      </TouchableOpacity>
 
       {/* controls */}
       <View style={[styles.ctrlContainer, {width: width / 2.5}]}>
-        <Pressable onPress={onBackwardPress} style={styles.playContainer}>
+        <TouchableOpacity
+          onPress={onBackwardPress}
+          style={styles.playContainer}>
           <RewindIcon
             size={ICON_SIZE}
             color={isDarkTheme ? appcolors.lightGrey : appcolors.darkGrey}
           />
-        </Pressable>
-        <Pressable
+        </TouchableOpacity>
+        <TouchableOpacity
           onPress={onPlayPress}
           style={[styles.playContainer, {backgroundColor: appcolors.primary}]}>
           <PlayIcon
             size={ICON_SIZE}
             color={isDarkTheme ? appcolors.lightGrey : appcolors.darkGrey}
           />
-        </Pressable>
-        <Pressable onPress={onForwardPress} style={styles.playContainer}>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={onForwardPress} style={styles.playContainer}>
           <FastForwardIcon
             size={ICON_SIZE}
             color={isDarkTheme ? appcolors.lightGrey : appcolors.darkGrey}
           />
-        </Pressable>
+        </TouchableOpacity>
       </View>
 
-      <Pressable onPress={onSpeedPress}>
+      <TouchableOpacity onPress={onSpeedPress}>
         <Text weight="bold">1.1X</Text>
-      </Pressable>
+      </TouchableOpacity>
     </View>
   );
 };

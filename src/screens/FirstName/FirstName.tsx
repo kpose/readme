@@ -58,7 +58,7 @@ const FirstName = ({navigation}: IFirstNameScreenProps) => {
 
   return (
     <Screen>
-      <SpeachTextTitle title={title} />
+      <SpeachTextTitle text={title} />
 
       <TextInput
         style={[
