@@ -144,6 +144,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
           id: getUniqueID(10),
           url: newBook.url,
           bookData: newBook.content,
+          listening: {currentPage: 1},
         };
         dispatch(updateBooks(bookData));
       }

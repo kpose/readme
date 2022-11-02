@@ -19,6 +19,7 @@ export interface ISpeachContext {
   currentVoice?: ISpeachVoice;
   speachLocation?: ISpeachCurrentWordProps;
   isReading?: boolean;
+  isFinishedReading?: boolean;
 }
 
 export interface ISpeachVoice {
@@ -42,7 +43,8 @@ const SpeachContext = createContext<ISpeachContext>({
 export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
   const [ttsvoices, setTtsVoices] = useState<ISpeachVoice[]>();
   const [selectedVoice, setSelectedVoice] = useState<ISpeachVoice>();
-  const [isReading, setIsReading] = useState(true);
+  const [isReading, setIsReading] = useState(false);
+  const [isFinishedReading, setIsFinishedReading] = useState(false);
   const [speachRate, setSpeachRate] = useState<number>(0.5);
   const [speachPitch, setSpeachPitch] = useState<number>(1);
   const [currentWord, setcurrentWord] = useState<ISpeachCurrentWordProps>();
@@ -80,16 +82,20 @@ export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
   useEffect(() => {
     const onStart = Tts.addEventListener('tts-start', () => {
       setIsReading(true);
+      setIsFinishedReading(false);
     });
     const onFinish = Tts.addEventListener('tts-finish', () => {
       setIsReading(false);
+      setIsFinishedReading(true);
     });
     const onCancel = Tts.addEventListener('tts-cancel', () => {
       setIsReading(false);
+      setIsFinishedReading(true);
     });
 
     const onProgress = Tts.addEventListener('tts-progress', value => {
       setcurrentWord(value);
+      setIsFinishedReading(false);
     });
 
     Tts.setDefaultRate(speachRate);
@@ -122,6 +128,7 @@ export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
         currentVoice: selectedVoice,
         speachLocation: currentWord,
         isReading: isReading,
+        isFinishedReading: isFinishedReading,
       }}>
       {children}
     </SpeachContext.Provider>

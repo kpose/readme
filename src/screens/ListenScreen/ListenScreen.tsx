@@ -11,9 +11,13 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import Text, {ScreenTitle} from '../../components/Text/Text';
 import SpeachText from '../../components/Text/SpeachText';
 
-import {useAppSelector} from '../../hooks/ReduxState.hook';
+import {useAppDispatch, useAppSelector} from '../../hooks/ReduxState.hook';
 import {RootState} from '../../redux/store';
-import {IPDFBook, IPDFBookData} from '../../redux/slices/uploadedBooksSlice';
+import {
+  IPDFBook,
+  IPDFBookData,
+  updateListening,
+} from '../../redux/slices/uploadedBooksSlice';
 import BottomControlPanel from '../../components/BottomControlPanel/BottomControlPanel';
 import {appcolors} from '../../utils/colors.util';
 import {useSpeach} from '../../providers/SpeachProvider';
@@ -21,10 +25,11 @@ import {useSpeach} from '../../providers/SpeachProvider';
 const ListenScreen = ({navigation, route}: IListenScreenProps) => {
   const books = useAppSelector((state: RootState) => state.books);
   const [doc, setDoc] = useState<IPDFBook>();
-  const ITEM_HEIGHT = 65; // fixed height of item component
+  const ITEM_HEIGHT = 65;
   const {height} = useWindowDimensions();
-  const {startSpeach} = useSpeach();
-  //   const messageRef = useRef<IPDFBookData>();
+  const {startSpeach, isReading, isFinishedReading} = useSpeach();
+  const flatListRef = useRef(null);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (!books.length) {
@@ -34,30 +39,51 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
     setDoc(book);
   }, [books, route.params.title]);
 
-  //   useEffect(() => {
-  //     if (!doc) {
-  //       return;
-  //     }
-  //     const book = doc;
-  //     messageRef.current = book.bookData;
-  //   }, [doc]);
-
   /* Speach Controls */
-  const onPlayPress = useCallback(() => {
-    if (!doc) {
+  const onPlayPress = useCallback(
+    (page?: number) => {
+      if (!doc) {
+        return;
+      }
+
+      // check here if user already started
+      // reading, then start from last word location
+
+      const book = doc.bookData;
+      const curretPage = doc.listening.currentPage;
+
+      let pageNumber = page || curretPage;
+
+      setTimeout(() => {
+        startSpeach(book[pageNumber].text);
+      }, 1000);
+    },
+    [doc, startSpeach],
+  );
+
+  useEffect(() => {
+    if (isReading) {
       return;
     }
-    // check here if user already started
-    // reading, then start from last word location
+    if (isFinishedReading) {
+      if (!books.length) {
+        return;
+      }
+      const book = books.find(x => x.title === route.params.title);
+      if (!book) {
+        return;
+      }
+      let currentPage = book.listening.currentPage;
 
-    const book = doc.bookData;
-    startSpeach(book[2].text);
-    // book.forEach((page, index) => {
-    //   setTimeout(() => {
-    //     startSpeach(page.text);
-    //   }, index * 1000);
-    // });
-  }, [doc, startSpeach]);
+      dispatch(
+        updateListening({
+          id: book.id,
+          currentPage: currentPage + 1,
+        }),
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFinishedReading]);
 
   /* Flatlist components */
   const keyExtractor = _ => `${_._id}`;
@@ -92,6 +118,7 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
         </ScreenTitle>
 
         <FlatList
+          ref={flatListRef}
           data={doc?.bookData}
           renderItem={renderDocContent}
           keyExtractor={keyExtractor}
