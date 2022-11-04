@@ -54,36 +54,34 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
 
       let pageNumber = page || curretPage;
 
-      setTimeout(() => {
-        startSpeach(book[pageNumber].text);
-      }, 1000);
+      startSpeach(book[pageNumber].text);
     },
     [doc, startSpeach],
   );
 
-  useEffect(() => {
-    if (isReading) {
-      return;
-    }
-    if (isFinishedReading) {
-      if (!books.length) {
-        return;
-      }
-      const book = books.find(x => x.title === route.params.title);
-      if (!book) {
-        return;
-      }
-      let currentPage = book.listening.currentPage;
+  // useEffect(() => {
+  //   if (isReading) {
+  //     return;
+  //   }
+  //   if (isFinishedReading) {
+  //     if (!books.length) {
+  //       return;
+  //     }
+  //     const book = books.find(x => x.title === route.params.title);
+  //     if (!book) {
+  //       return;
+  //     }
+  //     let currentPage = book.listening.currentPage;
 
-      dispatch(
-        updateListening({
-          id: book.id,
-          currentPage: currentPage + 1,
-        }),
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFinishedReading]);
+  //     dispatch(
+  //       updateListening({
+  //         id: book.id,
+  //         currentPage: currentPage + 1,
+  //       }),
+  //     );
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [isFinishedReading]);
 
   /* Flatlist components */
   const keyExtractor = _ => `${_._id}`;
@@ -117,6 +115,8 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
           {doc?.title.split('.pdf')}
         </ScreenTitle>
 
+        <SpeachText text="hello, how are you doing?" />
+
         <FlatList
           ref={flatListRef}
           data={doc?.bookData}
@@ -127,7 +127,11 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
         />
       </View>
 
-      <BottomControlPanel onPlayPress={onPlayPress} />
+      <BottomControlPanel
+        /* onPlayPress={onPlayPress} */ onPlayPress={() =>
+          startSpeach('hello, how are you doing?')
+        }
+      />
     </SafeAreaView>
   );
 };

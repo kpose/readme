@@ -26,6 +26,8 @@ const SpeachText: FC<ISpeachTextProps> = ({text}) => {
     const textArray = text.split(' ');
     const currentWord = text.slice(startPosition, finishPosition);
 
+    console.log(currentWord);
+
     const wordIndex = textArray.indexOf(currentWord);
 
     const word: ICurrentWordPosition = {currentWord, wordIndex};
