@@ -1,12 +1,12 @@
 import React, {FC, useCallback} from 'react';
 import Text from './Text';
-import {StyleSheet, TextProps, TextStyle, View} from 'react-native';
+import {StyleSheet, TextProps, View} from 'react-native';
 import {useSpeach} from '../../providers/SpeachProvider';
 import {appcolors} from '../../utils/colors.util';
 
-interface ISpeachTextProps {
+interface ISpeachTextProps extends TextProps {
   text: string;
-  // style: TextStyle;
+  active: boolean;
 }
 
 interface ICurrentWordPosition {
@@ -14,39 +14,36 @@ interface ICurrentWordPosition {
   wordIndex: number;
 }
 
-const SpeachText: FC<ISpeachTextProps> = ({text}) => {
+const SpeachText: FC<ISpeachTextProps> = ({text, active, ...props}) => {
   const {speachLocation} = useSpeach();
 
   const wordPosition = useCallback(() => {
     if (!text || !speachLocation) {
       return {currentWord: '', wordIndex: ''};
     }
-    const startPosition = speachLocation.location;
-    const finishPosition = speachLocation.location + speachLocation.length;
-    const textArray = text.split(' ');
-    const currentWord = text.slice(startPosition, finishPosition);
+    let startPosition = speachLocation.location;
+    let finishPosition = speachLocation.location + speachLocation.length;
+    let textArray = text.split(' ');
+    let currentWord = text.slice(startPosition, finishPosition);
+    let wordIndex = textArray.indexOf(currentWord);
 
-    console.log(currentWord);
-
-    const wordIndex = textArray.indexOf(currentWord);
-
-    const word: ICurrentWordPosition = {currentWord, wordIndex};
+    let word: ICurrentWordPosition = {currentWord, wordIndex};
     return word;
   }, [speachLocation, text]);
 
   const renderAnimatedText = useCallback(() => {
-    if (!text.length) {
+    if (!text.length || !active) {
       return;
     }
     return (
-      <Text>
+      <Text {...props}>
         {text.split(' ').map((t, index) => {
           const position = wordPosition();
           // console.log(position);
           if (position.currentWord === t && position.wordIndex === index) {
             return (
-              // eslint-disable-next-line react-native/no-inline-styles
               <Text
+                {...props}
                 style={[styles.textContent, {color: appcolors.primary}]}
                 key={index}>
                 {t}{' '}
@@ -54,8 +51,7 @@ const SpeachText: FC<ISpeachTextProps> = ({text}) => {
             );
           }
           return (
-            // eslint-disable-next-line react-native/no-inline-styles
-            <Text style={styles.textContent} key={index}>
+            <Text {...props} style={styles.textContent} key={index}>
               {`${t} `}
             </Text>
           );
@@ -63,7 +59,7 @@ const SpeachText: FC<ISpeachTextProps> = ({text}) => {
         })}
       </Text>
     );
-  }, [wordPosition, text]);
+  }, [text, active, props, wordPosition]);
 
   return <View>{renderAnimatedText()}</View>;
 };

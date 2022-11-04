@@ -25,6 +25,7 @@ import {useSpeach} from '../../providers/SpeachProvider';
 const ListenScreen = ({navigation, route}: IListenScreenProps) => {
   const books = useAppSelector((state: RootState) => state.books);
   const [doc, setDoc] = useState<IPDFBook>();
+  const [isReadingChapter, setIsReadingChapter] = useState(false);
   const ITEM_HEIGHT = 65;
   const {height} = useWindowDimensions();
   const {startSpeach, isReading, isFinishedReading} = useSpeach();
@@ -35,6 +36,7 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
     if (!books.length) {
       return;
     }
+    setIsReadingChapter(true);
     const book = books.find(x => x.title === route.params.title);
     setDoc(book);
   }, [books, route.params.title]);
@@ -52,6 +54,8 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
       const book = doc.bookData;
       const curretPage = doc.listening.currentPage;
 
+      console.log(curretPage);
+
       let pageNumber = page || curretPage;
 
       startSpeach(book[pageNumber].text);
@@ -59,29 +63,29 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
     [doc, startSpeach],
   );
 
-  // useEffect(() => {
-  //   if (isReading) {
-  //     return;
-  //   }
-  //   if (isFinishedReading) {
-  //     if (!books.length) {
-  //       return;
-  //     }
-  //     const book = books.find(x => x.title === route.params.title);
-  //     if (!book) {
-  //       return;
-  //     }
-  //     let currentPage = book.listening.currentPage;
+  useEffect(() => {
+    if (isReading) {
+      return;
+    }
+    if (isFinishedReading) {
+      if (!books.length) {
+        return;
+      }
+      const book = books.find(x => x.title === route.params.title);
+      if (!book) {
+        return;
+      }
+      let currentPage = book.listening.currentPage;
 
-  //     dispatch(
-  //       updateListening({
-  //         id: book.id,
-  //         currentPage: currentPage + 1,
-  //       }),
-  //     );
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [isFinishedReading]);
+      dispatch(
+        updateListening({
+          id: book.id,
+          currentPage: currentPage + 1,
+        }),
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFinishedReading]);
 
   /* Flatlist components */
   const keyExtractor = _ => `${_._id}`;
@@ -102,8 +106,7 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
           {'Page: '}
           {item.pageNumber}
         </Text>
-        <SpeachText text={item.text} />
-        {/* <SpeachText style={styles.textContent}>{item.text}  /></SpeachText> */}
+        <SpeachText text={item.text} active={isReadingChapter} />
       </View>
     );
   };
@@ -115,8 +118,6 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
           {doc?.title.split('.pdf')}
         </ScreenTitle>
 
-        <SpeachText text="hello, how are you doing?" />
-
         <FlatList
           ref={flatListRef}
           data={doc?.bookData}
@@ -127,11 +128,7 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
         />
       </View>
 
-      <BottomControlPanel
-        /* onPlayPress={onPlayPress} */ onPlayPress={() =>
-          startSpeach('hello, how are you doing?')
-        }
-      />
+      <BottomControlPanel onPlayPress={onPlayPress} />
     </SafeAreaView>
   );
 };

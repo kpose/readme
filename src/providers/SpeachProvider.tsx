@@ -110,10 +110,15 @@ export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
     };
   }, [initTts, speachPitch, speachRate]);
 
-  const startSpeach = useCallback(async (data: string) => {
-    Tts.stop();
-    Tts.speak(data);
-  }, []);
+  const startSpeach = useCallback(
+    async (data: string) => {
+      if (isReading) {
+        Tts.stop();
+      }
+      Tts.speak(data);
+    },
+    [isReading],
+  );
 
   const pauseSpeach = useCallback(() => {
     console.log('kkkkk');

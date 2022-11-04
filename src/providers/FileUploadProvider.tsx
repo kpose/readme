@@ -106,7 +106,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         return;
       }
     }
-  }, []);
+  }, [SAVEDBOOKS]);
 
   const getAllUserBooks = useCallback(async () => {
     try {
