@@ -1,17 +1,10 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {IAppStackBottomTabList} from './interfaces';
-import {
-  DownloadIcon,
-  HomeIcon,
-  SearchIcon,
-  UserIcon,
-} from '../components/Icon/Icon';
+import {HomeIcon, UserIcon} from '../components/Icon/Icon';
 import {appcolors} from '../utils/colors.util';
-import HomeStack from './HomeStack';
-import SearchStack from './SearchStack';
-import DownloadStack from './DownloadStack';
 import ProfileStack from './ProfileStack';
+import HomeScreen from '../screens/HomeStack/HomeStack';
 
 const Tab = createBottomTabNavigator<IAppStackBottomTabList>();
 
@@ -26,12 +19,8 @@ function AppBottomTabs() {
         },
         tabBarIcon: ({color, size}) => {
           switch (route.name) {
-            case 'HomeStack':
+            case 'Home':
               return <HomeIcon size={size} color={color} />;
-            case 'SearchStack':
-              return <SearchIcon size={size} color={color} />;
-            case 'DownloadStack':
-              return <DownloadIcon size={size} color={color} />;
             case 'ProfileStack':
               return <UserIcon size={size} color={color} />;
             default:
@@ -41,9 +30,7 @@ function AppBottomTabs() {
         tabBarActiveTintColor: appcolors.primary,
         tabBarInactiveTintColor: appcolors.grey,
       })}>
-      <Tab.Screen name="HomeStack" component={HomeStack} />
-      <Tab.Screen name="SearchStack" component={SearchStack} />
-      <Tab.Screen name="DownloadStack" component={DownloadStack} />
+      <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="ProfileStack" component={ProfileStack} />
     </Tab.Navigator>
   );

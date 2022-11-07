@@ -11,6 +11,13 @@ import HomeSvg from '../../assets/icons/home.svg';
 import SearchSvg from '../../assets/icons/search.svg';
 import DownloadSvg from '../../assets/icons/download.svg';
 import UserSvg from '../../assets/icons/user.svg';
+import ListenSVG from '../../assets/icons/listen.svg';
+import ReadSVG from '../../assets/icons/read.svg';
+import FastForwardSVG from '../../assets/icons/fastforward.svg';
+import MicrophoneSVG from '../../assets/icons/microphone.svg';
+import PauseSVG from '../../assets/icons/pause.svg';
+import PlaySVG from '../../assets/icons/play.svg';
+import RewindSVG from '../../assets/icons/rewind.svg';
 
 import {appcolors} from '../../utils/colors.util';
 
@@ -179,6 +186,111 @@ export const UserIcon: React.FC<IconProps> = function UserIcon({
   );
 };
 
+export const ReadIcon: React.FC<IconProps> = function ReadIcon({
+  color,
+  size,
+  opacity,
+}) {
+  return (
+    <ReadSVG
+      fill={color || appcolors.primary}
+      width={size || 16}
+      height={size || 16}
+      opacity={opacity || 1}
+    />
+  );
+};
+
+export const FastForwardIcon: React.FC<IconProps> = function FastForwardIcon({
+  color,
+  size,
+  opacity,
+}) {
+  return (
+    <FastForwardSVG
+      fill={color || appcolors.primary}
+      width={size || 16}
+      height={size || 16}
+      opacity={opacity || 1}
+    />
+  );
+};
+
+export const MicrophoneIcon: React.FC<IconProps> = function MicrophoneIcon({
+  color,
+  size,
+  opacity,
+}) {
+  return (
+    <MicrophoneSVG
+      fill={color || appcolors.primary}
+      width={size || 16}
+      height={size || 16}
+      opacity={opacity || 1}
+    />
+  );
+};
+
+export const PauseIcon: React.FC<IconProps> = function PauseIcon({
+  color,
+  size,
+  opacity,
+}) {
+  return (
+    <PauseSVG
+      fill={color || appcolors.primary}
+      width={size || 16}
+      height={size || 16}
+      opacity={opacity || 1}
+    />
+  );
+};
+
+export const PlayIcon: React.FC<IconProps> = function PlayIcon({
+  color,
+  size,
+  opacity,
+}) {
+  return (
+    <PlaySVG
+      fill={color || appcolors.primary}
+      width={size || 16}
+      height={size || 16}
+      opacity={opacity || 1}
+    />
+  );
+};
+
+export const RewindIcon: React.FC<IconProps> = function RewindIcon({
+  color,
+  size,
+  opacity,
+}) {
+  return (
+    <RewindSVG
+      fill={color || appcolors.primary}
+      width={size || 16}
+      height={size || 16}
+      opacity={opacity || 1}
+    />
+  );
+};
+
+export const ListenIcon: React.FC<IconProps> = function ListenIcon({
+  color,
+  size,
+  opacity,
+}) {
+  return (
+    <ListenSVG
+      fill={color || appcolors.primary}
+      width={size || 16}
+      height={size || 16}
+      opacity={opacity || 1}
+    />
+  );
+};
+
 export default {
   FolderIcon,
   CameraIcon,
@@ -191,4 +303,11 @@ export default {
   SearchIcon,
   DownloadIcon,
   UserIcon,
+  ReadIcon,
+  ListenIcon,
+  FastForwardIcon,
+  MicrophoneIcon,
+  PauseIcon,
+  PlayIcon,
+  RewindIcon,
 };

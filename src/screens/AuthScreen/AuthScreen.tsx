@@ -7,7 +7,8 @@ import Input from '../../components/Input/Input';
 import {appcolors} from '../../utils/colors.util';
 import Button from '../../components/Button/Button';
 import Text from '../../components/Text/Text';
-import {useUser} from '../../providers/UserProvider';
+import {asyncStore} from '../../utils/Async.util';
+import {STORE_KEYS} from '../../utils/Keys.util';
 
 const AuthScreen = ({navigation, route}: IAuthScreenProps) => {
   const {isSignup} = route.params;
@@ -15,8 +16,6 @@ const AuthScreen = ({navigation, route}: IAuthScreenProps) => {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
-
-  const {createUser, loginUser} = useUser();
 
   const onSwitchPress = useCallback(() => {
     if (isSignup) {
@@ -31,48 +30,69 @@ const AuthScreen = ({navigation, route}: IAuthScreenProps) => {
     }
     if (isSignup) {
       try {
-        if (!createUser) {
-          return;
-        }
         setLoading(true);
-        await createUser({email, password})
-          .then(x => {
-            Alert.alert('User successfully created');
-            setLoading(false);
-          })
-          .catch(x => {
-            setLoading(false);
-            if (x.code === 'auth/email-already-in-use') {
-              return Alert.alert('That email address is already in use!');
-            }
-            if (x.code === 'auth/invalid-email') {
-              return Alert.alert('That email address is invalid!');
-            }
-            return Alert.alert(x.code);
+        const response = await fetch('http://localhost:4000/api/register', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email.toLowerCase(),
+            password,
+            username: username.toLowerCase(),
+          }),
+        });
+
+        let json = await response.json();
+        if (json.error) {
+          setLoading(false);
+          return Alert.alert(json.error);
+        }
+
+        if (json.accessToken) {
+          // persist data and login
+          await asyncStore(STORE_KEYS.AUTH_TOKEN, json.accessToken).then(() => {
+            navigation.navigate('AppBottomTabs');
           });
+        }
+        setLoading(false);
       } catch (error) {
         setLoading(false);
       }
     } else {
       try {
-        if (!loginUser) {
-          return;
-        }
         setLoading(true);
-        await loginUser({email, password})
-          .then(x => {
-            Alert.alert('User successfully loged in');
-            setLoading(false);
-          })
-          .catch(x => {
-            setLoading(false);
-            return Alert.alert(x.code);
+        const response = await fetch('http://localhost:4000/api/login', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email.toLowerCase(),
+            password,
+          }),
+        });
+        let json = await response.json();
+
+        if (json.error) {
+          setLoading(false);
+          return Alert.alert(json.error);
+        }
+        if (json.accessToken) {
+          // persist data and login
+          await asyncStore(STORE_KEYS.AUTH_TOKEN, json.accessToken).then(() => {
+            navigation.navigate('AppBottomTabs');
           });
+        }
+
+        setLoading(false);
       } catch (error) {
         setLoading(false);
       }
     }
-  }, [createUser, email, isSignup, loginUser, password]);
+  }, [email, isSignup, navigation, password, username]);
 
   const isButtonDisabled = useCallback(() => {
     if (!email || !password || loading) {

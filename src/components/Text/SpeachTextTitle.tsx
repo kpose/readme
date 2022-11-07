@@ -1,11 +1,11 @@
 import React, {FC, useCallback} from 'react';
-import {ScreenTitle} from './Text';
+import {Text} from './Text';
 import {View} from 'react-native';
 import {useSpeach} from '../../providers/SpeachProvider';
 import {appcolors} from '../../utils/colors.util';
 
 interface ISpeachTextProps {
-  title: string;
+  text: string;
 }
 
 interface ICurrentWordPosition {
@@ -13,11 +13,11 @@ interface ICurrentWordPosition {
   wordIndex: number;
 }
 
-const SpeachTextTitle: FC<ISpeachTextProps> = ({title}) => {
+const SpeachTextTitle: FC<ISpeachTextProps> = ({text}) => {
   const {speachLocation, isReading} = useSpeach();
 
   const wordPosition = useCallback(() => {
-    if (!title) {
+    if (!text) {
       return {currentWord: '', wordIndex: ''};
     }
     if (!speachLocation) {
@@ -25,22 +25,22 @@ const SpeachTextTitle: FC<ISpeachTextProps> = ({title}) => {
     }
     const startPosition = speachLocation.location;
     const finishPosition = speachLocation.location + speachLocation.length;
-    const textArray = title.split(' ');
-    const currentWord = title.slice(startPosition, finishPosition);
+    const textArray = text.split(' ');
+    const currentWord = text.slice(startPosition, finishPosition);
 
     const wordIndex = textArray.indexOf(currentWord);
 
     const word: ICurrentWordPosition = {currentWord, wordIndex};
     return word;
-  }, [speachLocation, title]);
+  }, [speachLocation, text]);
 
   const renderAnimatedText = useCallback(() => {
-    if (!title.length) {
+    if (!text.length) {
       return;
     }
     return (
-      <ScreenTitle>
-        {title.split(' ').map((t, index) => {
+      <Text>
+        {text.split(' ').map((t, index) => {
           const position = wordPosition();
           if (
             position.currentWord === t &&
@@ -49,16 +49,16 @@ const SpeachTextTitle: FC<ISpeachTextProps> = ({title}) => {
           ) {
             return (
               // eslint-disable-next-line react-native/no-inline-styles
-              <ScreenTitle style={{color: appcolors.primary}} key={index}>
+              <Text style={{color: appcolors.primary}} key={index}>
                 {t}{' '}
-              </ScreenTitle>
+              </Text>
             );
           }
           return `${t} `;
         })}
-      </ScreenTitle>
+      </Text>
     );
-  }, [isReading, title, wordPosition]);
+  }, [isReading, text, wordPosition]);
 
   return <View>{renderAnimatedText()}</View>;
 };

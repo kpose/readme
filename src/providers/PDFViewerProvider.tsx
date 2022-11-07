@@ -5,11 +5,10 @@ import React, {
   useContext,
   useEffect,
   useState,
+  useRef,
 } from 'react';
-import {View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {DocumentView, RNPdftron} from 'react-native-pdftron';
-import Text from '../components/Text/Text';
-import RNFetchBlob from 'react-native-fetch-blob';
 
 interface IPDFViewerContextProps {
   children: React.ReactNode;
@@ -29,9 +28,11 @@ export const PDFViewerProvider: FC<IPDFViewerContextProps> = ({children}) => {
   const [hasPermission, setHasPermission] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [documentPath, setDocumentPath] = useState<string>('');
+  const pdfdocRef = useRef(null);
 
   useEffect(() => {
     RNPdftron.initialize('');
+    RNPdftron.enableJavaScript(true);
   }, []);
 
   const openDocument = useCallback(async (uri: string) => {
@@ -44,17 +45,12 @@ export const PDFViewerProvider: FC<IPDFViewerContextProps> = ({children}) => {
       value={{permissionGranted: hasPermission, openDocument}}>
       {children}
       {isVisible && documentPath ? (
-        <View
-          style={{
-            flex: 1,
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: 0,
-            backgroundColor: 'red',
-          }}>
-          <DocumentView document={documentPath} showLeadingNavButton={true} />
+        <View style={styles.container}>
+          <DocumentView
+            ref={pdfdocRef}
+            document={documentPath}
+            showLeadingNavButton={true}
+          />
         </View>
       ) : null}
     </PDFViewerContext.Provider>
@@ -62,3 +58,15 @@ export const PDFViewerProvider: FC<IPDFViewerContextProps> = ({children}) => {
 };
 
 export const usePDFViewer = () => useContext(PDFViewerContext);
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: 'red',
+  },
+});

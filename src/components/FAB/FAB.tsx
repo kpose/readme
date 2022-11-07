@@ -8,19 +8,18 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {appcolors} from '../../utils/colors.util';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import FABpopup from './FABpopup';
-import {useUser} from '../../providers/UserProvider';
 const fabBottomPosition = 20;
 const fabRightPosition = 20;
 
 interface IFABPopupProps {
   onImportPress: () => void;
+  disabled?: boolean;
 }
 
-const FAB = ({onImportPress}: IFABPopupProps) => {
+const FAB = ({onImportPress, disabled}: IFABPopupProps) => {
   const springAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
   const [isOpen, setIsOpen] = useState(true);
-  const {logoutUser} = useUser();
 
   const toggleOpen = useCallback(() => {
     const options = {
@@ -38,14 +37,14 @@ const FAB = ({onImportPress}: IFABPopupProps) => {
       if (index === 0) {
         return onImportPress();
       }
-      if (index === 1) {
-        if (!logoutUser) {
-          return;
-        }
-        await logoutUser();
-      }
+      // if (index === 1) {
+      //   if (!logoutUser) {
+      //     return;
+      //   }
+      //   await logoutUser();
+      // }
     },
-    [isOpen, logoutUser, onImportPress],
+    [isOpen, onImportPress],
   );
 
   useEffect(() => {
@@ -72,7 +71,7 @@ const FAB = ({onImportPress}: IFABPopupProps) => {
   return (
     <View style={styles.container}>
       {/* pop up */}
-      <TouchableWithoutFeedback>
+      <TouchableWithoutFeedback disabled={disabled}>
         <Animated.View
           style={[
             styles.popupContainer,
@@ -83,7 +82,7 @@ const FAB = ({onImportPress}: IFABPopupProps) => {
         </Animated.View>
       </TouchableWithoutFeedback>
       {/* fab */}
-      <TouchableWithoutFeedback onPress={toggleOpen}>
+      <TouchableWithoutFeedback onPress={toggleOpen} disabled={disabled}>
         <View style={[styles.fab]}>
           <Animated.Text style={[styles.label]}>+</Animated.Text>
         </View>

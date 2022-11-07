@@ -5,22 +5,13 @@ export type IAuthStackParamList = {
 };
 
 export type IAppStackBottomTabList = {
-  HomeStack: undefined;
-  SearchStack: undefined;
-  DownloadStack: undefined;
+  Home: undefined;
   ProfileStack: undefined;
 };
 
 export type IHomeStackParamList = {
-  Home: undefined;
-};
-
-export type ISearchStackParamList = {
-  SearchScreen: undefined;
-};
-
-export type IDownloadStackParamList = {
-  DownloadScreen: undefined;
+  HomeScreen: undefined;
+  ListenScreen: {title: string};
 };
 
 export type IProfileStackParamList = {
