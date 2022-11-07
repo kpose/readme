@@ -47,10 +47,6 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
       if (!doc) {
         return;
       }
-
-      // check here if user already started
-      // reading, then start from last word location
-
       const book = doc.bookData;
       const curretPage = doc.listening.currentPage;
 
@@ -74,6 +70,7 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
         return;
       }
       let currentPage = book.listening.currentPage;
+      startSpeach(book.bookData[currentPage + 1].text);
 
       dispatch(
         updateListening({
