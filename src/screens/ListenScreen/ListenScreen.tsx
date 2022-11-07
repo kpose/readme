@@ -54,8 +54,6 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
       const book = doc.bookData;
       const curretPage = doc.listening.currentPage;
 
-      console.log(curretPage);
-
       let pageNumber = page || curretPage;
 
       startSpeach(book[pageNumber].text);
