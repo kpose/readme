@@ -4,4 +4,5 @@ export interface IBottomControlPanelProps {
   onPlayPress: () => void;
   onSpeakerPress: () => void;
   onSpeedPress: () => void;
+  onPausePress: () => void;
 }

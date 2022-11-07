@@ -20,6 +20,7 @@ export interface ISpeachContext {
   speachLocation?: ISpeachCurrentWordProps;
   isReading?: boolean;
   isFinishedReading?: boolean;
+  isPaused?: boolean;
 }
 
 export interface ISpeachVoice {
@@ -45,6 +46,7 @@ export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
   const [selectedVoice, setSelectedVoice] = useState<ISpeachVoice>();
   const [isReading, setIsReading] = useState(false);
   const [isFinishedReading, setIsFinishedReading] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [speachRate, setSpeachRate] = useState<number>(0.5);
   const [speachPitch, setSpeachPitch] = useState<number>(1);
   const [currentWord, setcurrentWord] = useState<ISpeachCurrentWordProps>();
@@ -114,15 +116,21 @@ export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
     async (data: string) => {
       if (isReading) {
         Tts.stop();
+        setIsPaused(true);
       }
       Tts.speak(data);
     },
     [isReading],
   );
 
-  const pauseSpeach = useCallback(() => {
-    console.log('kkkkk');
-  }, []);
+  const pauseSpeach = useCallback(async () => {
+    if (isReading) {
+      Tts.stop();
+      setIsReading(false);
+      setIsPaused(true);
+    }
+    Tts.stop();
+  }, [isReading]);
 
   return (
     <SpeachContext.Provider
@@ -134,6 +142,7 @@ export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
         speachLocation: currentWord,
         isReading: isReading,
         isFinishedReading: isFinishedReading,
+        isPaused: isPaused,
       }}>
       {children}
     </SpeachContext.Provider>

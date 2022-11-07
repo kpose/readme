@@ -12,6 +12,7 @@ import {
   PauseIcon,
 } from '../Icon/Icon';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useSpeach} from '../../providers/SpeachProvider';
 
 const ICON_SIZE = 24;
 
@@ -19,10 +20,12 @@ const BottomControlPanel = ({
   onBackwardPress,
   onForwardPress,
   onPlayPress,
+  onPausePress,
   onSpeakerPress,
   onSpeedPress,
 }: IBottomControlPanelProps) => {
   const {isDarkTheme} = useTheme();
+  const {isReading} = useSpeach();
   const {width} = useWindowDimensions();
   return (
     <View
@@ -51,14 +54,31 @@ const BottomControlPanel = ({
             color={isDarkTheme ? appcolors.lightGrey : appcolors.darkGrey}
           />
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={onPlayPress}
-          style={[styles.playContainer, {backgroundColor: appcolors.primary}]}>
-          <PlayIcon
-            size={ICON_SIZE}
-            color={isDarkTheme ? appcolors.lightGrey : appcolors.darkGrey}
-          />
-        </TouchableOpacity>
+        {isReading ? (
+          <TouchableOpacity
+            onPress={onPausePress}
+            style={[
+              styles.playContainer,
+              {backgroundColor: appcolors.primary},
+            ]}>
+            <PauseIcon
+              size={ICON_SIZE}
+              color={isDarkTheme ? appcolors.lightGrey : appcolors.darkGrey}
+            />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            onPress={onPlayPress}
+            style={[
+              styles.playContainer,
+              {backgroundColor: appcolors.primary},
+            ]}>
+            <PlayIcon
+              size={ICON_SIZE}
+              color={isDarkTheme ? appcolors.lightGrey : appcolors.darkGrey}
+            />
+          </TouchableOpacity>
+        )}
         <TouchableOpacity onPress={onForwardPress} style={styles.playContainer}>
           <FastForwardIcon
             size={ICON_SIZE}

@@ -1,4 +1,4 @@
-import React, {FC, useCallback} from 'react';
+import React, {FC, useCallback, useEffect} from 'react';
 import Text from './Text';
 import {StyleSheet, TextProps, View} from 'react-native';
 import {useSpeach} from '../../providers/SpeachProvider';
@@ -15,7 +15,7 @@ interface ICurrentWordPosition {
 }
 
 const SpeachText: FC<ISpeachTextProps> = ({text, active, ...props}) => {
-  const {speachLocation} = useSpeach();
+  const {speachLocation, isReading} = useSpeach();
 
   const wordPosition = useCallback(() => {
     if (!text || !speachLocation) {
@@ -31,6 +31,13 @@ const SpeachText: FC<ISpeachTextProps> = ({text, active, ...props}) => {
     return word;
   }, [speachLocation, text]);
 
+  useEffect(() => {
+    if (!speachLocation) {
+      return;
+    }
+    wordPosition();
+  }, [speachLocation, wordPosition]);
+
   const renderAnimatedText = useCallback(() => {
     if (!text.length || !active) {
       return;
@@ -40,7 +47,11 @@ const SpeachText: FC<ISpeachTextProps> = ({text, active, ...props}) => {
         {text.split(' ').map((t, index) => {
           const position = wordPosition();
           // console.log(position);
-          if (position.currentWord === t && position.wordIndex === index) {
+          if (
+            position.currentWord === t &&
+            position.wordIndex === index &&
+            isReading
+          ) {
             return (
               <Text
                 {...props}
@@ -59,7 +70,7 @@ const SpeachText: FC<ISpeachTextProps> = ({text, active, ...props}) => {
         })}
       </Text>
     );
-  }, [text, active, props, wordPosition]);
+  }, [text, active, props, wordPosition, isReading]);
 
   return <View>{renderAnimatedText()}</View>;
 };

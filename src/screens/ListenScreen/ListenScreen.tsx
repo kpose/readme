@@ -28,7 +28,8 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
   const [isReadingChapter, setIsReadingChapter] = useState(false);
   const ITEM_HEIGHT = 65;
   const {height} = useWindowDimensions();
-  const {startSpeach, isReading, isFinishedReading} = useSpeach();
+  const {startSpeach, isReading, isFinishedReading, pauseSpeach, isPaused} =
+    useSpeach();
   const flatListRef = useRef(null);
   const dispatch = useAppDispatch();
 
@@ -57,10 +58,17 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
     [doc, startSpeach],
   );
 
+  const onPausePress = useCallback(() => {
+    console.log('olo');
+
+    pauseSpeach();
+  }, [pauseSpeach]);
+
   useEffect(() => {
-    if (isReading) {
+    if (isReading || isPaused) {
       return;
     }
+
     if (isFinishedReading) {
       if (!books.length) {
         return;
@@ -123,7 +131,10 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
         />
       </View>
 
-      <BottomControlPanel onPlayPress={onPlayPress} />
+      <BottomControlPanel
+        onPlayPress={onPlayPress}
+        onPausePress={onPausePress}
+      />
     </SafeAreaView>
   );
 };
