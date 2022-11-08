@@ -1,5 +1,5 @@
-import {Pressable, StyleSheet, useWindowDimensions, View} from 'react-native';
-import React from 'react';
+import {StyleSheet, useWindowDimensions, View, Animated} from 'react-native';
+import React, {useRef, useEffect} from 'react';
 import {useTheme} from '../../providers/ThemeProvider';
 import {appcolors} from '../../utils/colors.util';
 import {IBottomControlPanelProps} from './interfaces';
@@ -27,6 +27,28 @@ const BottomControlPanel = ({
   const {isDarkTheme} = useTheme();
   const {isReading} = useSpeach();
   const {width} = useWindowDimensions();
+  const pauseAnim = useRef(new Animated.Value(1));
+  const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        // increase size
+        Animated.timing(pauseAnim.current, {
+          toValue: 1.2,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+        // decrease size
+        Animated.timing(pauseAnim.current, {
+          toValue: 0.8,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+      ]),
+    ).start();
+  }, []);
+
   return (
     <View
       style={[
@@ -55,17 +77,22 @@ const BottomControlPanel = ({
           />
         </TouchableOpacity>
         {isReading ? (
-          <TouchableOpacity
+          <AnimatedTouchable
             onPress={onPausePress}
             style={[
               styles.playContainer,
-              {backgroundColor: appcolors.primary},
+              {
+                backgroundColor: appcolors.primary,
+                transform: [{scale: pauseAnim.current}],
+              },
             ]}>
-            <PauseIcon
-              size={ICON_SIZE}
-              color={isDarkTheme ? appcolors.lightGrey : appcolors.darkGrey}
-            />
-          </TouchableOpacity>
+            <Animated.View style={{transform: [{scale: pauseAnim.current}]}}>
+              <PauseIcon
+                size={ICON_SIZE}
+                color={isDarkTheme ? appcolors.lightGrey : appcolors.darkGrey}
+              />
+            </Animated.View>
+          </AnimatedTouchable>
         ) : (
           <TouchableOpacity
             onPress={onPlayPress}

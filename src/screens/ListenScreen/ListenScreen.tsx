@@ -59,8 +59,6 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
   );
 
   const onPausePress = useCallback(() => {
-    console.log('olo');
-
     pauseSpeach();
   }, [pauseSpeach]);
 
