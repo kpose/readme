@@ -47,7 +47,7 @@ export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
   const [isReading, setIsReading] = useState(false);
   const [isFinishedReading, setIsFinishedReading] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [speachRate, setSpeachRate] = useState<number>(1);
+  const [speachRate, setSpeachRate] = useState<number>(0.5);
   const [speachPitch, setSpeachPitch] = useState<number>(1);
   const [currentWord, setcurrentWord] = useState<ISpeachCurrentWordProps>();
 

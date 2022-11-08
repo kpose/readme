@@ -4,6 +4,7 @@ import {
   FlatList,
   ListRenderItem,
   useWindowDimensions,
+  Pressable,
 } from 'react-native';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {IListenScreenProps} from './interfaces';
@@ -27,7 +28,7 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
   const [doc, setDoc] = useState<IPDFBook>();
   const [isReadingChapter, setIsReadingChapter] = useState(false);
   const ITEM_HEIGHT = 65;
-  const {height} = useWindowDimensions();
+  const {height, width} = useWindowDimensions();
   const {startSpeach, isReading, isFinishedReading, pauseSpeach, isPaused} =
     useSpeach();
   const flatListRef = useRef<FlatList>(null);
@@ -45,7 +46,6 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
 
     if (flatListRef.current && book?.listening.currentPage) {
       let currentPage = book?.listening.currentPage;
-      console.log(currentPage);
       setTimeout(
         () =>
           flatListRef.current.scrollToIndex({
@@ -64,7 +64,6 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
     }
     const book = doc.bookData;
     const curretPage = doc.listening.currentPage;
-    console.log(curretPage);
 
     startSpeach(book[curretPage].text);
   }, [doc, startSpeach]);
@@ -114,7 +113,8 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
   };
   const renderDocContent: ListRenderItem<IPDFBookData> = ({item}) => {
     return (
-      <View style={[styles.docContentContainer, {height: height / 1.3}]}>
+      <View
+        style={[styles.docContentContainer, {height: height, width: width}]}>
         <Text weight="bold" style={styles.pageNumber}>
           {'Page: '}
           {item.pageNumber}
@@ -127,6 +127,11 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
     <SafeAreaView style={styles.container}>
       {/* reader chapters*/}
       <View style={styles.readerContainer}>
+        {/* close button/text */}
+        <Pressable onPress={() => navigation.goBack()}>
+          <Text style={styles.closeButton}>Close</Text>
+        </Pressable>
+
         <ScreenTitle style={styles.title}>
           {doc?.title.split('.pdf')}
         </ScreenTitle>
@@ -134,6 +139,7 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
         <FlatList
           ref={flatListRef}
           data={doc?.bookData}
+          contentContainerStyle={{flexGrow: 1}}
           renderItem={renderDocContent}
           keyExtractor={keyExtractor}
           getItemLayout={getItemLayout}
@@ -156,7 +162,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   docContentContainer: {
-    flex: 1,
+    // flex: 1,
   },
 
   pageNumber: {
@@ -169,6 +175,10 @@ const styles = StyleSheet.create({
     height: 1,
     borderRadius: 10,
     marginVertical: 30,
+  },
+
+  closeButton: {
+    marginBottom: 10,
   },
 
   readerContainer: {
