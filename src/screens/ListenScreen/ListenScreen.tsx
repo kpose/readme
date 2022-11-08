@@ -30,7 +30,8 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
   const {height} = useWindowDimensions();
   const {startSpeach, isReading, isFinishedReading, pauseSpeach, isPaused} =
     useSpeach();
-  const flatListRef = useRef(null);
+  const flatListRef = useRef<FlatList>(null);
+
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -39,25 +40,36 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
     }
     setIsReadingChapter(true);
     const book = books.find(x => x.title === route.params.title);
+
     setDoc(book);
+
+    if (flatListRef.current && book?.listening.currentPage) {
+      let currentPage = book?.listening.currentPage;
+      console.log(currentPage);
+      setTimeout(
+        () =>
+          flatListRef.current.scrollToIndex({
+            animated: true,
+            index: currentPage,
+          }),
+        500,
+      );
+    }
   }, [books, route.params.title]);
 
-  /* Speach Controls */
-  const onPlayPress = useCallback(
-    (page?: number) => {
-      if (!doc) {
-        return;
-      }
-      const book = doc.bookData;
-      const curretPage = doc.listening.currentPage;
+  /* Speach Control; play */
+  const onPlayPress = useCallback(() => {
+    if (!doc) {
+      return;
+    }
+    const book = doc.bookData;
+    const curretPage = doc.listening.currentPage;
+    console.log(curretPage);
 
-      let pageNumber = page || curretPage;
+    startSpeach(book[curretPage].text);
+  }, [doc, startSpeach]);
 
-      startSpeach(book[pageNumber].text);
-    },
-    [doc, startSpeach],
-  );
-
+  /* pause listening */
   const onPausePress = useCallback(() => {
     pauseSpeach();
   }, [pauseSpeach]);
