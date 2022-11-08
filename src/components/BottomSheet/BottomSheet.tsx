@@ -63,7 +63,7 @@ const BottomSheet = ({isVisible, onDismiss, children}: IBottomSheetProps) => {
 
   return (
     <Modal
-      animationType="slide"
+      animationType="fade"
       visible={isVisible}
       onRequestClose={handleDismiss}
       transparent>

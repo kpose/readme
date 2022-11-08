@@ -33,18 +33,17 @@ const BottomControlPanel = ({
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
-        // increase size
+        Animated.timing(pauseAnim.current, {
+          toValue: 0.8,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
         Animated.timing(pauseAnim.current, {
           toValue: 1.2,
           duration: 2000,
           useNativeDriver: true,
         }),
         // decrease size
-        Animated.timing(pauseAnim.current, {
-          toValue: 0.8,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
       ]),
     ).start();
   }, []);
@@ -77,8 +76,22 @@ const BottomControlPanel = ({
           />
         </TouchableOpacity>
         {isReading ? (
-          <AnimatedTouchable
+          <TouchableOpacity
             onPress={onPausePress}
+            style={[
+              styles.playContainer,
+              {
+                backgroundColor: appcolors.primary,
+              },
+            ]}>
+            <PauseIcon
+              size={ICON_SIZE}
+              color={isDarkTheme ? appcolors.lightGrey : appcolors.darkGrey}
+            />
+          </TouchableOpacity>
+        ) : (
+          <AnimatedTouchable
+            onPress={onPlayPress}
             style={[
               styles.playContainer,
               {
@@ -87,24 +100,12 @@ const BottomControlPanel = ({
               },
             ]}>
             <Animated.View style={{transform: [{scale: pauseAnim.current}]}}>
-              <PauseIcon
+              <PlayIcon
                 size={ICON_SIZE}
                 color={isDarkTheme ? appcolors.lightGrey : appcolors.darkGrey}
               />
             </Animated.View>
           </AnimatedTouchable>
-        ) : (
-          <TouchableOpacity
-            onPress={onPlayPress}
-            style={[
-              styles.playContainer,
-              {backgroundColor: appcolors.primary},
-            ]}>
-            <PlayIcon
-              size={ICON_SIZE}
-              color={isDarkTheme ? appcolors.lightGrey : appcolors.darkGrey}
-            />
-          </TouchableOpacity>
         )}
         <TouchableOpacity onPress={onForwardPress} style={styles.playContainer}>
           <FastForwardIcon

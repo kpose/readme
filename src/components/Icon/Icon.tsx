@@ -18,6 +18,7 @@ import MicrophoneSVG from '../../assets/icons/microphone.svg';
 import PauseSVG from '../../assets/icons/pause.svg';
 import PlaySVG from '../../assets/icons/play.svg';
 import RewindSVG from '../../assets/icons/rewind.svg';
+import CloseSVG from '../../assets/icons/close.svg';
 
 import {appcolors} from '../../utils/colors.util';
 
@@ -291,6 +292,21 @@ export const ListenIcon: React.FC<IconProps> = function ListenIcon({
   );
 };
 
+export const CloseIcon: React.FC<IconProps> = function CloseIcon({
+  color,
+  size,
+  opacity,
+}) {
+  return (
+    <CloseSVG
+      fill={color || appcolors.primary}
+      width={size || 16}
+      height={size || 16}
+      opacity={opacity || 1}
+    />
+  );
+};
+
 export default {
   FolderIcon,
   CameraIcon,
@@ -310,4 +326,5 @@ export default {
   PauseIcon,
   PlayIcon,
   RewindIcon,
+  CloseIcon,
 };

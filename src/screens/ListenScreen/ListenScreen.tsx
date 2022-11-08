@@ -22,13 +22,13 @@ import {
 import BottomControlPanel from '../../components/BottomControlPanel/BottomControlPanel';
 import {appcolors} from '../../utils/colors.util';
 import {useSpeach} from '../../providers/SpeachProvider';
+import {CloseIcon} from '../../components/Icon/Icon';
 
 const ListenScreen = ({navigation, route}: IListenScreenProps) => {
   const books = useAppSelector((state: RootState) => state.books);
   const [doc, setDoc] = useState<IPDFBook>();
   const [isReadingChapter, setIsReadingChapter] = useState(false);
-  const ITEM_HEIGHT = 65;
-  const {height, width} = useWindowDimensions();
+  const {height} = useWindowDimensions();
   const {startSpeach, isReading, isFinishedReading, pauseSpeach, isPaused} =
     useSpeach();
   const flatListRef = useRef<FlatList>(null);
@@ -73,6 +73,13 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
     pauseSpeach();
   }, [pauseSpeach]);
 
+  const closeDoc = () => {
+    if (isReading) {
+      pauseSpeach();
+    }
+    navigation.goBack();
+  };
+
   useEffect(() => {
     if (isReading || isPaused) {
       return;
@@ -99,22 +106,19 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFinishedReading]);
 
-  /* Flatlist components */
   const keyExtractor = _ => `${_._id}`;
-  const getItemLayout = (data, index) => {
-    return {
-      length: ITEM_HEIGHT,
-      offset: ITEM_HEIGHT * data.length,
-      index,
-    };
-  };
+
   const itemSeperator = () => {
     return <View style={styles.itemSeperator} />;
   };
+
   const renderDocContent: ListRenderItem<IPDFBookData> = ({item}) => {
     return (
       <View
-        style={[styles.docContentContainer, {height: height, width: width}]}>
+        style={[
+          styles.docContentContainer,
+          {height: height /* width: width */},
+        ]}>
         <Text weight="bold" style={styles.pageNumber}>
           {'Page: '}
           {item.pageNumber}
@@ -128,13 +132,14 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
       {/* reader chapters*/}
       <View style={styles.readerContainer}>
         {/* close button/text */}
-        <Pressable onPress={() => navigation.goBack()}>
-          <Text style={styles.closeButton}>Close</Text>
-        </Pressable>
-
-        <ScreenTitle style={styles.title}>
-          {doc?.title.split('.pdf')}
-        </ScreenTitle>
+        <View style={styles.header}>
+          <Pressable onPress={closeDoc}>
+            <CloseIcon size={30} />
+          </Pressable>
+          <Text weight="bold" style={styles.title}>
+            {doc?.title.split('.pdf')}
+          </Text>
+        </View>
 
         <FlatList
           ref={flatListRef}
@@ -142,8 +147,12 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
           contentContainerStyle={{flexGrow: 1}}
           renderItem={renderDocContent}
           keyExtractor={keyExtractor}
-          getItemLayout={getItemLayout}
           ItemSeparatorComponent={itemSeperator}
+          getItemLayout={(data, index) => ({
+            length: height,
+            offset: height * index,
+            index,
+          })}
         />
       </View>
 
@@ -163,6 +172,11 @@ const styles = StyleSheet.create({
   },
   docContentContainer: {
     // flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
   },
 
   pageNumber: {
@@ -186,6 +200,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 7,
   },
   title: {
-    alignSelf: 'center',
+    fontSize: 25,
+    marginLeft: 20,
   },
 });
