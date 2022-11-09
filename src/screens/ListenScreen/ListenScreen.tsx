@@ -5,11 +5,14 @@ import {
   ListRenderItem,
   useWindowDimensions,
   Pressable,
+  Alert,
+  Modal,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {IListenScreenProps} from './interfaces';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Text, {ScreenTitle} from '../../components/Text/Text';
+import Text from '../../components/Text/Text';
 import SpeachText from '../../components/Text/SpeachText';
 
 import {useAppDispatch, useAppSelector} from '../../hooks/ReduxState.hook';
@@ -21,16 +24,28 @@ import {
 } from '../../redux/slices/uploadedBooksSlice';
 import BottomControlPanel from '../../components/BottomControlPanel/BottomControlPanel';
 import {appcolors} from '../../utils/colors.util';
-import {useSpeach} from '../../providers/SpeachProvider';
+import {ISpeachVoice, useSpeach} from '../../providers/SpeachProvider';
 import {CloseIcon} from '../../components/Icon/Icon';
+import {useTheme} from '../../providers/ThemeProvider';
 
 const ListenScreen = ({navigation, route}: IListenScreenProps) => {
   const books = useAppSelector((state: RootState) => state.books);
   const [doc, setDoc] = useState<IPDFBook>();
   const [isReadingChapter, setIsReadingChapter] = useState(false);
-  const {height} = useWindowDimensions();
-  const {startSpeach, isReading, isFinishedReading, pauseSpeach, isPaused} =
-    useSpeach();
+  const [isVoiceModalVisible, setIsVoiceModalVisible] = useState(true);
+  const {height, width} = useWindowDimensions();
+  const {isDarkTheme} = useTheme();
+  const VOICE_MODAL_HEIGHT = 300;
+  const VOICE_MODAL_WIDTH = width / 1.2;
+
+  const {
+    startSpeach,
+    isReading,
+    isFinishedReading,
+    pauseSpeach,
+    isPaused,
+    speachVoices,
+  } = useSpeach();
   const flatListRef = useRef<FlatList>(null);
 
   const dispatch = useAppDispatch();
@@ -44,17 +59,15 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
 
     setDoc(book);
 
-    if (flatListRef.current && book?.listening.currentPage) {
-      let currentPage = book?.listening.currentPage;
-      setTimeout(
-        () =>
-          flatListRef.current.scrollToIndex({
-            animated: true,
-            index: currentPage,
-          }),
-        500,
-      );
-    }
+    setTimeout(() => {
+      if (flatListRef.current && book?.listening.currentPage) {
+        let currentPage = book.listening.currentPage;
+        flatListRef.current.scrollToIndex({
+          animated: true,
+          index: currentPage,
+        });
+      }
+    }, 500);
   }, [books, route.params.title]);
 
   /* Speach Control; play */
@@ -72,6 +85,22 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
   const onPausePress = useCallback(() => {
     pauseSpeach();
   }, [pauseSpeach]);
+
+  /* Speaking voice */
+  const onSpeakerPress = useCallback(() => {
+    if (speachVoices && speachVoices.length > 0) {
+      if (isVoiceModalVisible) {
+        setIsVoiceModalVisible(false);
+        return;
+      }
+      pauseSpeach();
+      setIsVoiceModalVisible(true);
+      return;
+    }
+    return Alert.alert(
+      'Your device does not support you changing the current voice',
+    );
+  }, [isVoiceModalVisible, pauseSpeach, speachVoices]);
 
   const closeDoc = () => {
     if (isReading) {
@@ -112,12 +141,22 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
     return <View style={styles.itemSeperator} />;
   };
 
+  const VoicesitemSeperator = () => {
+    return (
+      <View style={[styles.voicesItemSeperator, {width: VOICE_MODAL_WIDTH}]} />
+    );
+  };
+
   const renderDocContent: ListRenderItem<IPDFBookData> = ({item}) => {
     return (
       <View
         style={[
           styles.docContentContainer,
-          {height: height /* width: width */},
+          // eslint-disable-next-line react-native/no-inline-styles
+          {
+            height: height,
+            opacity: isVoiceModalVisible ? 0.5 : 1 /* width: width */,
+          },
         ]}>
         <Text weight="bold" style={styles.pageNumber}>
           {'Page: '}
@@ -127,6 +166,18 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
       </View>
     );
   };
+
+  const VoicesModalContent: ListRenderItem<ISpeachVoice> = ({item}) => {
+    return (
+      <TouchableOpacity onPress={() => console.log(item.language)}>
+        <View style={styles.voicesModalContentContainer}>
+          <Text weight="bold">{item.name}</Text>
+          <Text>{`Language:  ${item.language}`}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* reader chapters*/}
@@ -154,11 +205,47 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
             index,
           })}
         />
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isVoiceModalVisible}>
+          <View style={styles.voicesModalContainer}>
+            <View
+              style={[
+                styles.voicesContainer,
+                {
+                  backgroundColor: isDarkTheme
+                    ? appcolors.darkGrey
+                    : appcolors.lightGrey,
+                  width: VOICE_MODAL_WIDTH,
+                  height: VOICE_MODAL_HEIGHT,
+                },
+              ]}>
+              <View style={styles.voiceModalHead}>
+                <Pressable onPress={() => setIsVoiceModalVisible(false)}>
+                  <CloseIcon />
+                </Pressable>
+                <Text weight="bold" style={[styles.voicesModalHeader]}>
+                  Select Preferred Voice
+                </Text>
+              </View>
+              <FlatList
+                data={speachVoices}
+                showsVerticalScrollIndicator={false}
+                renderItem={VoicesModalContent}
+                keyExtractor={item => item.id}
+                ItemSeparatorComponent={VoicesitemSeperator}
+              />
+            </View>
+          </View>
+        </Modal>
       </View>
 
       <BottomControlPanel
         onPlayPress={onPlayPress}
         onPausePress={onPausePress}
+        onSpeakerPress={onSpeakerPress}
       />
     </SafeAreaView>
   );
@@ -172,6 +259,27 @@ const styles = StyleSheet.create({
   },
   docContentContainer: {
     // flex: 1,
+  },
+  voicesModalContentContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+    marginTop: 5,
+  },
+  voicesModalHeader: {
+    alignSelf: 'center',
+    marginVertical: 10,
+    color: appcolors.primary,
+  },
+  voicesItemSeperator: {
+    height: 0.4,
+    backgroundColor: appcolors.secondary,
+    borderWidth: 0.7,
+    borderStyle: 'dotted',
+  },
+  voiceModalHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   header: {
     flexDirection: 'row',
@@ -190,9 +298,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginVertical: 30,
   },
-
   closeButton: {
     marginBottom: 10,
+  },
+  voicesModalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+  voicesContainer: {
+    backgroundColor: 'red',
+    borderRadius: 10,
+    paddingHorizontal: 10,
   },
 
   readerContainer: {

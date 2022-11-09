@@ -118,7 +118,9 @@ export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
         Tts.stop();
         setIsPaused(true);
       }
-      Tts.speak(data);
+      Tts.setDucking(true).then(() => {
+        Tts.speak(data);
+      });
     },
     [isReading],
   );
