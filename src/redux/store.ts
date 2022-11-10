@@ -1,5 +1,6 @@
 import {configureStore, combineReducers} from '@reduxjs/toolkit';
 import uploadedBooksReducer from './slices/uploadedBooksSlice';
+import speakerInfoReducer from './slices/SpeakerSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   persistStore,
@@ -20,6 +21,7 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   books: uploadedBooksReducer,
+  speakerInfo: speakerInfoReducer,
 });
 
 export const store = configureStore({

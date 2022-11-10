@@ -29,9 +29,11 @@ import {appcolors} from '../../utils/colors.util';
 import {ISpeachVoice, useSpeach} from '../../providers/SpeachProvider';
 import {CheckMarkIcon, CloseIcon} from '../../components/Icon/Icon';
 import {useTheme} from '../../providers/ThemeProvider';
+import {updateVoice} from '../../redux/slices/SpeakerSlice';
 
 const ListenScreen = ({navigation, route}: IListenScreenProps) => {
   const books = useAppSelector((state: RootState) => state.books);
+  // const speakerInfo = useAppSelector((state: RootState) => state.speakerInfo);
   const [doc, setDoc] = useState<IPDFBook>();
   const [isReadingChapter, setIsReadingChapter] = useState(false);
   const [isVoiceModalVisible, setIsVoiceModalVisible] = useState(false);
@@ -124,9 +126,10 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
         pauseSpeach();
       }
       selectVoice(voice.id);
+      dispatch(updateVoice(voice));
       setIsVoiceModalVisible(!isVoiceModalVisible);
     },
-    [isReading, isVoiceModalVisible, pauseSpeach, selectVoice],
+    [dispatch, isReading, isVoiceModalVisible, pauseSpeach, selectVoice],
   );
 
   useEffect(() => {

@@ -7,6 +7,8 @@ import React, {
   useState,
 } from 'react';
 import Tts from 'react-native-tts';
+import {useAppSelector} from '../hooks/ReduxState.hook';
+import {RootState} from '../redux/store';
 
 interface ISpeachProviderProps {
   children: React.ReactNode;
@@ -52,10 +54,10 @@ export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
   const [speachRate, setSpeachRate] = useState<number>(0.5);
   const [speachPitch, setSpeachPitch] = useState<number>(1);
   const [currentWord, setcurrentWord] = useState<ISpeachCurrentWordProps>();
+  const speakerInfo = useAppSelector((state: RootState) => state.speakerInfo);
 
   const initTts = useCallback(async () => {
     const voices = await Tts.voices();
-
     const availableVoices = voices
       .filter(v => !v.networkConnectionRequired && !v.notInstalled)
       .map(v => {
@@ -66,7 +68,7 @@ export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
     if (availableVoices && availableVoices.length > 0) {
       // get english uk
       const englishUK = availableVoices.find(x => x.language === 'en-GB');
-      currentVoice = englishUK || availableVoices[0];
+      currentVoice = speakerInfo.voice || englishUK || availableVoices[0];
       try {
         await Tts.setDefaultLanguage(
           englishUK?.language || availableVoices[0].language,
@@ -75,13 +77,15 @@ export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
         // My Samsung S9 has always this error: "Language is not supported"
         // console.log(`setDefaultLanguage error `, err);
       }
-      await Tts.setDefaultVoice(englishUK?.id || availableVoices[0].id);
+      await Tts.setDefaultVoice(
+        speakerInfo.voice?.id || englishUK?.id || availableVoices[0].id,
+      );
       setTtsVoices(availableVoices);
       setSelectedVoice(currentVoice);
     } else {
       console.log('error');
     }
-  }, []);
+  }, [speakerInfo]);
 
   useEffect(() => {
     const onStart = Tts.addEventListener('tts-start', () => {
