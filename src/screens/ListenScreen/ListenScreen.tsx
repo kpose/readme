@@ -25,7 +25,7 @@ import {
 import BottomControlPanel from '../../components/BottomControlPanel/BottomControlPanel';
 import {appcolors} from '../../utils/colors.util';
 import {ISpeachVoice, useSpeach} from '../../providers/SpeachProvider';
-import {CloseIcon} from '../../components/Icon/Icon';
+import {CheckMarkIcon, CloseIcon} from '../../components/Icon/Icon';
 import {useTheme} from '../../providers/ThemeProvider';
 
 const ListenScreen = ({navigation, route}: IListenScreenProps) => {
@@ -45,6 +45,7 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
     pauseSpeach,
     isPaused,
     speachVoices,
+    currentVoice,
   } = useSpeach();
   const flatListRef = useRef<FlatList>(null);
 
@@ -173,6 +174,7 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
         <View style={styles.voicesModalContentContainer}>
           <Text weight="bold">{item.name}</Text>
           <Text>{`Language:  ${item.language}`}</Text>
+          {currentVoice?.id === item.id ? <CheckMarkIcon /> : null}
         </View>
       </TouchableOpacity>
     );
@@ -265,6 +267,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 10,
     marginTop: 5,
+    alignItems: 'center',
   },
   voicesModalHeader: {
     alignSelf: 'center',

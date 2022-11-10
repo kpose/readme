@@ -19,6 +19,7 @@ import PauseSVG from '../../assets/icons/pause.svg';
 import PlaySVG from '../../assets/icons/play.svg';
 import RewindSVG from '../../assets/icons/rewind.svg';
 import CloseSVG from '../../assets/icons/close.svg';
+import CheckMarkSVG from '../../assets/icons/checkmark.svg';
 
 import {appcolors} from '../../utils/colors.util';
 
@@ -307,6 +308,21 @@ export const CloseIcon: React.FC<IconProps> = function CloseIcon({
   );
 };
 
+export const CheckMarkIcon: React.FC<IconProps> = function CheckMarkIcon({
+  color,
+  size,
+  opacity,
+}) {
+  return (
+    <CheckMarkSVG
+      fill={color || appcolors.primary}
+      width={size || 16}
+      height={size || 16}
+      opacity={opacity || 1}
+    />
+  );
+};
+
 export default {
   FolderIcon,
   CameraIcon,
@@ -327,4 +343,5 @@ export default {
   PlayIcon,
   RewindIcon,
   CloseIcon,
+  CheckMarkIcon,
 };
