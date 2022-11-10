@@ -32,17 +32,17 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
   const books = useAppSelector((state: RootState) => state.books);
   const [doc, setDoc] = useState<IPDFBook>();
   const [isReadingChapter, setIsReadingChapter] = useState(false);
-  const [isVoiceModalVisible, setIsVoiceModalVisible] = useState(true);
+  const [isVoiceModalVisible, setIsVoiceModalVisible] = useState(false);
   const {height, width} = useWindowDimensions();
   const {isDarkTheme} = useTheme();
   const VOICE_MODAL_HEIGHT = 300;
   const VOICE_MODAL_WIDTH = width / 1.2;
-
   const {
     startSpeach,
+    selectVoice,
+    pauseSpeach,
     isReading,
     isFinishedReading,
-    pauseSpeach,
     isPaused,
     speachVoices,
     currentVoice,
@@ -110,6 +110,17 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
     navigation.goBack();
   };
 
+  const handleVoiceSelect = useCallback(
+    (voice: ISpeachVoice) => {
+      if (isReading) {
+        pauseSpeach();
+      }
+      selectVoice(voice.id);
+      setIsVoiceModalVisible(!isVoiceModalVisible);
+    },
+    [isReading, isVoiceModalVisible, pauseSpeach, selectVoice],
+  );
+
   useEffect(() => {
     if (isReading || isPaused) {
       return;
@@ -170,7 +181,7 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
 
   const VoicesModalContent: ListRenderItem<ISpeachVoice> = ({item}) => {
     return (
-      <TouchableOpacity onPress={() => console.log(item.language)}>
+      <TouchableOpacity onPress={() => handleVoiceSelect(item)}>
         <View style={styles.voicesModalContentContainer}>
           <Text weight="bold">{item.name}</Text>
           <Text>{`Language:  ${item.language}`}</Text>

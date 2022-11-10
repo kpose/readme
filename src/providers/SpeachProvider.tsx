@@ -21,6 +21,7 @@ export interface ISpeachContext {
   isReading?: boolean;
   isFinishedReading?: boolean;
   isPaused?: boolean;
+  selectVoice: (voiceId: string) => void;
 }
 
 export interface ISpeachVoice {
@@ -39,6 +40,7 @@ export interface ISpeachCurrentWordProps {
 const SpeachContext = createContext<ISpeachContext>({
   pauseSpeach: () => '',
   startSpeach: () => '',
+  selectVoice: () => {},
 });
 
 export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
@@ -134,11 +136,24 @@ export const SpeachProvider: FC<ISpeachProviderProps> = ({children}) => {
     Tts.stop();
   }, [isReading]);
 
+  const selectVoice = useCallback(
+    (voiceId: string) => {
+      if (isReading) {
+        Tts.stop();
+        setIsReading(false);
+        setIsPaused(true);
+      }
+      Tts.setDefaultVoice(voiceId);
+    },
+    [isReading],
+  );
+
   return (
     <SpeachContext.Provider
       value={{
         startSpeach,
         pauseSpeach,
+        selectVoice,
         speachVoices: ttsvoices,
         currentVoice: selectedVoice,
         speachLocation: currentWord,
