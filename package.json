@@ -22,6 +22,7 @@
     "@reduxjs/toolkit": "^1.8.5",
     "crypto-js": "^4.1.1",
     "fs": "^0.0.1-security",
+    "iso-639-1": "^2.1.15",
     "lottie-ios": "^3.4.0",
     "lottie-react-native": "^5.1.4",
     "pdf-parse": "^1.1.1",

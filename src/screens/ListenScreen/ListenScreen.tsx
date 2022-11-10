@@ -15,6 +15,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import Text from '../../components/Text/Text';
 import SpeachText from '../../components/Text/SpeachText';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import ISO6391 from 'iso-639-1';
 
 import {useAppDispatch, useAppSelector} from '../../hooks/ReduxState.hook';
 import {RootState} from '../../redux/store';
@@ -191,7 +192,7 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
       <TouchableOpacity onPress={() => handleVoiceSelect(item)}>
         <View style={styles.voicesModalContentContainer}>
           <Text weight="bold">{item.name}</Text>
-          <Text>{`Language:  ${item.language}`}</Text>
+          <Text>{`${ISO6391.getName(item.language.split('-')[0])}`}</Text>
           {currentVoice?.id === item.id ? <CheckMarkIcon /> : null}
         </View>
       </TouchableOpacity>

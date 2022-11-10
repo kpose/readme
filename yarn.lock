@@ -4728,6 +4728,11 @@
   "resolved" "https://registry.npmjs.org/isexe/-/isexe-2.0.0.tgz"
   "version" "2.0.0"
 
+"iso-639-1@^2.1.15":
+  "integrity" "sha512-7c7mBznZu2ktfvyT582E2msM+Udc1EjOyhVRE/0ZsjD9LBtWSm23h3PtiRh2a35XoUsTQQjJXaJzuLjXsOdFDg=="
+  "resolved" "https://registry.npmjs.org/iso-639-1/-/iso-639-1-2.1.15.tgz"
+  "version" "2.1.15"
+
 "isobject@^2.0.0":
   "integrity" "sha512-+OUdGJlgjOBZDfxnDjYYG6zp487z0JGNQq3cYQYg5f5hKR+syHMsaztzGeml/4kGG55CSpKSpWTY+jYGgsHLgA=="
   "resolved" "https://registry.npmjs.org/isobject/-/isobject-2.1.0.tgz"
