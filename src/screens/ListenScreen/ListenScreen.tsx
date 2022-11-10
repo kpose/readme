@@ -14,6 +14,7 @@ import {IListenScreenProps} from './interfaces';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Text from '../../components/Text/Text';
 import SpeachText from '../../components/Text/SpeachText';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 import {useAppDispatch, useAppSelector} from '../../hooks/ReduxState.hook';
 import {RootState} from '../../redux/store';
@@ -35,7 +36,7 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
   const [isVoiceModalVisible, setIsVoiceModalVisible] = useState(false);
   const {height, width} = useWindowDimensions();
   const {isDarkTheme} = useTheme();
-  const VOICE_MODAL_HEIGHT = 300;
+  const VOICE_MODAL_HEIGHT = 500;
   const VOICE_MODAL_WIDTH = width / 1.2;
   const {
     startSpeach,
@@ -89,6 +90,12 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
 
   /* Speaking voice */
   const onSpeakerPress = useCallback(() => {
+    const HepticFeedbackOptions = {
+      enableVibrateFallback: true,
+      ignoreAndroidSystemSettings: false,
+    };
+    ReactNativeHapticFeedback.trigger('impactLight', HepticFeedbackOptions);
+
     if (speachVoices && speachVoices.length > 0) {
       if (isVoiceModalVisible) {
         setIsVoiceModalVisible(false);
@@ -237,11 +244,12 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
               ]}>
               <View style={styles.voiceModalHead}>
                 <Pressable onPress={() => setIsVoiceModalVisible(false)}>
-                  <CloseIcon />
+                  <CloseIcon size={19} />
                 </Pressable>
                 <Text weight="bold" style={[styles.voicesModalHeader]}>
-                  Select Preferred Voice
+                  Select Voice
                 </Text>
+                <View />
               </View>
               <FlatList
                 data={speachVoices}
@@ -281,9 +289,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   voicesModalHeader: {
-    alignSelf: 'center',
     marginVertical: 10,
     color: appcolors.primary,
+    fontSize: 16,
   },
   voicesItemSeperator: {
     height: 0.4,
@@ -294,6 +302,8 @@ const styles = StyleSheet.create({
   voiceModalHead: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 6,
   },
   header: {
     flexDirection: 'row',
