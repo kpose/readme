@@ -18,6 +18,7 @@ import {ReadIcon, ListenIcon} from '../../components/Icon/Icon';
 import {useNavigation} from '@react-navigation/native';
 import SpeachText from '../../components/Text/SpeachText';
 import {useSpeach} from '../../providers/SpeachProvider';
+import {useFileUpload} from '../../providers/FileUploadProvider';
 // import {usePDFViewer} from '../../providers/PDFViewerProvider';
 
 const pdfWidth = 120;
@@ -32,6 +33,16 @@ const UploadedPDFs = () => {
   const navigation = useNavigation();
   const [isSpeachActive, setIsSpeachActive] = useState(false);
   const {startSpeach} = useSpeach();
+  const {isUploadingPDF, isFetchingBooks} = useFileUpload();
+
+  const kkk = {
+    title: 'Processing ...',
+    id: '20',
+    url: 'https://google.com',
+    bookData: [],
+    listening: {currentPage: 0},
+  };
+  const DummyBooks = [kkk, ...books];
   // const {openDocument} = usePDFViewer();
 
   useEffect(() => {
@@ -39,7 +50,7 @@ const UploadedPDFs = () => {
   }, [books]);
 
   useEffect(() => {
-    if (!books.length) {
+    if (!books.length && !IsProcessing()) {
       setIsSpeachActive(true);
       setTimeout(() => {
         startSpeach(EmptyDirectoryText);
@@ -52,9 +63,20 @@ const UploadedPDFs = () => {
     setopenModal(false);
   };
 
+  /* check if document is currently being uploaded */
+  const IsProcessing = useCallback(() => {
+    // return isFetchingBooks || isFetchingBooks;
+    if (isUploadingPDF) {
+      return true;
+    }
+    return false;
+  }, [isUploadingPDF]);
+
+  // console.log(IsProcessing());
+
   const handleDocPress = useCallback(
     (doc: IPDFBook) => {
-      if (openModal) {
+      if (openModal || IsProcessing()) {
         return;
       }
       // set bottom sheet details
@@ -62,7 +84,7 @@ const UploadedPDFs = () => {
       // open modal
       setopenModal(true);
     },
-    [openModal],
+    [IsProcessing, openModal],
   );
 
   const onReadPress = useCallback(() => {
@@ -129,7 +151,7 @@ const UploadedPDFs = () => {
     );
   };
 
-  if (!books.length) {
+  if (!books.length && !IsProcessing()) {
     return (
       <View style={styles.noBooks}>
         <SpeachText
@@ -143,11 +165,11 @@ const UploadedPDFs = () => {
 
   return (
     <View style={styles.container}>
-      {books.length ? (
+      {books.length || IsProcessing() ? (
         <View>
           <Text style={styles.heading}> Recently added </Text>
           <FlatList
-            data={books}
+            data={IsProcessing() ? DummyBooks : books}
             horizontal
             renderItem={renderPdfFiles}
             keyExtractor={item => item.id}

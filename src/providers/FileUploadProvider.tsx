@@ -54,7 +54,6 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
       }
 
       if (filesPermission === 'granted') {
-        setIsUploading(true);
         // pick single pdf and get temp location
         const filePath = await selectPdf();
         if (Object.keys(filePath).length === 0) {
@@ -112,7 +111,6 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
 
   const getAllUserBooks = useCallback(async () => {
     try {
-      /* make http call for text extraction */
       const token = await asyncGet(STORE_KEYS.AUTH_TOKEN);
       if (!token) {
         return;
