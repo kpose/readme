@@ -48,7 +48,9 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
       const filesPermission = await requestFilePermission();
       const token = await asyncGet(STORE_KEYS.AUTH_TOKEN);
       if (!token) {
-        return;
+        return Promise.reject(
+          'Error processing, please logout and log in again',
+        );
       }
 
       if (filesPermission === 'granted') {

@@ -16,21 +16,37 @@ import {IOpenDocProps} from './interfaces';
 import BottomSheet from '../../components/BottomSheet/BottomSheet';
 import {ReadIcon, ListenIcon} from '../../components/Icon/Icon';
 import {useNavigation} from '@react-navigation/native';
+import SpeachText from '../../components/Text/SpeachText';
+import {useSpeach} from '../../providers/SpeachProvider';
 // import {usePDFViewer} from '../../providers/PDFViewerProvider';
 
 const pdfWidth = 120;
 const pdfHeight = 190;
+const EmptyDirectoryText =
+  'Your library looks empty, click the button below to add your first document.';
 
 const UploadedPDFs = () => {
   const books = useAppSelector((state: RootState) => state.books);
   const [openModal, setopenModal] = useState<boolean>(false);
   const [openDoc, setOpenDoc] = useState<IOpenDocProps>();
   const navigation = useNavigation();
+  const [isSpeachActive, setIsSpeachActive] = useState(false);
+  const {startSpeach} = useSpeach();
   // const {openDocument} = usePDFViewer();
 
   useEffect(() => {
     // console.log(books);
   }, [books]);
+
+  useEffect(() => {
+    if (!books.length) {
+      setIsSpeachActive(true);
+      setTimeout(() => {
+        startSpeach(EmptyDirectoryText);
+      }, 2000);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [books.length]);
 
   const onDismiss = () => {
     setopenModal(false);
@@ -115,8 +131,12 @@ const UploadedPDFs = () => {
 
   if (!books.length) {
     return (
-      <View>
-        <Text>You currently don't have any books uploaded</Text>
+      <View style={styles.noBooks}>
+        <SpeachText
+          text={EmptyDirectoryText}
+          active={isSpeachActive}
+          style={styles.emptyDir}
+        />
       </View>
     );
   }
@@ -149,6 +169,17 @@ export default UploadedPDFs;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  noBooks: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  emptyDir: {
+    fontSize: 20,
+    textAlign: 'center',
+    fontWeight: '500',
   },
   inputContainer: {
     height: 0.5,

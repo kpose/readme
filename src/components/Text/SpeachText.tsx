@@ -1,12 +1,13 @@
 import React, {FC, useCallback, useEffect} from 'react';
 import Text from './Text';
-import {StyleSheet, TextProps, View} from 'react-native';
+import {StyleSheet, TextProps, TextStyle, View} from 'react-native';
 import {useSpeach} from '../../providers/SpeachProvider';
 import {appcolors} from '../../utils/colors.util';
 
 interface ISpeachTextProps extends TextProps {
   text: string;
   active: boolean;
+  style: TextStyle;
 }
 
 interface ICurrentWordPosition {
@@ -14,7 +15,7 @@ interface ICurrentWordPosition {
   wordIndex: number;
 }
 
-const SpeachText: FC<ISpeachTextProps> = ({text, active, ...props}) => {
+const SpeachText: FC<ISpeachTextProps> = ({text, active, style, ...props}) => {
   const {speachLocation, isReading} = useSpeach();
 
   const wordPosition = useCallback(() => {
@@ -43,7 +44,7 @@ const SpeachText: FC<ISpeachTextProps> = ({text, active, ...props}) => {
       return;
     }
     return (
-      <Text {...props}>
+      <Text>
         {text.split(' ').map((t, index) => {
           const position = wordPosition();
           // console.log(position);
@@ -55,14 +56,14 @@ const SpeachText: FC<ISpeachTextProps> = ({text, active, ...props}) => {
             return (
               <Text
                 {...props}
-                style={[styles.textContent, {color: appcolors.primary}]}
+                style={[style, styles.textContent, {color: appcolors.primary}]}
                 key={index}>
                 {t}{' '}
               </Text>
             );
           }
           return (
-            <Text {...props} style={styles.textContent} key={index}>
+            <Text {...props} style={[style, styles.textContent]} key={index}>
               {`${t} `}
             </Text>
           );
@@ -70,7 +71,7 @@ const SpeachText: FC<ISpeachTextProps> = ({text, active, ...props}) => {
         })}
       </Text>
     );
-  }, [text, active, props, wordPosition, isReading]);
+  }, [text, active, wordPosition, isReading, props, style]);
 
   return <View>{renderAnimatedText()}</View>;
 };
