@@ -9,7 +9,11 @@ import {selectPdf} from '../utils/FilePicker.util';
 import {requestFilePermission} from '../utils/Permissions.util';
 import DocumentPicker from 'react-native-document-picker';
 import {useAppDispatch, useAppSelector} from '../hooks/ReduxState.hook';
-import {updateBooks, IPDFBook} from '../redux/slices/uploadedBooksSlice';
+import {
+  updateBooks,
+  IPDFBook,
+  deleteBook,
+} from '../redux/slices/uploadedBooksSlice';
 import PdfThumbnail from 'react-native-pdf-thumbnail';
 import {asyncGet} from '../utils/Async.util';
 import {STORE_KEYS} from '../utils/Keys.util';
@@ -21,6 +25,7 @@ const initialState = {
   isFetchingBooks: false,
   uploadPDF: () => {},
   getUserBooks: () => {},
+  deletePDF: () => {},
 };
 interface IFileUploadProviderProps {
   children: React.ReactNode;
@@ -31,6 +36,7 @@ interface IFileUploadContext {
   isFetchingBooks: boolean;
   uploadPDF: () => Promise<string | undefined>;
   getUserBooks: () => Promise<any>;
+  deletePDF: (id: string) => Promise<any>;
 }
 
 const FileUploadContext = createContext<IFileUploadContext>(initialState);
@@ -40,6 +46,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
 }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const SAVEDBOOKS = useAppSelector((state: RootState) => state.books);
   const dispatch = useAppDispatch();
 
@@ -141,7 +148,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         let bookData: IPDFBook = {
           title: newBook.title,
           // thumbnail,
-          id: getUniqueID(10),
+          id: newBook._id,
           url: newBook.url,
           bookData: newBook.content,
           listening: {currentPage: 1},
@@ -153,6 +160,37 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
     }
   }, [SAVEDBOOKS, dispatch]);
 
+  const deletePDF = useCallback(
+    async (id: string) => {
+      try {
+        const token = await asyncGet(STORE_KEYS.AUTH_TOKEN);
+        if (!token) {
+          return;
+        }
+        setIsDeleting(true);
+        const response = await fetch(
+          `http://localhost:4000/api/deleteBook/${id}`,
+          {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              Authorization: token,
+            },
+          },
+        );
+        let responseInJs = await response.json();
+
+        if (responseInJs.message) {
+          dispatch(deleteBook(id));
+        }
+        console.log(responseInJs);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [dispatch],
+  );
+
   return (
     <FileUploadContext.Provider
       value={{
@@ -160,6 +198,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         isFetchingBooks: isFetching,
         uploadPDF: uploadAndSavePDF,
         getUserBooks: getAllUserBooks,
+        deletePDF: deletePDF,
       }}>
       {children}
     </FileUploadContext.Provider>

@@ -34,12 +34,14 @@ export const uploadedBooksSlice = createSlice({
     updateBooks: (state, action: PayloadAction<IPDFBook>) => {
       state.unshift(action.payload);
     },
+    deleteBook: (state, action: PayloadAction<string>) => {
+      return state.filter(book => book.id !== action.payload);
+    },
     updateListening: (
       state,
       action: PayloadAction<{id: string; currentPage: number}>,
     ) => {
       const {id, currentPage} = action.payload;
-      // update reading position for this id
       const book = state.find(doc => doc.id === id);
       if (!book) {
         return;
@@ -50,7 +52,8 @@ export const uploadedBooksSlice = createSlice({
   },
 });
 
-export const {updateBooks, updateListening} = uploadedBooksSlice.actions;
+export const {updateBooks, updateListening, deleteBook} =
+  uploadedBooksSlice.actions;
 
 export const uploadedPDFBooks = (state: RootState) => state.books;
 

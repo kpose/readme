@@ -33,7 +33,7 @@ const UploadedPDFs = () => {
   const navigation = useNavigation();
   const [isSpeachActive, setIsSpeachActive] = useState(false);
   const {startSpeach} = useSpeach();
-  const {isUploadingPDF, isFetchingBooks} = useFileUpload();
+  const {isUploadingPDF, deletePDF, isFetchingBooks} = useFileUpload();
 
   const kkk = {
     title: 'Processing ...',
@@ -65,11 +65,7 @@ const UploadedPDFs = () => {
 
   /* check if document is currently being uploaded */
   const IsProcessing = useCallback(() => {
-    // return isFetchingBooks || isFetchingBooks;
-    if (isUploadingPDF) {
-      return true;
-    }
-    return false;
+    return isUploadingPDF;
   }, [isUploadingPDF]);
 
   // console.log(IsProcessing());
@@ -80,7 +76,7 @@ const UploadedPDFs = () => {
         return;
       }
       // set bottom sheet details
-      setOpenDoc({title: doc.title});
+      setOpenDoc({title: doc.title, id: doc.id});
       // open modal
       setopenModal(true);
     },
@@ -98,6 +94,14 @@ const UploadedPDFs = () => {
       {title: openDoc?.title} as never,
     );
   }, [navigation, openDoc?.title]);
+
+  const onDeletePress = useCallback(
+    (id: string) => {
+      setopenModal(false);
+      deletePDF(id);
+    },
+    [deletePDF],
+  );
 
   const BottomSheetContent = () => {
     return (
@@ -128,6 +132,12 @@ const UploadedPDFs = () => {
             <ReadIcon />
           </Pressable>
         </View>
+
+        <Pressable onPress={() => onDeletePress(openDoc?.id)}>
+          <Text weight="bold" style={styles.delete}>
+            Delete
+          </Text>
+        </Pressable>
       </View>
     );
   };
@@ -220,6 +230,11 @@ const styles = StyleSheet.create({
   title: {
     alignSelf: 'center',
   },
+  delete: {
+    alignSelf: 'center',
+    color: appcolors.error,
+    marginTop: 5,
+  },
 
   bottomSheetThumbnail: {
     height: 150,
@@ -230,7 +245,7 @@ const styles = StyleSheet.create({
   sheetButtonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginTop: 30,
+    marginTop: 20,
   },
   sheetText: {
     marginRight: 7,
