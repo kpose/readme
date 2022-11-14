@@ -32,7 +32,7 @@ const UploadedPDFs = () => {
   const [openDoc, setOpenDoc] = useState<IOpenDocProps>();
   const navigation = useNavigation();
   const [isSpeachActive, setIsSpeachActive] = useState(false);
-  const {startSpeach} = useSpeach();
+  const {startSpeach, isReading, pauseSpeach} = useSpeach();
   const {isUploadingPDF, deletePDF, isFetchingBooks} = useFileUpload();
 
   const kkk = {
