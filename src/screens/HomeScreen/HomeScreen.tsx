@@ -15,7 +15,7 @@ const HomeScreen = ({navigation}: IHomeScreenProps) => {
   useEffect(
     function componentDidMount() {
       async function fetchAllUserBooks() {
-        await getUserBooks()
+        await getUserBooks('incognito')
           .then(x => {
             // do nothing
           })
@@ -31,7 +31,7 @@ const HomeScreen = ({navigation}: IHomeScreenProps) => {
   const onImportPress = useCallback(async () => {
     await uploadPDF()
       .then(() => {
-        getUserBooks()
+        getUserBooks('live')
           .then(() => {
             // do nothing
           })

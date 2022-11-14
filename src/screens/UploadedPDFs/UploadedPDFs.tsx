@@ -35,14 +35,14 @@ const UploadedPDFs = () => {
   const {startSpeach, isReading, pauseSpeach} = useSpeach();
   const {isUploadingPDF, deletePDF, isFetchingBooks} = useFileUpload();
 
-  const kkk = {
+  const dummy = {
     title: 'Processing ...',
     id: '20',
-    url: 'https://google.com',
+    url: 'https://readmeapp.com',
     bookData: [],
     listening: {currentPage: 0},
   };
-  const DummyBooks = [kkk, ...books];
+  const DummyBooks = [dummy, ...books];
   // const {openDocument} = usePDFViewer();
 
   useEffect(() => {
@@ -65,8 +65,10 @@ const UploadedPDFs = () => {
 
   /* check if document is currently being uploaded */
   const IsProcessing = useCallback(() => {
-    return isUploadingPDF;
-  }, [isUploadingPDF]);
+    return isUploadingPDF || isFetchingBooks;
+  }, [isFetchingBooks, isUploadingPDF]);
+
+  console.log(IsProcessing());
 
   // console.log(IsProcessing());
 
@@ -142,15 +144,19 @@ const UploadedPDFs = () => {
     );
   };
 
-  const renderPdfFiles: ListRenderItem<IPDFBook> = ({item}) => {
+  const renderPdfFiles: ListRenderItem<IPDFBook> = ({item, index}) => {
     return (
       <Pressable
-        style={styles.pdfContainer}
+        style={[
+          styles.pdfContainer,
+          // eslint-disable-next-line react-native/no-inline-styles
+          {opacity: IsProcessing() && index === 0 ? 0.4 : 1},
+        ]}
         onPress={() => handleDocPress(item)}>
         <Image
           // source={item.thumbnail}
           source={require('../../assets/images/thumbnail.png')}
-          style={styles.thumbnailImage}
+          style={[styles.thumbnailImage]}
           resizeMode="contain"
         />
         <Text numberOfLines={1} style={styles.pdfTitle}>

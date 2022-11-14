@@ -35,7 +35,7 @@ interface IFileUploadContext {
   isUploadingPDF: boolean;
   isFetchingBooks: boolean;
   uploadPDF: () => Promise<string | undefined>;
-  getUserBooks: () => Promise<any>;
+  getUserBooks: (mode: 'incognito' | 'live') => Promise<any>;
   deletePDF: (id: string) => Promise<any>;
 }
 
@@ -68,6 +68,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
           let error = 'Please make sure you have selected a pdf document';
           return Promise.reject(error);
         }
+
         const found = SAVEDBOOKS.some(doc => doc.title === filePath.name);
         if (found) {
           setIsUploading(false);
@@ -75,6 +76,8 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
             'This document already exist in your library, select another';
           return Promise.reject(error);
         }
+        setIsUploading(true);
+
         let data = new FormData();
         data.append('pdfFile', filePath);
 
@@ -90,6 +93,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
 
         let responseInJs = await response.json();
         if (responseInJs.error) {
+          setIsUploading(false);
           return Promise.reject(responseInJs.error);
         }
 
@@ -116,49 +120,59 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
     }
   }, [SAVEDBOOKS]);
 
-  const getAllUserBooks = useCallback(async () => {
-    try {
-      const token = await asyncGet(STORE_KEYS.AUTH_TOKEN);
-      if (!token) {
-        return;
-      }
-      setIsFetching(true);
-      const response = await fetch('http://localhost:4000/api/getBooks', {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          Authorization: token,
-        },
-      });
+  /* params here (incogniito or live), is used to determine how to fetch
+  the users uploaded books, we run incognito when we dont want to update the 
+  isFetching state. We only run on live mode when only uploading new documents, other times 
+  we run on incognito when fetching silently */
 
-      let responseInJs = await response.json();
-      if (responseInJs.error) {
+  const getAllUserBooks = useCallback(
+    async (mode: 'incognito' | 'live') => {
+      try {
+        const token = await asyncGet(STORE_KEYS.AUTH_TOKEN);
+        if (!token) {
+          return;
+        }
+        if (mode === 'live') {
+          setIsFetching(true);
+        }
+        const response = await fetch('http://localhost:4000/api/getBooks', {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            Authorization: token,
+          },
+        });
+
+        let responseInJs = await response.json();
+        if (responseInJs.error) {
+          setIsFetching(false);
+          return Promise.reject(responseInJs.error);
+        }
+        // check if database books habve been updated
+        let missingBooks = responseInJs.data.filter(
+          e => !SAVEDBOOKS.find(a => e.title === a.title),
+        );
+        // const thumbnail = await PdfThumbnail.generate(filePath.uri, 0);
+
+        // /* update device books storage if necessary*/
+        if (missingBooks.length) {
+          let newBook = missingBooks[0];
+          let bookData: IPDFBook = {
+            title: newBook.title,
+            // thumbnail,
+            id: newBook._id,
+            url: newBook.url,
+            bookData: newBook.content,
+            listening: {currentPage: 1},
+          };
+          dispatch(updateBooks(bookData));
+        }
+      } catch (error) {
         setIsFetching(false);
-        return Promise.reject(responseInJs.error);
       }
-      // check if database books habve been updated
-      let missingBooks = responseInJs.data.filter(
-        e => !SAVEDBOOKS.find(a => e.title === a.title),
-      );
-      // const thumbnail = await PdfThumbnail.generate(filePath.uri, 0);
-
-      // /* update device books storage if necessary*/
-      if (missingBooks.length) {
-        let newBook = missingBooks[0];
-        let bookData: IPDFBook = {
-          title: newBook.title,
-          // thumbnail,
-          id: newBook._id,
-          url: newBook.url,
-          bookData: newBook.content,
-          listening: {currentPage: 1},
-        };
-        dispatch(updateBooks(bookData));
-      }
-    } catch (error) {
-      setIsFetching(false);
-    }
-  }, [SAVEDBOOKS, dispatch]);
+    },
+    [SAVEDBOOKS, dispatch],
+  );
 
   const deletePDF = useCallback(
     async (id: string) => {

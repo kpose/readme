@@ -8,6 +8,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {appcolors} from '../../utils/colors.util';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import FABpopup from './FABpopup';
+import {useSpeach} from '../../providers/SpeachProvider';
 const fabBottomPosition = 20;
 const fabRightPosition = 20;
 
@@ -20,6 +21,7 @@ const FAB = ({onImportPress, disabled}: IFABPopupProps) => {
   const springAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
   const [isOpen, setIsOpen] = useState(true);
+  const {isReading, pauseSpeach} = useSpeach();
 
   const toggleOpen = useCallback(() => {
     const options = {
@@ -28,8 +30,11 @@ const FAB = ({onImportPress, disabled}: IFABPopupProps) => {
     };
 
     ReactNativeHapticFeedback.trigger('impactLight', options);
+    if (isReading) {
+      pauseSpeach();
+    }
     setIsOpen(!isOpen);
-  }, [isOpen]);
+  }, [isOpen, isReading, pauseSpeach]);
 
   const onPopUpItemPress = useCallback(
     async (index: number) => {
