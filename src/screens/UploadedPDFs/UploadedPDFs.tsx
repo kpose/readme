@@ -5,6 +5,8 @@ import {
   Image,
   Pressable,
   ListRenderItem,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import Text from '../../components/Text/Text';
@@ -29,10 +31,11 @@ const EmptyDirectoryText =
 const UploadedPDFs = () => {
   const books = useAppSelector((state: RootState) => state.books);
   const [openModal, setopenModal] = useState<boolean>(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [openDoc, setOpenDoc] = useState<IOpenDocProps>();
   const navigation = useNavigation();
   const [isSpeachActive, setIsSpeachActive] = useState(false);
-  const {startSpeach, isReading, pauseSpeach} = useSpeach();
+  const {startSpeach} = useSpeach();
   const {isUploadingPDF, deletePDF, isFetchingBooks} = useFileUpload();
 
   const dummy = {
@@ -91,27 +94,56 @@ const UploadedPDFs = () => {
     );
   }, [navigation, openDoc?.title]);
 
-  const onDeletePress = useCallback(
-    (id: string) => {
-      setopenModal(false);
-      deletePDF(id);
-    },
-    [deletePDF],
-  );
+  const onDeletePress = useCallback(() => {
+    if (isDeleting || !openDoc) {
+      return;
+    }
+    Alert.alert('Attention', 'Are you sure you want to delete this document?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Yes, delete',
+        onPress: () => {
+          setIsDeleting(true);
+          deletePDF(openDoc.id);
+          setopenModal(false);
+        },
+      },
+    ]);
+  }, [deletePDF, isDeleting, openDoc]);
 
   const BottomSheetContent = () => {
     return (
       <View>
+        {isDeleting ? (
+          <View style={styles.bottomSheetSpinerContainer}>
+            <ActivityIndicator size="large" color={appcolors.primary} />
+          </View>
+        ) : null}
         <Image
           source={require('../../assets/images/thumbnail.png')}
-          style={styles.bottomSheetThumbnail}
+          style={[
+            styles.bottomSheetThumbnail,
+            // eslint-disable-next-line react-native/no-inline-styles
+            {opacity: isDeleting ? 0.5 : 1},
+          ]}
           resizeMode="contain"
         />
-        <Text weight="bold" style={styles.title}>
+        <Text
+          weight="bold"
+          // eslint-disable-next-line react-native/no-inline-styles
+          style={[styles.title, {opacity: isDeleting ? 0.5 : 1}]}>
           Title: {openDoc?.title.split('.pdf')}
         </Text>
 
-        <View style={styles.sheetButtonsContainer}>
+        <View
+          style={[
+            styles.sheetButtonsContainer,
+            // eslint-disable-next-line react-native/no-inline-styles
+            {opacity: isDeleting ? 0.5 : 1},
+          ]}>
           {/* Listen button */}
           <Pressable style={styles.sheetButton} onPress={onListenPress}>
             <Text weight="bold" style={styles.sheetText}>
@@ -129,7 +161,7 @@ const UploadedPDFs = () => {
           </Pressable>
         </View>
 
-        <Pressable onPress={() => onDeletePress(openDoc?.id)}>
+        <Pressable onPress={onDeletePress}>
           <Text weight="bold" style={styles.delete}>
             Delete
           </Text>
@@ -204,6 +236,15 @@ const styles = StyleSheet.create({
   },
   noBooks: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bottomSheetSpinerContainer: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
     alignItems: 'center',
     justifyContent: 'center',
   },
