@@ -2,6 +2,8 @@ import {configureStore, combineReducers} from '@reduxjs/toolkit';
 import uploadedBooksReducer from './slices/uploadedBooksSlice';
 import speakerInfoReducer from './slices/SpeakerSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+const createDebugger = require('redux-flipper').default; // <-- ADD THIS
+
 import {
   persistStore,
   persistReducer,
@@ -27,11 +29,17 @@ const rootReducer = combineReducers({
 export const store = configureStore({
   reducer: persistReducer(persistConfig, rootReducer),
   middleware: getDefaultMiddleware =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
-    }),
+    __DEV__
+      ? getDefaultMiddleware({
+          serializableCheck: {
+            ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+          },
+        }).concat(createDebugger())
+      : getDefaultMiddleware({
+          serializableCheck: {
+            ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+          },
+        }),
 });
 
 export const persistor = persistStore(store);

@@ -43,7 +43,6 @@ const UploadedPDFs = () => {
     listening: {currentPage: 0},
   };
   const DummyBooks = [dummy, ...books];
-  // const {openDocument} = usePDFViewer();
 
   useEffect(() => {
     // console.log(books);
@@ -68,10 +67,6 @@ const UploadedPDFs = () => {
     return isUploadingPDF || isFetchingBooks;
   }, [isFetchingBooks, isUploadingPDF]);
 
-  console.log(IsProcessing());
-
-  // console.log(IsProcessing());
-
   const handleDocPress = useCallback(
     (doc: IPDFBook) => {
       if (openModal || IsProcessing()) {
@@ -79,7 +74,6 @@ const UploadedPDFs = () => {
       }
       // set bottom sheet details
       setOpenDoc({title: doc.title, id: doc.id});
-      // open modal
       setopenModal(true);
     },
     [IsProcessing, openModal],
