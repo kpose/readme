@@ -35,6 +35,7 @@ const UploadedPDFs = () => {
   const books = useAppSelector((state: RootState) => state.books);
   const [openModal, setopenModal] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isLoadingThumbnail, setIsLoadingThumbnail] = useState(true);
   const [openDoc, setOpenDoc] = useState<IOpenDocProps>();
   const navigation = useNavigation();
   const [isSpeachActive, setIsSpeachActive] = useState(false);
@@ -121,6 +122,10 @@ const UploadedPDFs = () => {
     ]);
   }, [deletePDF, isDeleting, openDoc]);
 
+  const handleLoadingImage = useCallback((status: 'start' | 'finish') => {
+    console.log(status);
+  }, []);
+
   const BottomSheetContent = () => {
     return (
       <View>
@@ -202,8 +207,11 @@ const UploadedPDFs = () => {
             }
             style={[styles.thumbnailImage]}
             resizeMode={FastImage.resizeMode.contain}
+            onLoadStart={() => handleLoadingImage('start')}
+            onLoadEnd={() => handleLoadingImage('finish')}
           />
         </TouchableOpacity>
+        {IsProcessing() && index === 0 ? <Text>Processing...</Text> : null}
       </View>
     );
   };
@@ -288,10 +296,9 @@ const styles = StyleSheet.create({
   },
 
   bottomSheetThumbnail: {
-    height: 150,
+    height: PDFHEIGHT - 15,
     width: PDFWIDTH,
     alignSelf: 'center',
-    overflow: 'hidden',
   },
   sheetButtonsContainer: {
     flexDirection: 'row',

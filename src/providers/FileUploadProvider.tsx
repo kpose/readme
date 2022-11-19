@@ -178,7 +178,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
             pdfFileUrl: newBook.pdfFileUrl,
             thumbnailFileUrl: newBook.thumbnailFileUrl,
             bookData: newBook.content,
-            listening: {currentPage: 1},
+            listening: {currentPage: 0},
           };
           dispatch(updateBooks(bookData));
         }
