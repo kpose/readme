@@ -171,6 +171,7 @@ const UploadedPDFs = () => {
   };
 
   const renderPdfFiles: ListRenderItem<IPDFBook> = ({item, index}) => {
+    // console.log(item);
     return (
       <Pressable
         style={[
@@ -180,8 +181,13 @@ const UploadedPDFs = () => {
         ]}
         onPress={() => handleDocPress(item)}>
         <Image
-          // source={item.thumbnail}
-          source={require('../../assets/images/thumbnail.png')}
+          source={
+            IsProcessing() && index === 0
+              ? require('../../assets/images/thumbnail.png')
+              : {
+                  uri: item.thumbnailFileUrl,
+                }
+          }
           style={[styles.thumbnailImage]}
           resizeMode="contain"
         />

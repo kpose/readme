@@ -13,9 +13,9 @@ export interface IPDFBookReadingData {
 }
 export interface IPDFBook {
   title: string;
-  thumbnail?: ThumbnailResult;
+  thumbnailFileUrl: string;
   id: string;
-  url: string;
+  pdfFileUrl: string;
   bookData: IPDFBookData[];
   listening: IPDFBookReadingData;
 }

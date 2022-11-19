@@ -19,6 +19,7 @@ import {asyncGet} from '../utils/Async.util';
 import {STORE_KEYS} from '../utils/Keys.util';
 import {getUniqueID} from '../utils/Helpers.util';
 import {RootState} from '../redux/store';
+import RNFS from 'react-native-fs';
 
 const initialState = {
   isUploadingPDF: false,
@@ -78,14 +79,31 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         }
         setIsUploading(true);
 
+        const firstPage = await PdfThumbnail.generate(filePath.uri, 0);
+
+        const thumbnail = {
+          // fileCopyUri: firstPage.uri,
+          // size: firstPage.height,
+          // name: filePath.name.split('.pdf') + '-thumbnail.jpeg',
+          name: `${filePath.name.split('.pdf')}${'-thumbnail.jpeg'}`,
+          type: 'image/jpeg',
+          uri: firstPage.uri,
+        };
+
+        const uploads = [filePath, thumbnail];
+
         let data = new FormData();
-        data.append('pdfFile', filePath);
+
+        for (let i = 0; i < uploads.length; i++) {
+          data.append('uploads', uploads[i]);
+        }
 
         /* make http call for text extraction */
         const response = await fetch('http://localhost:4000/api/upload', {
           method: 'POST',
           headers: {
             Accept: 'application/json',
+            // 'Content-Type': 'multipart/form-data',
             Authorization: token,
           },
           body: data,
@@ -152,16 +170,15 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         let missingBooks = responseInJs.data.filter(
           e => !SAVEDBOOKS.find(a => e.title === a.title),
         );
-        // const thumbnail = await PdfThumbnail.generate(filePath.uri, 0);
 
         // /* update device books storage if necessary*/
         if (missingBooks.length) {
           let newBook = missingBooks[0];
           let bookData: IPDFBook = {
             title: newBook.title,
-            // thumbnail,
             id: newBook._id,
-            url: newBook.url,
+            pdfFileUrl: newBook.pdfFileUrl,
+            thumbnailFileUrl: newBook.thumbnailFileUrl,
             bookData: newBook.content,
             listening: {currentPage: 1},
           };
