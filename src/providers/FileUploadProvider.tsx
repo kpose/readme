@@ -110,6 +110,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         });
 
         let responseInJs = await response.json();
+
         if (responseInJs.error) {
           setIsUploading(false);
           return Promise.reject(responseInJs.error);

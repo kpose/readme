@@ -29,6 +29,7 @@
     "react": "18.0.0",
     "react-native": "0.69.4",
     "react-native-document-picker": "^8.1.1",
+    "react-native-fast-image": "^8.6.3",
     "react-native-flipper": "^0.174.0",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.6.0",

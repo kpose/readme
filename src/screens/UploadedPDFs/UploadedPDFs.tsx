@@ -21,6 +21,7 @@ import {useNavigation} from '@react-navigation/native';
 import SpeachText from '../../components/Text/SpeachText';
 import {useSpeach} from '../../providers/SpeachProvider';
 import {useFileUpload} from '../../providers/FileUploadProvider';
+import FastImage from 'react-native-fast-image';
 // import {usePDFViewer} from '../../providers/PDFViewerProvider';
 
 const pdfWidth = 120;
@@ -76,7 +77,11 @@ const UploadedPDFs = () => {
         return;
       }
       // set bottom sheet details
-      setOpenDoc({title: doc.title, id: doc.id});
+      setOpenDoc({
+        title: doc.title,
+        id: doc.id,
+        thumbnail: doc.thumbnailFileUrl,
+      });
       setopenModal(true);
     },
     [IsProcessing, openModal],
@@ -122,8 +127,12 @@ const UploadedPDFs = () => {
             <ActivityIndicator size="large" color={appcolors.primary} />
           </View>
         ) : null}
-        <Image
-          source={require('../../assets/images/thumbnail.png')}
+        <FastImage
+          source={{
+            uri: openDoc?.thumbnail,
+            priority: FastImage.priority.normal,
+            cache: FastImage.cacheControl.immutable,
+          }}
           style={[
             styles.bottomSheetThumbnail,
             // eslint-disable-next-line react-native/no-inline-styles
@@ -180,16 +189,18 @@ const UploadedPDFs = () => {
           {opacity: IsProcessing() && index === 0 ? 0.4 : 1},
         ]}
         onPress={() => handleDocPress(item)}>
-        <Image
+        <FastImage
           source={
             IsProcessing() && index === 0
               ? require('../../assets/images/thumbnail.png')
               : {
                   uri: item.thumbnailFileUrl,
+                  priority: FastImage.priority.normal,
+                  cache: FastImage.cacheControl.immutable,
                 }
           }
           style={[styles.thumbnailImage]}
-          resizeMode="contain"
+          resizeMode={FastImage.resizeMode.contain}
         />
         <Text numberOfLines={1} style={styles.pdfTitle}>
           {item.title.split('.pdf')}
