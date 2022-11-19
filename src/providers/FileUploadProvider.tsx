@@ -82,9 +82,6 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         const firstPage = await PdfThumbnail.generate(filePath.uri, 0);
 
         const thumbnail = {
-          // fileCopyUri: firstPage.uri,
-          // size: firstPage.height,
-          // name: filePath.name.split('.pdf') + '-thumbnail.jpeg',
           name: `${filePath.name.split('.pdf')}${'-thumbnail.jpeg'}`,
           type: 'image/jpeg',
           uri: firstPage.uri,

@@ -36,13 +36,11 @@ const HomeScreen = ({navigation}: IHomeScreenProps) => {
             // do nothing
           })
           .catch(err => {
-            console.log(err);
-            // Alert.alert(err);
+            Alert.alert(err);
           });
       })
       .catch(err => {
-        console.log(err);
-        // Alert.alert(err);
+        Alert.alert(err);
       });
   }, [getUserBooks, uploadPDF]);
 

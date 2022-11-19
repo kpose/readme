@@ -2,14 +2,15 @@ import {
   View,
   FlatList,
   StyleSheet,
-  Image,
   Pressable,
   ListRenderItem,
   Alert,
   ActivityIndicator,
+  Dimensions,
+  Platform,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
-import Text from '../../components/Text/Text';
+import Text, {ScreenTitle} from '../../components/Text/Text';
 import {RootState} from '../../redux/store';
 import {useAppSelector} from '../../hooks/ReduxState.hook';
 import {appcolors} from '../../utils/colors.util';
@@ -22,10 +23,11 @@ import SpeachText from '../../components/Text/SpeachText';
 import {useSpeach} from '../../providers/SpeachProvider';
 import {useFileUpload} from '../../providers/FileUploadProvider';
 import FastImage from 'react-native-fast-image';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 // import {usePDFViewer} from '../../providers/PDFViewerProvider';
 
-const pdfWidth = 120;
-const pdfHeight = 190;
+const PDFWIDTH = Dimensions.get('window').width / 3 - 10;
+const PDFHEIGHT = Dimensions.get('window').height / 6 - 10;
 const EmptyDirectoryText =
   'Your library looks empty, click the button below to add your first document.';
 
@@ -180,33 +182,29 @@ const UploadedPDFs = () => {
   };
 
   const renderPdfFiles: ListRenderItem<IPDFBook> = ({item, index}) => {
-    // console.log(item);
     return (
-      <Pressable
+      <View
         style={[
           styles.pdfContainer,
           // eslint-disable-next-line react-native/no-inline-styles
           {opacity: IsProcessing() && index === 0 ? 0.4 : 1},
-        ]}
-        onPress={() => handleDocPress(item)}>
-        <FastImage
-          source={
-            IsProcessing() && index === 0
-              ? require('../../assets/images/thumbnail.png')
-              : {
-                  uri: item.thumbnailFileUrl,
-                  priority: FastImage.priority.normal,
-                  cache: FastImage.cacheControl.immutable,
-                }
-          }
-          style={[styles.thumbnailImage]}
-          resizeMode={FastImage.resizeMode.contain}
-        />
-        <Text numberOfLines={1} style={styles.pdfTitle}>
-          {item.title.split('.pdf')}
-        </Text>
-        <View style={styles.progressBar} />
-      </Pressable>
+        ]}>
+        <TouchableOpacity onPress={() => handleDocPress(item)}>
+          <FastImage
+            source={
+              IsProcessing() && index === 0
+                ? require('../../assets/images/thumbnail.png')
+                : {
+                    uri: item.thumbnailFileUrl,
+                    priority: FastImage.priority.normal,
+                    cache: FastImage.cacheControl.immutable,
+                  }
+            }
+            style={[styles.thumbnailImage]}
+            resizeMode={FastImage.resizeMode.contain}
+          />
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -226,10 +224,10 @@ const UploadedPDFs = () => {
     <View style={styles.container}>
       {books.length || IsProcessing() ? (
         <View>
-          <Text style={styles.heading}> Recently added </Text>
+          <ScreenTitle> Library </ScreenTitle>
           <FlatList
             data={IsProcessing() ? DummyBooks : books}
-            horizontal
+            numColumns={3}
             renderItem={renderPdfFiles}
             keyExtractor={item => item.id}
             contentContainerStyle={styles.pdfContent}
@@ -279,12 +277,7 @@ const styles = StyleSheet.create({
   pdfView: {
     backgroundColor: 'red',
   },
-  thumbnailImage: {
-    width: pdfWidth,
-    height: pdfHeight,
-    borderRadius: 20,
-    overflow: 'hidden',
-  },
+
   title: {
     alignSelf: 'center',
   },
@@ -296,7 +289,7 @@ const styles = StyleSheet.create({
 
   bottomSheetThumbnail: {
     height: 150,
-    width: pdfWidth,
+    width: PDFWIDTH,
     alignSelf: 'center',
     overflow: 'hidden',
   },
@@ -318,14 +311,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   pdfContainer: {
-    marginRight: 20,
+    flex: 1,
+    marginHorizontal: 5,
+    marginVertical: 10,
+    maxWidth: PDFWIDTH,
+    justifyContent: 'center',
     alignItems: 'center',
-    width: pdfWidth,
-    shadowColor: appcolors.primary,
-    shadowOffset: {width: 2, height: 2},
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-    elevation: 2,
+    ...Platform.select({
+      ios: {
+        shadowColor: appcolors.secondary,
+        shadowOffset: {height: 0, width: 0},
+        shadowOpacity: 0.5,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 5,
+      },
+    }),
+  },
+  thumbnailImage: {
+    width: PDFWIDTH,
+    height: PDFHEIGHT - 15,
+    overflow: 'hidden',
   },
   pdfContent: {
     // paddingHorizontal: 10,
@@ -333,13 +340,14 @@ const styles = StyleSheet.create({
   pdfTitle: {
     flexWrap: 'wrap',
     textAlign: 'center',
+    marginTop: 7,
   },
   progressBar: {
     backgroundColor: appcolors.primary,
     borderRadius: 10,
     width: '100%',
     height: 2,
-    marginTop: 6,
+    marginTop: 7,
   },
   heading: {
     fontSize: 20,
