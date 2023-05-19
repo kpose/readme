@@ -212,7 +212,6 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         if (responseInJs.message) {
           dispatch(deleteBook(id));
         }
-        console.log(responseInJs);
       } catch (error) {
         console.log(error);
       }

@@ -355,6 +355,8 @@ PODS:
     - React-Core
   - react-native-flipper (0.174.0):
     - React-Core
+  - react-native-get-random-values (1.9.0):
+    - React-Core
   - react-native-pdf-thumbnail (1.0.2):
     - React
   - react-native-render-html (6.3.4):
@@ -556,6 +558,7 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-document-picker (from `../node_modules/react-native-document-picker`)
   - react-native-flipper (from `../node_modules/react-native-flipper`)
+  - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - react-native-pdf-thumbnail (from `../node_modules/react-native-pdf-thumbnail`)
   - react-native-render-html (from `../node_modules/react-native-render-html`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -670,6 +673,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-document-picker"
   react-native-flipper:
     :path: "../node_modules/react-native-flipper"
+  react-native-get-random-values:
+    :path: "../node_modules/react-native-get-random-values"
   react-native-pdf-thumbnail:
     :path: "../node_modules/react-native-pdf-thumbnail"
   react-native-render-html:
@@ -783,6 +788,7 @@ SPEC CHECKSUMS:
   React-logger: 1088859f145b8f6dd0d3ed051a647ef0e3e80fad
   react-native-document-picker: f68191637788994baed5f57d12994aa32cf8bf88
   react-native-flipper: b269b4d4e1ec04f7f443f5edf15100a13e760bf0
+  react-native-get-random-values: dee677497c6a740b71e5612e8dbd83e7539ed5bb
   react-native-pdf-thumbnail: 2610e6c7ed8fad03b8768fe126846d91db61a473
   react-native-render-html: 984dfe2294163d04bf5fe25d7c9f122e60e05ebe
   react-native-safe-area-context: b456e1c40ec86f5593d58b275bd0e9603169daca
