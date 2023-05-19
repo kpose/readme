@@ -211,7 +211,7 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
           <Pressable onPress={closeDoc}>
             <CloseIcon size={30} />
           </Pressable>
-          <Text weight="bold" style={styles.title}>
+          <Text weight="bold" style={styles.title} numberOfLines={1}>
             {doc?.title.split('.pdf')}
           </Text>
         </View>
@@ -347,6 +347,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 25,
-    marginLeft: 20,
+    marginHorizontal: 20,
   },
 });
