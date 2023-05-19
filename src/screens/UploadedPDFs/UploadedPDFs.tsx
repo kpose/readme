@@ -161,27 +161,27 @@ const UploadedPDFs = () => {
             {opacity: isDeleting ? 0.5 : 1},
           ]}>
           {/* Listen button */}
-          <Pressable style={styles.sheetButton} onPress={onListenPress}>
+          <TouchableOpacity style={styles.sheetButton} onPress={onListenPress}>
             <Text weight="bold" style={styles.sheetText}>
               Listen
             </Text>
             <ListenIcon />
-          </Pressable>
+          </TouchableOpacity>
 
           {/* Read button */}
-          <Pressable style={styles.sheetButton} onPress={onReadPress}>
+          <TouchableOpacity style={styles.sheetButton} onPress={onReadPress}>
             <Text weight="bold" style={styles.sheetText}>
               Read
             </Text>
             <ReadIcon />
-          </Pressable>
+          </TouchableOpacity>
         </View>
 
-        <Pressable onPress={onDeletePress}>
+        <TouchableOpacity onPress={onDeletePress}>
           <Text weight="bold" style={styles.delete}>
             Delete
           </Text>
-        </Pressable>
+        </TouchableOpacity>
       </View>
     );
   };
