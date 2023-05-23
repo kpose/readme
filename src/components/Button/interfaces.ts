@@ -5,4 +5,5 @@ export interface ButtonProps extends PressableProps {
   style?: ViewStyle;
   disabled?: boolean;
   loading?: boolean;
+  backgroundColor?: string;
 }

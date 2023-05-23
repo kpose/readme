@@ -13,6 +13,7 @@ import {useTheme} from '../../providers/ThemeProvider';
 
 interface IBottomSheetProps {
   isVisible: boolean;
+  height?: number;
   onDismiss: () => void;
   children: React.ReactNode;
 }
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderTopRightRadius: 12,
     borderTopLeftRadius: 12,
-    minHeight: 300,
+    paddingVertical: 40,
   },
   sliderIndicatorRow: {
     flexDirection: 'row',

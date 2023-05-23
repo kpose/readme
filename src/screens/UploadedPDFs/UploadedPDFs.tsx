@@ -24,6 +24,7 @@ import {useSpeach} from '../../providers/SpeachProvider';
 import {useFileUpload} from '../../providers/FileUploadProvider';
 import FastImage from 'react-native-fast-image';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {getUniqueID} from '../../utils/Helpers.util';
 // import {usePDFViewer} from '../../providers/PDFViewerProvider';
 
 const PDFWIDTH = Dimensions.get('window').width / 3 - 10;
@@ -42,10 +43,12 @@ const UploadedPDFs = () => {
   const {startSpeach} = useSpeach();
   const {isUploadingPDF, deletePDF, isFetchingBooks} = useFileUpload();
 
+  console.log(isUploadingPDF, isFetchingBooks);
+
   const dummy = {
     title: 'Processing ...',
-    id: '20',
-    url: 'https://readmeapp.com',
+    id: getUniqueID(5),
+    url: 'https://google.com',
     bookData: [],
     listening: {currentPage: 0},
   };
@@ -56,6 +59,7 @@ const UploadedPDFs = () => {
   }, [books]);
 
   useEffect(() => {
+    /* read the **no pdf** welcome if user has no previous books */
     if (!books.length && !IsProcessing()) {
       setIsSpeachActive(true);
       setTimeout(() => {
@@ -79,7 +83,7 @@ const UploadedPDFs = () => {
       if (openModal || IsProcessing()) {
         return;
       }
-      // set bottom sheet details
+      // open book's details bottom sheet
       setOpenDoc({
         title: doc.title,
         id: doc.id,

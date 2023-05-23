@@ -57,7 +57,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
       const token = await asyncGet(STORE_KEYS.AUTH_TOKEN);
       if (!token) {
         return Promise.reject(
-          'Error processing, please logout and log in again',
+          'Error processing, please logout then log in again',
         );
       }
 
@@ -74,7 +74,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         if (found) {
           setIsUploading(false);
           let error =
-            'This document already exist in your library, select another';
+            'This document already exist in your library, please select another';
           return Promise.reject(error);
         }
         setIsUploading(true);
@@ -114,9 +114,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         }
 
         setIsUploading(false);
-        return Promise.resolve(
-          'Document have been uploaded/extracted successfully',
-        );
+        return Promise.resolve('Document have been uploaded successfully');
       }
       if (filesPermission === 'unavailable') {
         setIsUploading(false);
@@ -164,11 +162,12 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
           setIsFetching(false);
           return Promise.reject(responseInJs.error);
         }
+        setIsFetching(false);
+
         // check if database books habve been updated
         let missingBooks = responseInJs.data.filter(
           e => !SAVEDBOOKS.find(a => e.title === a.title),
         );
-
         // /* update device books storage if necessary*/
         if (missingBooks.length) {
           let newBook = missingBooks[0];

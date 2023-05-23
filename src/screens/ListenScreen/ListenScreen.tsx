@@ -30,6 +30,7 @@ import {ISpeachVoice, useSpeach} from '../../providers/SpeachProvider';
 import {CheckMarkIcon, CloseIcon} from '../../components/Icon/Icon';
 import {useTheme} from '../../providers/ThemeProvider';
 import {updateVoice} from '../../redux/slices/SpeakerSlice';
+import BottomSheet from '../../components/BottomSheet/BottomSheet';
 
 const ListenScreen = ({navigation, route}: IListenScreenProps) => {
   const books = useAppSelector((state: RootState) => state.books);
@@ -37,6 +38,7 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
   const [doc, setDoc] = useState<IPDFBook>();
   const [isReadingChapter, setIsReadingChapter] = useState(false);
   const [isVoiceModalVisible, setIsVoiceModalVisible] = useState(false);
+  const [isContinueModal, setIsContinueModal] = useState(false);
   const {height, width} = useWindowDimensions();
   const {isDarkTheme} = useTheme();
   const VOICE_MODAL_HEIGHT = 500;
@@ -64,8 +66,20 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
 
     setDoc(book);
 
+    /* Request user to either continue reading or restart */
+    if (book && book.listening.currentPage > 1) {
+      setIsContinueModal(true);
+    }
+  }, [books, route.params.title]);
+
+  const handleContinueReading = () => {
+    if (!books.length) {
+      return;
+    }
+    const book = books.find(x => x.title === route.params.title);
     setTimeout(() => {
       if (flatListRef.current && book?.listening.currentPage) {
+        setIsContinueModal(false);
         let currentPage = book.listening.currentPage;
         flatListRef.current.scrollToIndex({
           animated: true,
@@ -73,7 +87,11 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
         });
       }
     }, 500);
-  }, [books, route.params.title]);
+  };
+
+  const handleRestartReading = () => {
+    setIsContinueModal(false);
+  };
 
   /* Speach Control; play */
   const onPlayPress = useCallback(() => {
@@ -202,6 +220,33 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
     );
   };
 
+  const renderContinueReadingModal = () => {
+    return (
+      <View>
+        <Text style={styles.continueReadingText} weight="medium">
+          Would you like to continue from where you stopped?
+        </Text>
+        <View style={styles.continueModalButtonsContainer}>
+          <TouchableOpacity
+            style={styles.sheetButton}
+            onPress={handleRestartReading}>
+            <Text weight="bold" style={styles.sheetText}>
+              Restart
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.sheetButton}
+            onPress={handleContinueReading}>
+            <Text weight="bold" style={styles.sheetText}>
+              Continue
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* reader chapters*/}
@@ -266,6 +311,12 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
           </View>
         </Modal>
       </View>
+
+      <BottomSheet
+        onDismiss={() => setIsContinueModal(false)}
+        isVisible={isContinueModal}>
+        {renderContinueReadingModal()}
+      </BottomSheet>
 
       <BottomControlPanel
         onPlayPress={onPlayPress}
@@ -348,5 +399,28 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 25,
     marginHorizontal: 20,
+  },
+  continueModalButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 20,
+  },
+  sheetText: {
+    marginRight: 7,
+  },
+  sheetButton: {
+    backgroundColor: appcolors.grey,
+    borderRadius: 7,
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 40,
+    width: 120,
+    justifyContent: 'center',
+  },
+  continueReadingText: {
+    textAlign: 'center',
+    paddingVertical: 8,
+    fontSize: 18,
+    color: appcolors.primary,
   },
 });

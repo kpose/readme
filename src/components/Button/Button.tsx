@@ -10,6 +10,7 @@ const Button: FC<ButtonProps> = ({
   style,
   disabled,
   loading,
+  backgroundColor,
   ...props
 }) => {
   const {width} = useWindowDimensions();
@@ -18,7 +19,13 @@ const Button: FC<ButtonProps> = ({
       style={[
         style,
         styles.button,
-        {backgroundColor: disabled ? appcolors.grey : appcolors.primary},
+        {
+          backgroundColor: disabled
+            ? appcolors.grey
+            : backgroundColor
+            ? backgroundColor
+            : appcolors.primary,
+        },
         {width: width / 1.2},
       ]}
       {...props}>
