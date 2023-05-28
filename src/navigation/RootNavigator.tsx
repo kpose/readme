@@ -4,6 +4,8 @@ import AuthStack from './AuthStack';
 import {DarkTheme, LightTheme} from '../utils/colors.util';
 import {useTheme} from '../providers/ThemeProvider';
 import HomeStack from './HomeStack';
+import AppBottomTabs from './AppBottomTabs';
+
 import {asyncGet} from '../utils/Async.util';
 import {STORE_KEYS} from '../utils/Keys.util';
 
@@ -24,7 +26,7 @@ export default function RootNavigator() {
 
   return hasToken ? (
     <NavigationContainer theme={isDarkTheme ? DarkTheme : LightTheme}>
-      <HomeStack />
+      <AppBottomTabs />
     </NavigationContainer>
   ) : (
     <NavigationContainer theme={isDarkTheme ? DarkTheme : LightTheme}>

@@ -5,6 +5,7 @@ import {HomeIcon, UserIcon} from '../components/Icon/Icon';
 import {appcolors} from '../utils/colors.util';
 import ProfileStack from './ProfileStack';
 import HomeScreen from '../screens/HomeStack/HomeStack';
+import HomeStack from './HomeStack';
 
 const Tab = createBottomTabNavigator<IAppStackBottomTabList>();
 
@@ -30,7 +31,7 @@ function AppBottomTabs() {
         tabBarActiveTintColor: appcolors.primary,
         tabBarInactiveTintColor: appcolors.grey,
       })}>
-      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Home" component={HomeStack} />
       <Tab.Screen name="ProfileStack" component={ProfileStack} />
     </Tab.Navigator>
   );
