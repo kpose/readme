@@ -23,6 +23,7 @@ import RNFS from 'react-native-fs';
 
 const initialState = {
   isUploadingPDF: false,
+  isDeletingPDF: false,
   isFetchingBooks: false,
   uploadPDF: () => {},
   getUserBooks: () => {},
@@ -34,8 +35,9 @@ interface IFileUploadProviderProps {
 
 interface IFileUploadContext {
   isUploadingPDF: boolean;
+  isDeletingPDF: boolean;
   isFetchingBooks: boolean;
-  uploadPDF: () => Promise<string | undefined>;
+  uploadPDF: () => Promise<string>;
   getUserBooks: (mode: 'incognito' | 'live') => Promise<any>;
   deletePDF: (id: string) => Promise<any>;
 }
@@ -74,7 +76,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         if (found) {
           setIsUploading(false);
           let error =
-            'This document already exist in your library, please select another';
+            'This document already exist in your library, please select another.';
           return Promise.reject(error);
         }
         setIsUploading(true);
@@ -163,6 +165,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
           return Promise.reject(responseInJs.error);
         }
         setIsFetching(false);
+        console.log(responseInJs.data);
 
         // check if database books habve been updated
         let missingBooks = responseInJs.data.filter(
@@ -191,11 +194,12 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
   const deletePDF = useCallback(
     async (id: string) => {
       try {
+        setIsDeleting(true);
         const token = await asyncGet(STORE_KEYS.AUTH_TOKEN);
         if (!token) {
+          setIsDeleting(false);
           return;
         }
-        setIsDeleting(true);
         const response = await fetch(
           `http://localhost:4000/api/deleteBook/${id}`,
           {
@@ -209,10 +213,11 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         let responseInJs = await response.json();
 
         if (responseInJs.message) {
+          setIsDeleting(false);
           dispatch(deleteBook(id));
         }
       } catch (error) {
-        console.log(error);
+        setIsDeleting(false);
       }
     },
     [dispatch],
@@ -223,6 +228,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
       value={{
         isUploadingPDF: isUploading,
         isFetchingBooks: isFetching,
+        isDeletingPDF: isDeleting,
         uploadPDF: uploadAndSavePDF,
         getUserBooks: getAllUserBooks,
         deletePDF: deletePDF,
