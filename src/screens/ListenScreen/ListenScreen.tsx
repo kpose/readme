@@ -66,11 +66,48 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
 
     setDoc(book);
 
+    setTimeout(() => {
+      if (flatListRef.current && book?.listening.currentPage) {
+        setIsContinueModal(false);
+        let currentPage = book.listening.currentPage;
+        flatListRef.current.scrollToIndex({
+          animated: true,
+          index: currentPage,
+        });
+      }
+    }, 500);
+
     /* Request user to either continue reading or restart */
-    if (book && book.listening.currentPage > 1) {
-      setIsContinueModal(true);
-    }
+    // if (book && book.listening.currentPage > 1) {
+    //   setIsContinueModal(true);
+    // }
   }, [books, route.params.title]);
+
+  useEffect(() => {
+    if (isReading || isPaused) {
+      return;
+    }
+
+    if (isFinishedReading) {
+      if (!books.length) {
+        return;
+      }
+      const book = books.find(x => x.title === route.params.title);
+      if (!book) {
+        return;
+      }
+      let currentPage = book.listening.currentPage;
+      startSpeach(book.bookData[currentPage + 1].text);
+
+      dispatch(
+        updateListening({
+          id: book.id,
+          currentPage: currentPage + 1,
+        }),
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFinishedReading]);
 
   const handleContinueReading = () => {
     if (!books.length) {
@@ -149,32 +186,6 @@ const ListenScreen = ({navigation, route}: IListenScreenProps) => {
     },
     [dispatch, isReading, isVoiceModalVisible, pauseSpeach, selectVoice],
   );
-
-  useEffect(() => {
-    if (isReading || isPaused) {
-      return;
-    }
-
-    if (isFinishedReading) {
-      if (!books.length) {
-        return;
-      }
-      const book = books.find(x => x.title === route.params.title);
-      if (!book) {
-        return;
-      }
-      let currentPage = book.listening.currentPage;
-      startSpeach(book.bookData[currentPage + 1].text);
-
-      dispatch(
-        updateListening({
-          id: book.id,
-          currentPage: currentPage + 1,
-        }),
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFinishedReading]);
 
   const keyExtractor = _ => `${_._id}`;
 

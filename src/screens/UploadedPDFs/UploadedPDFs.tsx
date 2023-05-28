@@ -25,6 +25,7 @@ import {useFileUpload} from '../../providers/FileUploadProvider';
 import FastImage from 'react-native-fast-image';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {getUniqueID} from '../../utils/Helpers.util';
+import UpdatingLibraryView from '../../components/UpdatingLibraryView/UpdatingLibraryView';
 // import {usePDFViewer} from '../../providers/PDFViewerProvider';
 
 const PDFWIDTH = Dimensions.get('window').width / 3 - 10;
@@ -43,8 +44,6 @@ const UploadedPDFs = () => {
   const {startSpeach} = useSpeach();
   const {isUploadingPDF, deletePDF, isFetchingBooks} = useFileUpload();
 
-  console.log(isUploadingPDF, isFetchingBooks);
-
   const dummy = {
     title: 'Processing ...',
     id: getUniqueID(5),
@@ -59,7 +58,7 @@ const UploadedPDFs = () => {
   }, [books]);
 
   useEffect(() => {
-    /* read the **no pdf** welcome if user has no previous books */
+    /* read the **no pdf** welcome if user has no uploaded docs */
     if (!books.length && !IsProcessing()) {
       setIsSpeachActive(true);
       setTimeout(() => {
@@ -234,6 +233,7 @@ const UploadedPDFs = () => {
 
   return (
     <View style={styles.container}>
+      <UpdatingLibraryView />
       {books.length || IsProcessing() ? (
         <View>
           <ScreenTitle> Library </ScreenTitle>

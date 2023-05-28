@@ -6,9 +6,8 @@ import {useFileUpload} from '../../providers/FileUploadProvider';
 import {Alert, TouchableOpacity} from 'react-native';
 import Text from '../../components/Text/Text';
 import {usePDFViewer} from '../../providers/PDFViewerProvider';
-import {IHomeScreenProps} from './interfaces';
 
-const HomeScreen = ({navigation}: IHomeScreenProps) => {
+const HomeScreen = () => {
   const {uploadPDF, isUploadingPDF, getUserBooks} = useFileUpload();
   const {openDocument} = usePDFViewer();
 
