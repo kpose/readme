@@ -78,7 +78,7 @@ const AuthScreen = ({navigation, route}: IAuthScreenProps) => {
 
         if (json.error) {
           setLoading(false);
-          return Alert.alert(json.error);
+          return Alert.alert(json.message);
         }
         if (json.accessToken) {
           // persist data and login

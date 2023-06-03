@@ -3,17 +3,25 @@ import React from 'react';
 import Text from '../Text/Text';
 import {appcolors} from '../../utils/colors.util';
 
-const UpdatingLibraryView = () => {
+interface UpdatingLibraryViewProps {
+  isVisible: boolean;
+}
+
+const UpdatingLibraryView = ({isVisible}: UpdatingLibraryViewProps) => {
   return (
     <View style={styles.updatingViewContainer}>
-      <Text weight="bold" style={styles.updatingText}>
-        Updating Library
-      </Text>
-      <ActivityIndicator
-        color={appcolors.primary}
-        size={'small'}
-        animating={true}
-      />
+      {isVisible ? (
+        <>
+          <Text weight="bold" style={styles.updatingText}>
+            Updating Library
+          </Text>
+          <ActivityIndicator
+            color={appcolors.primary}
+            size={'small'}
+            animating={true}
+          />
+        </>
+      ) : null}
     </View>
   );
 };

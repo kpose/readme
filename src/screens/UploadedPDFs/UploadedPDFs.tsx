@@ -2,7 +2,6 @@ import {
   View,
   FlatList,
   StyleSheet,
-  Pressable,
   ListRenderItem,
   Alert,
   ActivityIndicator,
@@ -36,13 +35,13 @@ const EmptyDirectoryText =
 const UploadedPDFs = () => {
   const books = useAppSelector((state: RootState) => state.books);
   const [openModal, setopenModal] = useState<boolean>(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [isLoadingThumbnail, setIsLoadingThumbnail] = useState(true);
   const [openDoc, setOpenDoc] = useState<IOpenDocProps>();
   const navigation = useNavigation();
   const [isSpeachActive, setIsSpeachActive] = useState(false);
   const {startSpeach} = useSpeach();
-  const {isUploadingPDF, deletePDF, isFetchingBooks} = useFileUpload();
+  const {isUploadingPDF, deletePDF, isFetchingDocs, isDeletingPDF} =
+    useFileUpload();
 
   const dummy = {
     title: 'Processing ...',
@@ -74,8 +73,8 @@ const UploadedPDFs = () => {
 
   /* check if document is currently being uploaded */
   const IsProcessing = useCallback(() => {
-    return isUploadingPDF || isFetchingBooks;
-  }, [isFetchingBooks, isUploadingPDF]);
+    return isUploadingPDF || isFetchingDocs;
+  }, [isFetchingDocs, isUploadingPDF]);
 
   const handleDocPress = useCallback(
     (doc: IPDFBook) => {
@@ -106,7 +105,7 @@ const UploadedPDFs = () => {
   }, [navigation, openDoc?.title]);
 
   const onDeletePress = useCallback(() => {
-    if (isDeleting || !openDoc) {
+    if (isDeletingPDF || !openDoc) {
       return;
     }
     Alert.alert('Attention', 'Are you sure you want to delete this document?', [
@@ -117,22 +116,21 @@ const UploadedPDFs = () => {
       {
         text: 'Yes, delete',
         onPress: () => {
-          setIsDeleting(true);
           deletePDF(openDoc.id);
           setopenModal(false);
         },
       },
     ]);
-  }, [deletePDF, isDeleting, openDoc]);
+  }, [deletePDF, isDeletingPDF, openDoc]);
 
   const handleLoadingImage = useCallback((status: 'start' | 'finish') => {
-    console.log(status);
+    // console.log(status);
   }, []);
 
   const BottomSheetContent = () => {
     return (
       <View>
-        {isDeleting ? (
+        {isDeletingPDF ? (
           <View style={styles.bottomSheetSpinerContainer}>
             <ActivityIndicator size="large" color={appcolors.primary} />
           </View>
@@ -146,14 +144,14 @@ const UploadedPDFs = () => {
           style={[
             styles.bottomSheetThumbnail,
             // eslint-disable-next-line react-native/no-inline-styles
-            {opacity: isDeleting ? 0.5 : 1},
+            {opacity: isDeletingPDF ? 0.5 : 1},
           ]}
           resizeMode="contain"
         />
         <Text
           weight="bold"
           // eslint-disable-next-line react-native/no-inline-styles
-          style={[styles.title, {opacity: isDeleting ? 0.5 : 1}]}>
+          style={[styles.title, {opacity: isDeletingPDF ? 0.5 : 1}]}>
           Title: {openDoc?.title.split('.pdf')}
         </Text>
 
@@ -161,7 +159,7 @@ const UploadedPDFs = () => {
           style={[
             styles.sheetButtonsContainer,
             // eslint-disable-next-line react-native/no-inline-styles
-            {opacity: isDeleting ? 0.5 : 1},
+            {opacity: isDeletingPDF ? 0.5 : 1},
           ]}>
           {/* Listen button */}
           <TouchableOpacity style={styles.sheetButton} onPress={onListenPress}>
@@ -233,8 +231,11 @@ const UploadedPDFs = () => {
 
   return (
     <View style={styles.container}>
-      <UpdatingLibraryView />
-      {books.length || IsProcessing() ? (
+      {!books.length && IsProcessing() ? (
+        <UpdatingLibraryView isVisible={true} />
+      ) : null}
+
+      {books.length ? (
         <View>
           <ScreenTitle> Library </ScreenTitle>
           <FlatList

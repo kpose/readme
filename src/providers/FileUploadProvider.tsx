@@ -19,12 +19,11 @@ import {asyncGet} from '../utils/Async.util';
 import {STORE_KEYS} from '../utils/Keys.util';
 import {getUniqueID} from '../utils/Helpers.util';
 import {RootState} from '../redux/store';
-import RNFS from 'react-native-fs';
 
 const initialState = {
   isUploadingPDF: false,
   isDeletingPDF: false,
-  isFetchingBooks: false,
+  isFetchingDocs: false,
   uploadPDF: () => {},
   getUserBooks: () => {},
   deletePDF: () => {},
@@ -36,7 +35,7 @@ interface IFileUploadProviderProps {
 interface IFileUploadContext {
   isUploadingPDF: boolean;
   isDeletingPDF: boolean;
-  isFetchingBooks: boolean;
+  isFetchingDocs: boolean;
   uploadPDF: () => Promise<string>;
   getUserBooks: (mode: 'incognito' | 'live') => Promise<any>;
   deletePDF: (id: string) => Promise<any>;
@@ -62,10 +61,10 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
           'Error processing, please logout then log in again',
         );
       }
-
       if (filesPermission === 'granted') {
         // pick single pdf and get temp location
         const filePath = await selectPdf();
+
         if (Object.keys(filePath).length === 0) {
           setIsUploading(false);
           let error = 'Please make sure you have selected a pdf document';
@@ -97,6 +96,8 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
           data.append('uploads', uploads[i]);
         }
 
+        console.log(data);
+
         /* make http call for text extraction */
         const response = await fetch('http://localhost:4000/api/upload', {
           method: 'POST',
@@ -109,12 +110,13 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
         });
 
         let responseInJs = await response.json();
+        console.log(responseInJs);
+        console.log('llll');
 
         if (responseInJs.error) {
           setIsUploading(false);
           return Promise.reject(responseInJs.error);
         }
-
         setIsUploading(false);
         return Promise.resolve('Document have been uploaded successfully');
       }
@@ -159,15 +161,18 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
           },
         });
 
+        if (!response) {
+          setIsFetching(false);
+          return Promise.reject('Error fetching documents');
+        }
+
         let responseInJs = await response.json();
         if (responseInJs.error) {
           setIsFetching(false);
           return Promise.reject(responseInJs.error);
         }
-        setIsFetching(false);
-        console.log(responseInJs.data);
 
-        // check if database books habve been updated
+        // check if  books habve been updated
         let missingBooks = responseInJs.data.filter(
           e => !SAVEDBOOKS.find(a => e.title === a.title),
         );
@@ -184,6 +189,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
           };
           dispatch(updateBooks(bookData));
         }
+        setIsFetching(false);
       } catch (error) {
         setIsFetching(false);
       }
@@ -227,7 +233,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
     <FileUploadContext.Provider
       value={{
         isUploadingPDF: isUploading,
-        isFetchingBooks: isFetching,
+        isFetchingDocs: isFetching,
         isDeletingPDF: isDeleting,
         uploadPDF: uploadAndSavePDF,
         getUserBooks: getAllUserBooks,

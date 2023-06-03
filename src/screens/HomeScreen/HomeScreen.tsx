@@ -1,20 +1,23 @@
 import React, {useCallback, useEffect} from 'react';
-import Screen from '../../components/Screen/Screen';
 import FAB from '../../components/FAB/FAB';
 import UploadedPDFs from '../UploadedPDFs/UploadedPDFs';
 import {useFileUpload} from '../../providers/FileUploadProvider';
-import {Alert, TouchableOpacity} from 'react-native';
+import {Alert, SafeAreaView, TouchableOpacity} from 'react-native';
 import Text from '../../components/Text/Text';
 import {usePDFViewer} from '../../providers/PDFViewerProvider';
+import {useAppSelector} from '../../hooks/ReduxState.hook';
+import {RootState} from '../../redux/store';
 
 const HomeScreen = () => {
   const {uploadPDF, isUploadingPDF, getUserBooks} = useFileUpload();
   const {openDocument} = usePDFViewer();
+  const books = useAppSelector((state: RootState) => state.books);
 
   useEffect(
     function componentDidMount() {
+      const mode = books.length ? 'incognito' : 'live';
       async function fetchAllUserBooks() {
-        await getUserBooks('incognito')
+        await getUserBooks(mode)
           .then(x => {
             // do nothing
           })
@@ -24,14 +27,15 @@ const HomeScreen = () => {
       }
       fetchAllUserBooks();
     },
-    [getUserBooks],
+    [books, getUserBooks],
   );
 
   const onImportPress = useCallback(async () => {
     await uploadPDF()
       .then(() => {
         getUserBooks('live')
-          .then(() => {
+          .then(x => {
+            console.log(x);
             // do nothing
           })
           .catch(err => {
@@ -52,13 +56,19 @@ const HomeScreen = () => {
   }, [openDocument]);
 
   return (
-    <Screen>
+    <SafeAreaView
+      style={{
+        // backgroundColor: 'blue',
+        flex: 1,
+        // marginHorizontal: 16,
+        // marginTop: 20,
+      }}>
       <UploadedPDFs />
       <FAB onImportPress={onImportPress} disabled={isUploadingPDF} />
       <TouchableOpacity onPress={openDoc}>
         <Text>press</Text>
       </TouchableOpacity>
-    </Screen>
+    </SafeAreaView>
   );
 };
 
