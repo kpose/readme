@@ -23,7 +23,7 @@ import {RootState} from '../redux/store';
 const initialState = {
   isUploadingPDF: false,
   isDeletingPDF: false,
-  isFetchingDocs: false,
+  isFetchingPDF: false,
   uploadPDF: () => {},
   getUserBooks: () => {},
   deletePDF: () => {},
@@ -35,7 +35,7 @@ interface IFileUploadProviderProps {
 interface IFileUploadContext {
   isUploadingPDF: boolean;
   isDeletingPDF: boolean;
-  isFetchingDocs: boolean;
+  isFetchingPDF: boolean;
   uploadPDF: () => Promise<string>;
   getUserBooks: (mode: 'incognito' | 'live') => Promise<any>;
   deletePDF: (id: string) => Promise<any>;
@@ -111,7 +111,6 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
 
         let responseInJs = await response.json();
         console.log(responseInJs);
-        console.log('llll');
 
         if (responseInJs.error) {
           setIsUploading(false);
@@ -233,7 +232,7 @@ export const FileUploadProvider: FC<IFileUploadProviderProps> = ({
     <FileUploadContext.Provider
       value={{
         isUploadingPDF: isUploading,
-        isFetchingDocs: isFetching,
+        isFetchingPDF: isFetching,
         isDeletingPDF: isDeleting,
         uploadPDF: uploadAndSavePDF,
         getUserBooks: getAllUserBooks,

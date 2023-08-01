@@ -21,7 +21,7 @@ import {useNavigation} from '@react-navigation/native';
 import SpeachText from '../../components/Text/SpeachText';
 import {useSpeach} from '../../providers/SpeachProvider';
 import {useFileUpload} from '../../providers/FileUploadProvider';
-import FastImage from 'react-native-fast-image';
+import FastImage, {OnProgressEvent} from 'react-native-fast-image';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {getUniqueID} from '../../utils/Helpers.util';
 import UpdatingLibraryView from '../../components/UpdatingLibraryView/UpdatingLibraryView';
@@ -35,12 +35,13 @@ const EmptyDirectoryText =
 const UploadedPDFs = () => {
   const books = useAppSelector((state: RootState) => state.books);
   const [openModal, setopenModal] = useState<boolean>(false);
+  const [loadingPercent, setLoadingPercent] = useState(0);
   const [isLoadingThumbnail, setIsLoadingThumbnail] = useState(true);
   const [openDoc, setOpenDoc] = useState<IOpenDocProps>();
   const navigation = useNavigation();
   const [isSpeachActive, setIsSpeachActive] = useState(false);
   const {startSpeach} = useSpeach();
-  const {isUploadingPDF, deletePDF, isFetchingDocs, isDeletingPDF} =
+  const {isUploadingPDF, deletePDF, isFetchingPDF, isDeletingPDF} =
     useFileUpload();
 
   const dummy = {
@@ -73,8 +74,8 @@ const UploadedPDFs = () => {
 
   /* check if document is currently being uploaded */
   const IsProcessing = useCallback(() => {
-    return isUploadingPDF || isFetchingDocs;
-  }, [isFetchingDocs, isUploadingPDF]);
+    return isUploadingPDF || isFetchingPDF;
+  }, [isFetchingPDF, isUploadingPDF]);
 
   const handleDocPress = useCallback(
     (doc: IPDFBook) => {
@@ -123,9 +124,21 @@ const UploadedPDFs = () => {
     ]);
   }, [deletePDF, isDeletingPDF, openDoc]);
 
-  const handleLoadingImage = useCallback((status: 'start' | 'finish') => {
-    // console.log(status);
-  }, []);
+  const shouldShowProgress = useCallback(
+    (index: number) => {
+      return index === 0 && loadingPercent >= 1 && loadingPercent <= 99;
+    },
+    [loadingPercent],
+  );
+
+  // const handleImageLoadProgress = useCallback((e: OnProgressEvent) => {
+  //   if (!e.nativeEvent) {
+  //     return;
+  //   }
+  //   let percentage = Number(e.nativeEvent.loaded / e.nativeEvent.total) * 100;
+  //   console.log(percentage);
+  //   setLoadingPercent(Math.round(percentage));
+  // }, []);
 
   const BottomSheetContent = () => {
     return (
@@ -186,7 +199,6 @@ const UploadedPDFs = () => {
       </View>
     );
   };
-
   const renderPdfFiles: ListRenderItem<IPDFBook> = ({item, index}) => {
     return (
       <View
@@ -195,23 +207,38 @@ const UploadedPDFs = () => {
           // eslint-disable-next-line react-native/no-inline-styles
           {opacity: IsProcessing() && index === 0 ? 0.4 : 1},
         ]}>
-        <TouchableOpacity onPress={() => handleDocPress(item)}>
-          <FastImage
-            source={
-              IsProcessing() && index === 0
-                ? require('../../assets/images/thumbnail.png')
-                : {
-                    uri: item.thumbnailFileUrl,
-                    priority: FastImage.priority.normal,
-                    cache: FastImage.cacheControl.immutable,
-                  }
-            }
-            style={[styles.thumbnailImage]}
-            resizeMode={FastImage.resizeMode.contain}
-            onLoadStart={() => handleLoadingImage('start')}
-            onLoadEnd={() => handleLoadingImage('finish')}
-          />
-        </TouchableOpacity>
+        {shouldShowProgress(index) ? (
+          <TouchableOpacity onPress={() => handleDocPress(item)}>
+            <Text>Loading ... {loadingPercent}</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={() => handleDocPress(item)}>
+            <FastImage
+              source={
+                IsProcessing() && index === 0
+                  ? require('../../assets/images/thumbnail.png')
+                  : {
+                      uri: item.thumbnailFileUrl,
+                      priority: FastImage.priority.normal,
+                      cache: FastImage.cacheControl.immutable,
+                    }
+              }
+              style={[styles.thumbnailImage]}
+              resizeMode={FastImage.resizeMode.contain}
+              onProgress={e => {
+                if (Number(e.nativeEvent.total) < 5) {
+                  return setLoadingPercent(0);
+                }
+                let percentage =
+                  Number(e.nativeEvent.loaded / e.nativeEvent.total) * 100;
+                console.log(e.nativeEvent.loaded, 'loaded');
+                console.log(e.nativeEvent.total, 'total');
+                console.log(percentage, 'percentage');
+                setLoadingPercent(Math.round(percentage));
+              }}
+            />
+          </TouchableOpacity>
+        )}
         {IsProcessing() && index === 0 ? <Text>Processing...</Text> : null}
       </View>
     );

@@ -35,7 +35,6 @@ const HomeScreen = () => {
       .then(() => {
         getUserBooks('live')
           .then(x => {
-            console.log(x);
             // do nothing
           })
           .catch(err => {
@@ -58,7 +57,7 @@ const HomeScreen = () => {
   return (
     <SafeAreaView
       style={{
-        // backgroundColor: 'blue',
+        backgroundColor: 'blue',
         flex: 1,
         // marginHorizontal: 16,
         // marginTop: 20,
